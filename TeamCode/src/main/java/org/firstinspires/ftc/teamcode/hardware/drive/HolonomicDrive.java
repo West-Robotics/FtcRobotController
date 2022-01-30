@@ -443,7 +443,7 @@ public abstract class HolonomicDrive extends BaseHardware {
         pidFLBR.setInputRange(currFlbr, currFlbr + flbrDist);
         pidFLBR.setOutputRange(0, goalFLBRSpeed);
         pidFLBR.setSetpoint(currFlbr + flbrDist);
-        pidFLBR.setTolerance(5);
+        pidFLBR.setTolerance(80);
         pidFLBR.enable();
 
         // For frontright and backleft motors
@@ -451,7 +451,7 @@ public abstract class HolonomicDrive extends BaseHardware {
         pidFRBL.setInputRange(currFrbl, currFrbl + frblDist);
         pidFRBL.setOutputRange(0, goalFRBLSpeed);
         pidFRBL.setSetpoint(currFrbl + frblDist);
-        pidFRBL.setTolerance(5);
+        pidFRBL.setTolerance(80);
         pidFRBL.enable();
 
         boolean isFLBROnTarget = false;
@@ -482,14 +482,18 @@ public abstract class HolonomicDrive extends BaseHardware {
             //print("Correction: ", correction);
             print("FLBR Setpoint: ", pidFLBR.getSetpoint() + " " + Double.toString(flbrDist));
             print("FRBL Setpoint: ", pidFRBL.getSetpoint() + " " + Double.toString(frblDist));
-            print("FLBR Speed: ", speedFLBR);
-            print("FRBL Speed: ", speedFRBL);
+            //print("FLBR Speed: ", speedFLBR);
+            //print("FRBL Speed: ", speedFRBL);
             //print("FLBR Ontarget: ", pidFLBR.onTarget() || isFLBROnTarget);
             //print("FRBL Ontarget: ", pidFRBL.onTarget() || isFRBLOnTarget);
 
             linearOpMode.telemetry.update();
 
         } while (linearOpMode.opModeIsActive() && ((!pidFRBL.onTarget() && !isFRBLOnTarget) || (!pidFLBR.onTarget() && !isFLBROnTarget)));
+
+        // Reset turn
+        gyro.reset();
+        currAngle = 0;
 
         // Stop motors
         stop();
@@ -511,7 +515,7 @@ public abstract class HolonomicDrive extends BaseHardware {
         pidTurn.setInputRange(currAngle, currAngle - angle);
         pidTurn.setOutputRange(0, speed);
         pidTurn.setSetpoint(currAngle - angle);
-        pidTurn.setTolerance(5);
+        pidTurn.setTolerance(2);
         pidTurn.enable();
 
         do {
@@ -541,6 +545,9 @@ public abstract class HolonomicDrive extends BaseHardware {
         // Stop motors
         stop();
 
+        // Reset motors
+        resetMotors();
+
         // Add slight delay
         linearOpMode.sleep(500);
 
@@ -568,6 +575,9 @@ public abstract class HolonomicDrive extends BaseHardware {
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        currFlbr = 0;
+        currFrbl = 0;
 
     }
 

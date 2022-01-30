@@ -48,9 +48,10 @@ public class Arm extends BaseHardware {
     private void setup(HardwareMap hwMap) {
 
         // Set up PID
+        pidArm.reset();
         pidArm.setInputRange(0, ARM_STAGES[3]);
         pidArm.setOutputRange(0, LIFT_POWER);
-        pidArm.setTolerance(1);
+        pidArm.setTolerance(100);
 
         // Set up lift motor
         liftMotor = hwMap.get(DcMotor.class, "lift");
@@ -77,6 +78,7 @@ public class Arm extends BaseHardware {
 
     public void lift(boolean up, boolean down) {
 
+        print("Touch Arm", armTouch.isPressed());
         print("Position Arm", liftMotor.getCurrentPosition());
 
         // Manually move arm
@@ -106,7 +108,7 @@ public class Arm extends BaseHardware {
         pidArm.reset();
         pidArm.enable();
         pidArm.setSetpoint(ARM_STAGES[stage]);
-        pidArm.setTolerance(1);
+        pidArm.setTolerance(100);
 
         do {
 

@@ -15,7 +15,7 @@ public class Intake extends BaseHardware {
     // Motor and motor power
     private DcMotor intakeMotor;
     private static final double INTAKE_POWER = 1;
-    private static final double OUTTAKE_POWER = 0.8;
+    private static final double OUTTAKE_POWER = 0.5;
 
     // Servo
     private Servo flag;
@@ -62,14 +62,14 @@ public class Intake extends BaseHardware {
     public void intake(boolean intake, boolean reverse) {
 
         // Control intake
-        print("Distance: ", distanceSensor.getDistance(DistanceUnit.INCH));
-        if (intake && distanceSensor.getDistance(DistanceUnit.INCH) > DISTANCE_THRESHOLD) intake();
+        //print("Distance: ", distanceSensor.getDistance(DistanceUnit.INCH));
+        if (intake/* && distanceSensor.getDistance(DistanceUnit.INCH) > DISTANCE_THRESHOLD*/) intake();
         else if (reverse) reverse();
         else stop();
 
         // Raise the flag if block is in
-        if (distanceSensor.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD) flag.setPosition(POS_UP);
-        else flag.setPosition(POS_DOWN);
+        //if (distanceSensor.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD) flag.setPosition(POS_UP);
+        //else flag.setPosition(POS_DOWN);
 
     }
 
