@@ -8,23 +8,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
-import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
 import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 import org.firstinspires.ftc.teamcode.vampire.roadrunner.drive.VampireRRDrive;
 
-@Autonomous(name="Vampire: BRDWhWa", group="Vampire")
-public class BRDWhWa extends LinearOpMode {
+@Autonomous(name="Vampire: RRDWa", group="Vampire")
+public class RRWIn extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // Dum auto RIP
         VampireDrive drive;
         Arm arm;
         Intake intake;
-        DuckDuckGo spin;
         Webcam webcam;
 
         // Elapsed time for timed motion
@@ -40,7 +37,6 @@ public class BRDWhWa extends LinearOpMode {
         drive = new VampireDrive(this, hardwareMap);
         arm = new Arm(this, hardwareMap);
         intake = new Intake(this, hardwareMap);
-        spin = new DuckDuckGo(this, hardwareMap);
         webcam = new Webcam(this, hardwareMap);
         webcam.debug();
 
@@ -57,24 +53,21 @@ public class BRDWhWa extends LinearOpMode {
 
         if (position == 1) {
 
-            drive.move(0.6, 28, 0);
+            drive.move(0.6, 27, 0);
             drive.move(0.6, 13, -90);
 
-        } else drive.move(0.5, 28, -33);
+        } else drive.move(0.6, 30, -28);
 
         arm.setLift(position);
-        drive.turn(0.5, -45);
+        drive.turn(1, -45);
         intake.reverse();
         sleep(3000);
         intake.stop();
-        drive.turn(1, 45);
-        drive.move(0.5, 40, 111);
-        spin.spinBlue();
-        sleep(5000);
-        spin.stop();
-        drive.turn(1, 10);
-        drive.move(0.6, 22, 20);
+        drive.turn(1, -45);
+        drive.move(0.5, 35, -90);
+        drive.move(0.5, 40, -175);
         arm.setLift(0);
+
     }
 
 }

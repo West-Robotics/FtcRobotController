@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 import org.firstinspires.ftc.teamcode.vampire.roadrunner.drive.VampireRRDrive;
 
-@Autonomous(name="Vampire: RLDWhWa", group="Vampire")
-public class RLDWhWa extends LinearOpMode {
+@Autonomous(name="Vampire: BRDWhWa", group="Vampire")
+public class BRS extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,10 +42,7 @@ public class RLDWhWa extends LinearOpMode {
         intake = new Intake(this, hardwareMap);
         spin = new DuckDuckGo(this, hardwareMap);
         webcam = new Webcam(this, hardwareMap);
-
         webcam.debug();
-        //drive.debug();
-        arm.debug();
 
         // Get how many rings are stacked
         int position = 3;
@@ -58,27 +55,28 @@ public class RLDWhWa extends LinearOpMode {
 
         }
 
-        if (position == 3) {
+        if (position == 1) {
 
-            drive.move(0.6, 27, 0);
-            drive.move(0.6, 13, 90);
+            drive.move(0.6, 28, 0);
+            drive.move(0.6, 13, -90);
 
-        } else drive.move(0.6, 29, 30);
+        } else drive.move(0.5, 28, -33);
 
         arm.setLift(position);
-        drive.turn(1, 45);
+        drive.turn(0.5, -45);
         intake.reverse();
         sleep(3000);
         intake.stop();
         drive.turn(1, 45);
-        drive.move(0.5, 30, 95);
-        drive.move(0.4, 34,-178);
-        spin.spinRed();
-        sleep(4000);
-        spin.stop();
-        drive.move(0.6, 28, -93);
-        arm.setLift(0);
+        drive.move(0.5, 40, 111);
 
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < 4000) { spin.spin(true, false); }
+        spin.stop();
+
+        drive.turn(1, 10);
+        drive.move(0.6, 22, 20);
+        arm.setLift(0);
     }
 
 }

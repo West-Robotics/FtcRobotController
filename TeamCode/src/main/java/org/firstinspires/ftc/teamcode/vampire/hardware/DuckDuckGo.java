@@ -13,7 +13,7 @@ public class DuckDuckGo extends BaseHardware {
     // Motor and motor power
     private CRServo duckSpin;
     private static final double INIT_POWER = 0.5;
-    private static final double ACCEL = 0.01;
+    private static final double ACCEL = 0.001;
     private double speed = INIT_POWER;
 
     // Teleop constructor
@@ -42,6 +42,7 @@ public class DuckDuckGo extends BaseHardware {
 
     public void spin(boolean red, boolean blue) {
 
+        print("Carousel Speed:", speed);
         if (red || blue) speed += ACCEL;
         if (red) spinRed();
         else if (blue) spinBlue();

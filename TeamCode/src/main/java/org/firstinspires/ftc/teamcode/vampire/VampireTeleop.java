@@ -51,7 +51,8 @@ public class VampireTeleop extends OpMode {
         // Debug mode
         //intake.debug();
         //drive.debug();
-        arm.debug();
+        //arm.debug();
+        spin.debug();
         //webcam.debug();
         //tapeArm.debug();
 
@@ -94,7 +95,7 @@ public class VampireTeleop extends OpMode {
 
         // Second controller
         arm.lift(controller2.Y(), controller2.A());
-        arm.toggleAuto(controller2.B());
+        arm.toggleAuto(controller2.X());
 
         // The tape measure...
         tapeArm.horzMove(controller2.dpadRight(), controller2.dpadLeft());
