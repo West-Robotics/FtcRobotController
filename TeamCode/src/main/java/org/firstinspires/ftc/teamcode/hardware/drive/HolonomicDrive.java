@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.PIDController;
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 import org.firstinspires.ftc.teamcode.hardware.Gyro;
-import org.firstinspires.ftc.teamcode.hardware.drive.odometry.OdometryGlobalCoordinatePosition;
 
 public abstract class HolonomicDrive extends BaseHardware {
 
@@ -29,9 +28,6 @@ public abstract class HolonomicDrive extends BaseHardware {
 
     // Gyro
     protected Gyro gyro;
-
-    // Odometry
-    protected OdometryGlobalCoordinatePosition odometry = null;
 
     // Modes
     protected boolean isDrivePOV = true;
@@ -112,13 +108,6 @@ public abstract class HolonomicDrive extends BaseHardware {
     protected void setTicksPerRev(double ticksPerRev) {
 
         this.ticksPerRev = ticksPerRev;
-
-    }
-
-    // Get odometry
-    public void getOdometry(OdometryGlobalCoordinatePosition odometry) {
-
-        this.odometry = odometry;
 
     }
 

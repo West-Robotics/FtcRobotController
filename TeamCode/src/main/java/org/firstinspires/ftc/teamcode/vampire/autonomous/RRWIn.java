@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 import org.firstinspires.ftc.teamcode.vampire.roadrunner.drive.VampireRRDrive;
 
-@Autonomous(name="Vampire: RRDWa", group="Vampire")
+@Autonomous(name="Vampire: RRWIn", group="Vampire")
 public class RRWIn extends LinearOpMode {
 
     @Override

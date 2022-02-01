@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 import org.firstinspires.ftc.teamcode.vampire.roadrunner.drive.VampireRRDrive;
 
-@Autonomous(name="Vampire: RLDWhWa", group="Vampire")
+@Autonomous(name="Vampire: RLS", group="Vampire")
 public class RLS extends LinearOpMode {
 
     @Override

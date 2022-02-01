@@ -23,7 +23,7 @@ public class Intake extends BaseHardware {
     private static final double POS_DOWN = 0.6;
 
     // For distance sensor
-    private DistanceSensor distanceSensor;
+    //private DistanceSensor distanceSensor;
     private static final double DISTANCE_THRESHOLD = 5.5;
 
     // Teleop constructor
@@ -55,7 +55,7 @@ public class Intake extends BaseHardware {
         flag.setPosition(POS_DOWN);
 
         // Set up distance sensor
-        distanceSensor = hwMap.get(DistanceSensor.class, "distance");
+        //distanceSensor = hwMap.get(DistanceSensor.class, "distance");
 
     }
 

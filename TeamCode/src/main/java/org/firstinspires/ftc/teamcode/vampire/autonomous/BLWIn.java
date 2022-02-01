@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
 import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 
-@Autonomous(name="Vampire: BLDWa", group="Vampire")
+@Autonomous(name="Vampire: BLWIn", group="Vampire")
 public class BLWIn extends LinearOpMode {
 
     @Override

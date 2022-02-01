@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
 import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 
-@Autonomous(name="Vampire: BRDWhWa", group="Vampire")
+@Autonomous(name="Vampire: BRWOut", group="Vampire")
 public class BRWOut extends LinearOpMode {
 
     @Override
