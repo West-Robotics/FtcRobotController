@@ -50,7 +50,9 @@ public abstract class HolonomicDrive extends BaseHardware {
     protected double correction;
     protected boolean isPID = true;
 
+    // Static variables
     protected static final double SLOW_MULTIPLIER = 0.5;
+    protected static final double TURN_REDUCTION = 1.5;
 
     // Set pidDrive values
     protected void setPidDrive(double p, double i, double d) {
@@ -242,7 +244,7 @@ public abstract class HolonomicDrive extends BaseHardware {
         }
 
         // Reduce joystick turn
-        double turn = joystickTurn / 1.8;
+        double turn = joystickTurn / TURN_REDUCTION;
 
         // PID calculation
         pidDrive.setSetpoint(prevAngle);

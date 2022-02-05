@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.vampire.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,7 +16,7 @@ public class Intake extends BaseHardware {
     // Motor and motor power
     private DcMotor intakeMotor;
     private static final double INTAKE_POWER = 1;
-    private static final double OUTTAKE_POWER = 0.5;
+    private static final double OUTTAKE_POWER = 0.7;
 
     // Servo
     private Servo flag;
@@ -23,8 +24,8 @@ public class Intake extends BaseHardware {
     private static final double POS_DOWN = 0.6;
 
     // For distance sensor
-    //private DistanceSensor distanceSensor;
-    private static final double DISTANCE_THRESHOLD = 5.5;
+    private static final double DISTANCE_THRESHOLD = 1.5;
+    private ColorRangeSensor CRSensor;
 
     // Teleop constructor
     public Intake(OpMode opMode, HardwareMap hwMap) {
@@ -56,20 +57,21 @@ public class Intake extends BaseHardware {
 
         // Set up distance sensor
         //distanceSensor = hwMap.get(DistanceSensor.class, "distance");
+        CRSensor = hwMap.get(ColorRangeSensor.class, "CR");
 
     }
 
     public void intake(boolean intake, boolean reverse) {
 
         // Control intake
-        //print("Distance: ", distanceSensor.getDistance(DistanceUnit.INCH));
-        if (intake/* && distanceSensor.getDistance(DistanceUnit.INCH) > DISTANCE_THRESHOLD*/) intake();
+        print("Distance", CRSensor.getDistance(DistanceUnit.INCH));
+        if (intake && CRSensor.getDistance(DistanceUnit.INCH) > DISTANCE_THRESHOLD) intake();
         else if (reverse) reverse();
         else stop();
 
         // Raise the flag if block is in
-        //if (distanceSensor.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD) flag.setPosition(POS_UP);
-        //else flag.setPosition(POS_DOWN);
+        if (CRSensor.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD) flag.setPosition(POS_UP);
+        else flag.setPosition(POS_DOWN);
 
     }
 

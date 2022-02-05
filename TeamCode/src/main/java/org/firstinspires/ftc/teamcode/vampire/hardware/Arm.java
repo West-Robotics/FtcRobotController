@@ -102,36 +102,6 @@ public class Arm extends BaseHardware {
 
     }
 
-    public void setLift(int s) {
-
-        stage = s;
-        pidArm.reset();
-        pidArm.enable();
-        pidArm.setSetpoint(ARM_STAGES[stage]);
-        pidArm.setTolerance(100);
-
-        do {
-
-            // Telemetry
-            print("Position Arm", liftMotor.getCurrentPosition());
-            linearOpMode.telemetry.update();
-
-            // Power the motors
-            liftMotor.setPower(pidArm.performPID(liftMotor.getCurrentPosition()));
-
-        } while (!pidArm.onTarget() ||
-                (stage == 0 && !armTouch.isPressed()));
-
-        liftMotor.setPower(0);
-        if (stage == 0) {
-
-            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        }
-
-    }
-
     public void changeStage(boolean up, boolean down) {
 
         // Print arm info
@@ -182,6 +152,44 @@ public class Arm extends BaseHardware {
             else stage = 3;
 
         }
+
+    }
+
+    public void setLift(int stage) {
+
+        new Thread() {
+
+            @Override
+            public void run() {
+
+                pidArm.reset();
+                pidArm.enable();
+                pidArm.setSetpoint(ARM_STAGES[stage]);
+                pidArm.setTolerance(100);
+
+                do {
+
+                    // Telemetry
+                    print("Position Arm", liftMotor.getCurrentPosition());
+                    linearOpMode.telemetry.update();
+
+                    // Power the motors
+                    liftMotor.setPower(pidArm.performPID(liftMotor.getCurrentPosition()));
+
+                } while (!pidArm.onTarget() ||
+                        (stage == 0 && !armTouch.isPressed()));
+
+                liftMotor.setPower(0);
+                if (stage == 0) {
+
+                    liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                }
+
+            }
+
+        }.start();
 
     }
 

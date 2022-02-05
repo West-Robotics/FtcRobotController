@@ -49,7 +49,7 @@ public class VampireTeleop extends OpMode {
         //drive.enableSquaredInputs();
 
         // Debug mode
-        //intake.debug();
+        intake.debug();
         //drive.debug();
         //arm.debug();
         spin.debug();

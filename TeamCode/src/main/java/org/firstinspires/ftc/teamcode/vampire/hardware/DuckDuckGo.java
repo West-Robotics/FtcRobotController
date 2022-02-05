@@ -11,9 +11,10 @@ import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 public class DuckDuckGo extends BaseHardware {
 
     // Motor and motor power
-    private CRServo duckSpin;
-    private static final double INIT_POWER = 0.5;
-    private static final double ACCEL = 0.001;
+    private DcMotor duckSpin;
+    private static final double INIT_POWER = 0.35;
+    private static final double ACCEL = 0.01;
+    private static final double FINAL_POWER = 0.8;
     private double speed = INIT_POWER;
 
     // Teleop constructor
@@ -35,7 +36,7 @@ public class DuckDuckGo extends BaseHardware {
     private void setup(HardwareMap hwMap) {
 
         // Set up servo
-        duckSpin = hwMap.get(CRServo.class, "spin");
+        duckSpin = hwMap.get(DcMotor.class, "spin");
         duckSpin.setDirection(DcMotor.Direction.FORWARD);
 
     }
@@ -44,6 +45,7 @@ public class DuckDuckGo extends BaseHardware {
 
         print("Carousel Speed:", speed);
         if (red || blue) speed += ACCEL;
+        if (speed > FINAL_POWER) speed = FINAL_POWER;
         if (red) spinRed();
         else if (blue) spinBlue();
         else stop();
