@@ -32,6 +32,9 @@ public class VampireTeleop extends OpMode {
     private ArrayList<Double> x = new ArrayList<>();
     private ArrayList<Double> y = new ArrayList<>();
 
+    // Use webcam?
+    private static final boolean IS_WEBCAM = true;
+
     @Override
     public void init() {
 
@@ -40,7 +43,7 @@ public class VampireTeleop extends OpMode {
         intake = new Intake(this, hardwareMap);
         arm = new Arm(this, hardwareMap);
         spin = new DuckDuckGo(this, hardwareMap);
-        webcam = new Webcam(this, hardwareMap);
+        if (IS_WEBCAM) webcam = new Webcam(this, hardwareMap);
         tapeArm = new TapeArm(this, hardwareMap);
         controller1 = new Controller(gamepad1);
         controller2 = new Controller(gamepad2);
@@ -53,8 +56,9 @@ public class VampireTeleop extends OpMode {
         //drive.debug();
         //arm.debug();
         spin.debug();
-        //webcam.debug();
         //tapeArm.debug();
+
+        if (IS_WEBCAM) webcam.debug();
 
     }
 
@@ -92,6 +96,7 @@ public class VampireTeleop extends OpMode {
         spin.spin(controller1.A(), controller1.X());
         arm.lift(controller1.dpadUp(), controller1.dpadDown());
         arm.changeStage(controller1.dpadUpOnce(), controller1.dpadDownOnce());
+        webcam.toggleMode(controller1.startOnce());
 
         // Second controller
         arm.lift(controller2.Y(), controller2.A());
@@ -104,7 +109,7 @@ public class VampireTeleop extends OpMode {
         tapeArm.toggleSpeed(controller2.X());
 
         // Update webcam values
-        webcam.update();
+        if (IS_WEBCAM) webcam.update();
 
         telemetry.update();
 

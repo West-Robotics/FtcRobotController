@@ -21,14 +21,15 @@ public class Webcam extends BaseHardware {
 
     // For OpenCV
     private OpenCvCamera webcam;
-    private CargoDeterminationPipeline pipeline;
+    private CargoDeterminationPipeline cargoPipeline;
+    private DuckPositionPipeline duckPipeline;
 
     // Video resolution
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
 
-    // Get webcam name
-    WebcamName webcamName;
+    // Modes
+    private boolean isCargo = true;
 
     public Webcam(OpMode opMode, HardwareMap hwMap) {
 
@@ -49,8 +50,9 @@ public class Webcam extends BaseHardware {
         // Webcam setup
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-        pipeline = new CargoDeterminationPipeline();
-        webcam.setPipeline(pipeline);
+        cargoPipeline = new CargoDeterminationPipeline();
+        duckPipeline = new DuckPositionPipeline();
+        webcam.setPipeline(duckPipeline);
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
         // Start video streaming
@@ -69,28 +71,131 @@ public class Webcam extends BaseHardware {
     public void update() {
 
         // For OpenCV
-        print("Threshold Left: ", pipeline.avgL);
-        print("Threshold Mid: ", pipeline.avgM);
-        print("Threshold Right: ", pipeline.avgR);
-        print("Position: ", getCargoPos());
+        print("Threshold Left", cargoPipeline.avgL);
+        print("Threshold Mid", cargoPipeline.avgM);
+        print("Threshold Right", cargoPipeline.avgR);
+        print("X", duckPipeline.xNum);
+        print("Y", duckPipeline.yNum);
+        print("Average Hue", duckPipeline.desiredHSV[0]);
+        print("Average Saturation", duckPipeline.desiredHSV[1]);
+        print("Average Brightness", duckPipeline.desiredHSV[2]);
+        print("Position", getCargoPos());
+        print("Mode", isCargo);
+
+    }
+
+    public void toggleMode(boolean button) {
+
+        if (button) {
+
+            isCargo = !isCargo;
+
+            if (isCargo) webcam.setPipeline(cargoPipeline);
+            else webcam.setPipeline(duckPipeline);
+
+        }
 
     }
 
     public int getCargoPos() {
 
-        if (pipeline.getPosition() == CargoDeterminationPipeline.CargoPosition.BOTTOM)
-            return 1;
-        else if (pipeline.getPosition() == CargoDeterminationPipeline.CargoPosition.MIDDLE)
-            return 2;
-        else if (pipeline.getPosition() == CargoDeterminationPipeline.CargoPosition.TOP)
-            return 3;
+        if (cargoPipeline.getPosition() == CargoDeterminationPipeline.CargoPosition.BOTTOM) return 1;
+        else if (cargoPipeline.getPosition() == CargoDeterminationPipeline.CargoPosition.MIDDLE) return 2;
+        else if (cargoPipeline.getPosition() == CargoDeterminationPipeline.CargoPosition.TOP) return 3;
         else return 0;
 
     }
 
-    public int[] getRaw() {
+    private static class DuckPositionPipeline extends OpenCvPipeline {
 
-        return pipeline.getRaw();
+        private static final int REGION_WIDTH = 40;
+        private static final int REGION_HEIGHT = 40;
+        private static final int NUM_HORZ = WIDTH / REGION_WIDTH;
+        private static final int NUM_VERT = HEIGHT / REGION_HEIGHT;
+        private static final Mat[][][] regions = new Mat[3][NUM_HORZ][NUM_VERT]; // H = 0, S = 1, V = 2
+        private Mat hsv = new Mat();
+        private Mat[] hsvArray = new Mat[] { new Mat(), new Mat(), new Mat() };
+        private static final int[] GOAL = new int[] { 24, 140, 180 };
+
+        private int[] desiredHSV = new int[3];
+        private int xNum = 0;
+        private int yNum = 0;
+
+        private void inputToHSV(Mat input) {
+
+            // Convert to hsv
+            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+            Core.extractChannel(hsv, hsvArray[0], 0);
+            Core.extractChannel(hsv, hsvArray[1], 1);
+            Core.extractChannel(hsv, hsvArray[2], 2);
+
+        }
+
+        @Override
+        public void init(Mat firstFrame) {
+
+            inputToHSV(firstFrame);
+            for (int i = 0; i < 3; i++) {
+
+                for (int h = 0; h < NUM_HORZ; h++) {
+
+                    for (int v = 0; v < NUM_VERT; v++) {
+
+                        regions[i][h][v] = hsvArray[i].submat(new Rect(
+                                new Point(h * REGION_WIDTH, v * REGION_HEIGHT),
+                                new Point((h + 1) * REGION_WIDTH, (v + 1) * REGION_HEIGHT)));
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        @Override
+        public Mat processFrame(Mat input) {
+
+            inputToHSV(input);
+
+            double closest = 10000;
+            for (int h = 0; h < NUM_HORZ; h++) {
+
+                for (int v = 0; v < NUM_VERT; v++) {
+
+                    int avgHue = (int) Core.mean(regions[0][h][v]).val[0];
+                    int avgSaturation = (int) Core.mean(regions[1][h][v]).val[0];
+                    int avgBrightness = (int) Core.mean(regions[2][h][v]).val[0];
+
+                    // Calculate difference between goal hue and calculated average hue
+                    double difference = Math.hypot(Math.hypot(GOAL[0] - avgHue, GOAL[1] - avgSaturation), GOAL[2] - avgBrightness);
+                    if (difference < closest) {
+
+                        desiredHSV[0] = avgHue;
+                        desiredHSV[1] = avgSaturation;
+                        desiredHSV[2] = avgBrightness;
+
+                        closest = difference;
+                        xNum = h;
+                        yNum = v;
+
+                    }
+
+                }
+
+            }
+
+            // Draw rectangles
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    new Point(xNum * REGION_WIDTH, yNum * REGION_HEIGHT), // First point which defines the rectangle
+                    new Point((xNum + 1) * REGION_WIDTH, (yNum + 1) * REGION_HEIGHT), // Second point which defines the rectangle
+                    new Scalar(0, 0, 255), // The color the rectangle is drawn in
+                    6); // Thickness of the rectangle lines
+
+            return input;
+
+        }
 
     }
 
@@ -177,58 +282,43 @@ public class Webcam extends BaseHardware {
             avgM = (int) Core.mean(regionMidCb).val[0];
             avgR = (int) Core.mean(regionRightCb).val[0];
 
-            // Draw rectangles
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    REGION_LEFT_A, // First point which defines the rectangle
-                    REGION_LEFT_B, // Second point which defines the rectangle
-                    new Scalar(0, 0, 255), // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    REGION_LEFT_A, // First point which defines the rectangle
-                    REGION_LEFT_B, // Second point which defines the rectangle
-                    new Scalar(0, 255, 0), // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-            // Draw rectangles
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    REGION_MID_A, // First point which defines the rectangle
-                    REGION_MID_B, // Second point which defines the rectangle
-                    new Scalar(0, 0, 255), // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    REGION_MID_A, // First point which defines the rectangle
-                    REGION_MID_B, // Second point which defines the rectangle
-                    new Scalar(0, 255, 0), // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill// Draw rectangles
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    REGION_RIGHT_A, // First point which defines the rectangle
-                    REGION_RIGHT_B, // Second point which defines the rectangle
-                    new Scalar(0, 0, 255), // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    REGION_RIGHT_A, // First point which defines the rectangle
-                    REGION_RIGHT_B, // Second point which defines the rectangle
-                    new Scalar(0, 255, 0), // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-
             // Get position
             int max = Math.max(avgL, Math.max(avgM, avgR));
             if (max == avgL) position = CargoPosition.BOTTOM;
             else if (max == avgM) position = CargoPosition.MIDDLE;
             else position = CargoPosition.TOP;
 
+            // Draw rectangle
+            if (position == CargoPosition.BOTTOM) {
+
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        REGION_LEFT_A, // First point which defines the rectangle
+                        REGION_LEFT_B, // Second point which defines the rectangle
+                        new Scalar(0, 0, 255), // The color the rectangle is drawn in
+                        6); // Thickness of the rectangle lines
+
+            } else if (position == CargoPosition.MIDDLE) {
+
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        REGION_MID_A, // First point which defines the rectangle
+                        REGION_MID_B, // Second point which defines the rectangle
+                        new Scalar(0, 0, 255), // The color the rectangle is drawn in
+                        6); // Thickness of the rectangle lines
+
+            } else {
+
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        REGION_RIGHT_A, // First point which defines the rectangle
+                        REGION_RIGHT_B, // Second point which defines the rectangle
+                        new Scalar(0, 0, 255), // The color the rectangle is drawn in
+                        6); // Thickness of the rectangle lines
+
+            }
+
             return input;
-
-        }
-
-        private int[] getRaw() {
-
-            return new int[] { avgL, avgM, avgR };
 
         }
 
