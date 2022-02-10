@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.vampire.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -13,9 +12,11 @@ public class DuckDuckGo extends BaseHardware {
     // Motor and motor power
     private DcMotor duckSpin;
     private static final double INIT_POWER = 0.35;
-    private static final double ACCEL = 0.01;
-    private static final double FINAL_POWER = 0.8;
+    private static final double INIT_ACCEL = 0.005;
+    private static final double JERK = 0.0012;
+    private static final double FINAL_POWER = 1;
     private double speed = INIT_POWER;
+    private double accel = INIT_ACCEL;
 
     // Teleop constructor
     public DuckDuckGo(OpMode opMode, HardwareMap hwMap) {
@@ -43,8 +44,14 @@ public class DuckDuckGo extends BaseHardware {
 
     public void spin(boolean red, boolean blue) {
 
-        print("Carousel Speed:", speed);
-        if (red || blue) speed += ACCEL;
+        print("Carousel Speed", speed);
+        print("Carousel Accel", accel);
+        if (red || blue) {
+
+            speed += accel;
+            accel += JERK;
+
+        }
         if (speed > FINAL_POWER) speed = FINAL_POWER;
         if (red) spinRed();
         else if (blue) spinBlue();
@@ -67,6 +74,7 @@ public class DuckDuckGo extends BaseHardware {
     public void stop() {
 
         speed = INIT_POWER;
+        accel = INIT_ACCEL;
         duckSpin.setPower(0);
 
     }
