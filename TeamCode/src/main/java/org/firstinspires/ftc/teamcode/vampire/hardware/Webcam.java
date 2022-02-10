@@ -121,6 +121,38 @@ public class Webcam extends BaseHardware {
         private int xNum = 0;
         private int yNum = 0;
 
+        // Calculate depth
+        private final double CAMERA_HEIGHT = 10;
+        private final double MID_DEPTH = 24;
+        private final double MID_DIFF = 3.5;
+        private final double BOX_HEIGHT = MID_DIFF * Math.sin(getVertAngle(0));
+
+        private double getVertAngle(int index) {
+
+            return Math.atan2(CAMERA_HEIGHT, getDepth(index));
+
+        }
+
+        private double getDiff(int index) {
+
+            if (Math.abs(index) == 1) return MID_DIFF;
+            double lastAngle;
+            if (index < 0) lastAngle = getVertAngle(index + 1);
+            else lastAngle = getVertAngle(index - 1);
+            double numerator = BOX_HEIGHT * Math.sin(Math.PI / 2 + getVertAngle(0) - lastAngle);
+            double denominator = Math.sin(lastAngle);
+            return numerator / denominator;
+
+        }
+
+        private double getDepth(int index) {
+
+            if (index == 0) return MID_DEPTH;
+            else if (index < 0) return getDepth(index + 1) - getDiff(index);
+            else return getDepth(index - 1) + getDiff(index);
+
+        }
+
         private void inputToHSV(Mat input) {
 
             // Convert to hsv
