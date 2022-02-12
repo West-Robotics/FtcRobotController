@@ -13,14 +13,16 @@ public class TapeArm extends BaseHardware {
     // Servos
     private Servo horz;
     private Servo vert;
-    private CRServo roll;
+    private CRServo rollTop;
+    private CRServo rollBottom;
 
     // Constants
-    private double speed = SLOW_SPEED;
-    private static final double SLOW_SPEED = 0.003;
-    private static final double FAST_SPEED = 0.015;
-    private static final double ROLL_POW = 1;
+    private static final double SLOW_SPEED = -0.003;
+    private static final double FAST_SPEED = -0.015;
+    private static final double ROLL_POW = 0.75;
     private static final double MAX_POS = 0.75;
+    private static final double VERT_MULTIPLIER = 2;
+    private double speed = SLOW_SPEED;
 
     // Teleop constructor
     public TapeArm(OpMode opMode, HardwareMap hwMap) {
@@ -44,8 +46,9 @@ public class TapeArm extends BaseHardware {
         horz = hwMap.get(Servo.class, "horz");
         horz.setPosition(0);
         vert = hwMap.get(Servo.class, "vert");
-        vert.setPosition(MAX_POS);
-        roll = hwMap.get(CRServo.class, "roll");
+        vert.setPosition(MAX_POS / 2);
+        rollTop = hwMap.get(CRServo.class, "rollTop");
+        rollBottom = hwMap.get(CRServo.class, "rollBottom");
 
     }
 
@@ -69,19 +72,32 @@ public class TapeArm extends BaseHardware {
         print("vert", vert.getPosition());
         if (up) {
 
-            if (vert.getPosition() < MAX_POS) vert.setPosition(vert.getPosition() + speed);
+            if (vert.getPosition() < MAX_POS) vert.setPosition(vert.getPosition() + speed * VERT_MULTIPLIER);
             else vert.setPosition(MAX_POS);
 
         }
-        if (down) vert.setPosition(vert.getPosition() - speed);
+        if (down) vert.setPosition(vert.getPosition() - speed * VERT_MULTIPLIER);
 
     }
 
     public void roll(boolean out, boolean in) {
 
-        if (out) roll.setPower(ROLL_POW);
-        else if (in) roll.setPower(-ROLL_POW);
-        else roll.setPower(0);
+        if (out) {
+
+            rollTop.setPower(ROLL_POW);
+            rollBottom.setPower(ROLL_POW);
+
+        } else if (in) {
+
+            rollTop.setPower(-ROLL_POW);
+            rollBottom.setPower(-ROLL_POW);
+
+        } else {
+
+            rollTop.setPower(0);
+            rollBottom.setPower(0);
+
+        }
 
     }
 

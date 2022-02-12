@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
 import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
-import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam; import org.firstinspires.ftc.teamcode.vampire.roadrunner.drive.VampireRRDrive;
+import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 
 @Autonomous(name="Vampire: BLWOut", group="Vampire")
 public class BLWOut extends LinearOpMode {

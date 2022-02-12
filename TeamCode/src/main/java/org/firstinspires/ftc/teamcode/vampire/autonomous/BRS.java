@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
 import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
-import org.firstinspires.ftc.teamcode.vampire.roadrunner.drive.VampireRRDrive;
 
 @Autonomous(name="Vampire: BRS", group="Vampire")
 public class BRS extends LinearOpMode {
