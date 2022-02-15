@@ -17,10 +17,11 @@ public class TapeArm extends BaseHardware {
     private CRServo rollBottom;
 
     // Constants
-    private static final double SLOW_SPEED = -0.003;
-    private static final double FAST_SPEED = -0.015;
+    private static final double SLOW_SPEED = 0.003;
+    private static final double FAST_SPEED = 0.015;
     private static final double ROLL_POW = 0.75;
     private static final double MAX_POS = 0.75;
+    private static final double INIT_POS = 0.2;
     private static final double VERT_MULTIPLIER = 2;
     private double speed = SLOW_SPEED;
 
@@ -46,7 +47,7 @@ public class TapeArm extends BaseHardware {
         horz = hwMap.get(Servo.class, "horz");
         horz.setPosition(0);
         vert = hwMap.get(Servo.class, "vert");
-        vert.setPosition(MAX_POS / 2);
+        vert.setPosition(INIT_POS);
         rollTop = hwMap.get(CRServo.class, "rollTop");
         rollBottom = hwMap.get(CRServo.class, "rollBottom");
 
@@ -70,13 +71,9 @@ public class TapeArm extends BaseHardware {
     public void vertMove(boolean up, boolean down) {
 
         print("vert", vert.getPosition());
-        if (up) {
-
-            if (vert.getPosition() < MAX_POS) vert.setPosition(vert.getPosition() + speed * VERT_MULTIPLIER);
-            else vert.setPosition(MAX_POS);
-
-        }
-        if (down) vert.setPosition(vert.getPosition() - speed * VERT_MULTIPLIER);
+        if (up) vert.setPosition(vert.getPosition() - speed * VERT_MULTIPLIER);
+        if (down) vert.setPosition(vert.getPosition() + speed * VERT_MULTIPLIER);
+        if (vert.getPosition() > MAX_POS) vert.setPosition(MAX_POS);
 
     }
 

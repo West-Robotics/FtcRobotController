@@ -17,6 +17,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Webcam extends BaseHardware {
 
     // For OpenCV
@@ -74,13 +78,16 @@ public class Webcam extends BaseHardware {
         print("Threshold Left", cargoPipeline.avgL);
         print("Threshold Mid", cargoPipeline.avgM);
         print("Threshold Right", cargoPipeline.avgR);
-        print("X", duckPipeline.xNum);
-        print("Y", duckPipeline.yNum);
-        print("Average Hue", duckPipeline.desiredHSV[0]);
-        print("Average Saturation", duckPipeline.desiredHSV[1]);
-        print("Average Brightness", duckPipeline.desiredHSV[2]);
+        print("X", duckPipeline.getXNum());
+        print("Y", duckPipeline.getYNum());
+        print("Inch X", duckPipeline.getXDist());
+        print("Inch Depth", duckPipeline.getDepth());
+        print("Total Distance", duckPipeline.getTotalDist());
+        print("Angle", duckPipeline.getAngle());
+        print("Average HSV", duckPipeline.desiredHSV[0] + " " + duckPipeline.desiredHSV[1] + " " + duckPipeline.desiredHSV[2]);
+        print("Test HSV", duckPipeline.testHSV[0] + " " + duckPipeline.testHSV[1] + " " + duckPipeline.testHSV[2]);
         print("Position", getCargoPos());
-        print("Mode", isCargo);
+        print("Cargo Mode", isCargo);
 
     }
 
@@ -108,24 +115,37 @@ public class Webcam extends BaseHardware {
 
     private static class DuckPositionPipeline extends OpenCvPipeline {
 
-        private static final int REGION_WIDTH = 40;
-        private static final int REGION_HEIGHT = 40;
+        private static final int REGION_WIDTH = 20;
+        private static final int REGION_HEIGHT = 20;
+        private static final int TOP_Y = 6;
         private static final int NUM_HORZ = WIDTH / REGION_WIDTH;
         private static final int NUM_VERT = HEIGHT / REGION_HEIGHT;
         private static final Mat[][][] regions = new Mat[3][NUM_HORZ][NUM_VERT]; // H = 0, S = 1, V = 2
         private Mat hsv = new Mat();
         private Mat[] hsvArray = new Mat[] { new Mat(), new Mat(), new Mat() };
-        private static final int[] GOAL = new int[] { 24, 140, 180 };
+        private static final int[] GOAL = new int[] { 40, 100, 180 };
 
+        // For testing
+        private static final int TEST_X = 5;
+        private static final int TEST_Y = 3;
+        private int[] testHSV = new int[3];
+
+        // Calculate x, y, HSV
         private int[] desiredHSV = new int[3];
         private int xNum = 0;
         private int yNum = 0;
+        private static final int AVG_NUM = 30;
+        private ArrayList<Integer> avgX = new ArrayList<>();
+        private Map<Integer, Integer> mapX = new HashMap<>();
+        private ArrayList<Integer> avgY = new ArrayList<>();
+        private Map<Integer, Integer> mapY = new HashMap<>();
 
         // Calculate depth
-        private final double CAMERA_HEIGHT = 10;
+        private final double CAMERA_HEIGHT = 11;
         private final double MID_DEPTH = 24;
-        private final double MID_DIFF = 3.5;
+        private final double MID_DIFF = 2;
         private final double BOX_HEIGHT = MID_DIFF * Math.sin(getVertAngle(0));
+        private final double BOX_WIDTH = 3.5;
 
         private double getVertAngle(int index) {
 
@@ -163,6 +183,38 @@ public class Webcam extends BaseHardware {
 
         }
 
+        public int getXNum() {
+
+            if (mapX.size() == 0) return 0;
+
+            Map.Entry<Integer, Integer> max = null;
+            for (Map.Entry<Integer, Integer> e : mapX.entrySet())
+                if (max == null || e.getValue() > max.getValue()) max = e;
+
+            return max.getKey();
+
+        }
+
+        public int getYNum() {
+
+            if (mapY.size() == 0) return 0;
+
+            Map.Entry<Integer, Integer> max = null;
+            for (Map.Entry<Integer, Integer> e : mapY.entrySet())
+                if (max == null || e.getValue() > max.getValue()) max = e;
+
+            return max.getKey();
+
+        }
+
+        public double getXDist() { return BOX_WIDTH * (getXNum() - NUM_HORZ / 2); }
+
+        public double getDepth() { return getDepth(NUM_VERT / 2 - getYNum()); }
+
+        public double getTotalDist() { return Math.hypot(getXDist(), getDepth()); }
+
+        public double getAngle() { return Math.atan2(getXDist(), getDepth()); }
+
         @Override
         public void init(Mat firstFrame) {
 
@@ -193,7 +245,7 @@ public class Webcam extends BaseHardware {
             double closest = 10000;
             for (int h = 0; h < NUM_HORZ; h++) {
 
-                for (int v = 0; v < NUM_VERT; v++) {
+                for (int v = TOP_Y; v < NUM_VERT; v++) {
 
                     int avgHue = (int) Core.mean(regions[0][h][v]).val[0];
                     int avgSaturation = (int) Core.mean(regions[1][h][v]).val[0];
@@ -216,6 +268,41 @@ public class Webcam extends BaseHardware {
                 }
 
             }
+
+            // Check test
+            for (int i = 0; i < 3; i++) testHSV[i] = (int) Core.mean(regions[i][TEST_X][TEST_Y]).val[0];
+
+            // Add to avgs
+            avgX.add(xNum);
+            avgY.add(yNum);
+            Integer freqX = mapX.get(xNum);
+            mapX.put(xNum, freqX == null ? 1 : freqX + 1);
+            Integer freqY = mapY.get(yNum);
+            mapY.put(yNum, freqY == null ? 1 : freqY + 1);
+
+            // Delete the extra
+            if (avgX.size() > AVG_NUM) {
+
+                freqX = mapX.get(avgX.get(0));
+                mapX.put(avgX.get(0), freqX - 1);
+                avgX.remove(0);
+
+            }
+            if (avgY.size() > AVG_NUM) {
+
+                freqY = mapY.get(avgY.get(0));
+                mapY.put(avgY.get(0), freqY - 1);
+                avgY.remove(0);
+
+            }
+
+            // Draw test rectangle
+            Imgproc.rectangle(
+                    input,
+                    new Point(TEST_X * REGION_WIDTH, TEST_Y * REGION_HEIGHT),
+                    new Point((TEST_X + 1) * REGION_WIDTH, (TEST_Y + 1) * REGION_HEIGHT),
+                    new Scalar(0, 255, 0),
+                    6);
 
             // Draw rectangles
             Imgproc.rectangle(

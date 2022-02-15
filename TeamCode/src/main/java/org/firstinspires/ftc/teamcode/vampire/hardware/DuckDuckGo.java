@@ -11,9 +11,9 @@ public class DuckDuckGo extends BaseHardware {
 
     // Motor and motor power
     private DcMotor duckSpin;
-    private static final double INIT_POWER = 0.35;
-    private static final double INIT_ACCEL = 0.005;
-    private static final double JERK = 0.0012;
+    private static final double INIT_POWER = 0.45;
+    private static final double INIT_ACCEL = 0.01;
+    private static final double JERK = 0.001;
     private static final double FINAL_POWER = 1;
     private double speed = INIT_POWER;
     private double accel = INIT_ACCEL;

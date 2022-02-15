@@ -89,19 +89,19 @@ public class VampireTeleop extends OpMode {
 
         // Drive controls
         drive.drive(avgX, avgY, controller1.right_stick_x);
-        drive.togglePOV(controller1.backOnce());
+        //drive.togglePOV(controller1.backOnce());
 
         // Other subsystem controls
         intake.intake(controller1.leftBumper(), controller1.rightBumper());
         spin.spin(controller1.A(), controller1.X());
         arm.lift(controller1.dpadUp(), controller1.dpadDown());
         arm.changeStage(controller1.dpadUpOnce(), controller1.dpadDownOnce());
-        webcam.toggleMode(controller1.startOnce());
+        webcam.toggleMode(controller1.backOnce());
 
         // Second controller
         arm.lift(controller2.Y(), controller2.A());
         arm.changeStage(controller2.YOnce(), controller2.AOnce());
-        arm.toggleAuto(controller2.X());
+        arm.toggleAuto(controller2.backOnce());
 
         // The tape measure...
         tapeArm.horzMove(controller2.dpadRight(), controller2.dpadLeft());

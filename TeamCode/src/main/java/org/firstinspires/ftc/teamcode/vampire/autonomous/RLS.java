@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
@@ -19,6 +20,23 @@ public class RLS extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        MecanumDrive driveRR = new MecanumDrive(hardwareMap);
+        VampireDrive driveV = new VampireDrive(this, hardwareMap);
+
+        Pose2d startPose = new Pose2d(-36, -65, Math.toRadians(90));
+        driveRR.setPoseEstimate(startPose);
+
+        // Trajectories
+        Trajectory toCarousel = driveRR.trajectoryBuilder(startPose)
+                .splineToLinearHeading(new Pose2d(-50, -59, 0), 0)
+                .build();
+
+        waitForStart();
+        if (isStopRequested()) return;
+
+        driveRR.followTrajectory(toCarousel);
+
+        /*
         // Dum auto RIP
         VampireDrive drive;
         Arm arm;
@@ -79,7 +97,7 @@ public class RLS extends LinearOpMode {
 
         drive.move(0.6, 28, -93);
         arm.setLift(0);
-
+*/
     }
 
 }
