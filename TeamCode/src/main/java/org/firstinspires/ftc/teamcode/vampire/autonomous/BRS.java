@@ -17,85 +17,59 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 @Autonomous(name="Vampire: BRS", group="Vampire")
 public class BRS extends LinearOpMode {
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+	@Override
+	public void runOpMode() throws InterruptedException {
 
-        MecanumDrive drive = new MecanumDrive(hardwareMap);
+		// Set up subsystems
+		MecanumDrive drive = new MecanumDrive(hardwareMap);
+		Arm arm = new Arm(this, hardwareMap);
+		Intake intake = new Intake(this, hardwareMap);
+		DuckDuckGo spin = new DuckDuckGo(this, hardwareMap);
+		Webcam webcam = new Webcam(this, hardwareMap);
 
-        Pose2d startPose = new Pose2d(-36, 65, Math.toRadians(-90));
-        drive.setPoseEstimate(startPose);
+		// Set timer
+		ElapsedTime runtime = new ElapsedTime();
 
-        // Trajectories
-        Trajectory toCarousel = drive.trajectoryBuilder(startPose)
-                .lineTo(new Vector2d(-60, 60))
-                .build();
-        Trajectory toHub = drive.trajectoryBuilder(toCarousel.end())
-                .lineToSplineHeading(new Pose2d(-27, 38, Math.toRadians(-45)))
-                .build();
+		// Set start pose
+		Pose2d startPose = new Pose2d(-36, 65, Math.toRadians(-90));
+		drive.setPoseEstimate(startPose);
 
-        waitForStart();
-        if (isStopRequested()) return;
+		// Trajectories
+		Trajectory toCarousel = drive.trajectoryBuilder(startPose)
+			.lineTo(new Vector2d(-58, 59))
+			.build();
+		Trajectory toHub = drive.trajectoryBuilder(toCarousel.end())
+			.lineToLinearHeading(new Pose2d(-26, 38, Math.toRadians(-45)))
+			.build();
 
-/*
-        // Dum auto RIP
-        VampireDrive drive;
-        Arm arm;
-        Intake intake;
-        DuckDuckGo spin;
-        Webcam webcam;
+		// Send telemetry message to signify robot waiting
+		telemetry.addData("Status", "Ready to run");
+		telemetry.update();
 
-        // Elapsed time for timed motion
-        ElapsedTime runtime = new ElapsedTime();
+		// Wait for program to start
+		waitForStart();
+		if (isStopRequested()) return;
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");
-        telemetry.update();
+		// Get how many rings are stacked
+		int position = 3;
+		runtime.reset();
+		while (opModeIsActive() && runtime.seconds() < 2) {
 
-        waitForStart();
-        if (isStopRequested()) return;
+			position = webcam.getCargoPos();
+			webcam.update();
+			telemetry.update();
 
-        drive = new VampireDrive(this, hardwareMap);
-        arm = new Arm(this, hardwareMap);
-        intake = new Intake(this, hardwareMap);
-        spin = new DuckDuckGo(this, hardwareMap);
-        webcam = new Webcam(this, hardwareMap);
-        webcam.debug();
+		}
 
-        // Get how many rings are stacked
-        int position = 3;
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 2) {
+		// Move carousel
+		drive.followTrajectory(toCarousel);
+		runtime.reset();
+		while (opModeIsActive() && runtime.seconds() < 4) {
 
-            position = webcam.getCargoPos();
-            webcam.update();
-            telemetry.update();
 
-        }
 
-        if (position == 1) {
+		}
 
-            drive.move(0.6, 28, 0);
-            drive.move(0.6, 13, -90);
-
-        } else drive.move(0.5, 28, -33);
-
-        arm.setLift(position);
-        drive.turn(0.5, -45);
-        intake.reverse();
-        sleep(3000);
-        intake.stop();
-        drive.turn(1, 45);
-        drive.move(0.5, 40, 111);
-
-        runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 4000) { spin.spin(true, false); }
-        spin.stop();
-
-        drive.turn(1, 10);
-        drive.move(0.6, 22, 20);
-        arm.setLift(0);
-
- */
-    }
+	}
 
 }
