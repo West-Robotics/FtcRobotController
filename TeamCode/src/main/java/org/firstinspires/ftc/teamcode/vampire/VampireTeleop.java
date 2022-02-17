@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.vampire;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
@@ -19,6 +21,7 @@ public class VampireTeleop extends OpMode {
 
     // Subsystems
     private VampireDrive drive;
+    private MecanumDrive driveRR;
     private Intake intake;
     private Arm arm;
     private DuckDuckGo spin;
@@ -40,6 +43,7 @@ public class VampireTeleop extends OpMode {
 
         // Initialize subsystems
         drive = new VampireDrive(this, hardwareMap);
+        driveRR = new MecanumDrive(hardwareMap);
         intake = new Intake(this, hardwareMap);
         arm = new Arm(this, hardwareMap);
         spin = new DuckDuckGo(this, hardwareMap);
@@ -89,6 +93,7 @@ public class VampireTeleop extends OpMode {
 
         // Drive controls
         drive.drive(avgX, avgY, controller1.right_stick_x);
+        //driveRR.setWeightedDrivePower(new Pose2d(controller1.left_stick_x, -controller1.left_stick_y, -controller1.right_stick_x));
         //drive.togglePOV(controller1.backOnce());
 
         // Other subsystem controls

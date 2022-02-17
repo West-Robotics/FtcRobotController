@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.vampire.autonomous;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
@@ -16,32 +19,46 @@ public class RLWOut extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // Dum auto RIP
-        VampireDrive drive;
-        Arm arm;
-        Intake intake;
-        DuckDuckGo spin;
-        Webcam webcam;
+        // Set up subsystems
+        MecanumDrive drive = new MecanumDrive(hardwareMap);
+        Arm arm = new Arm(this, hardwareMap);
+        Intake intake = new Intake(this, hardwareMap);
+        DuckDuckGo spin = new DuckDuckGo(this, hardwareMap);
+        Webcam webcam = new Webcam(this, hardwareMap);
 
-        // Elapsed time for timed motion
+        // Set timer
         ElapsedTime runtime = new ElapsedTime();
 
-        // Send telemetry message to signify robot waiting;
+        // Enable debug mode
+        webcam.debug();
+        arm.debug();
+
+        // Set start pose
+        Pose2d startPose = new Pose2d(-36, -65, Math.toRadians(90));
+        drive.setPoseEstimate(startPose);
+
+        // Trajectories
+        Trajectory toCarousel = drive.trajectoryBuilder(startPose)
+                .splineToLinearHeading(new Pose2d(-55, -59, 0), 0)
+                .build();
+        Trajectory toHub = drive.trajectoryBuilder(toCarousel.end())
+                .lineToLinearHeading(new Pose2d(-26, -38, Math.toRadians(45)))
+                .build();
+        Trajectory backOut = drive.trajectoryBuilder(toHub.end())
+                .lineToLinearHeading(new Pose2d(-36, -38, Math.toRadians(-120)))
+                .build();
+        Trajectory park = drive.trajectoryBuilder(toHub.end())
+                .lineToLinearHeading(new Pose2d(15, -65, 0))
+                .forward(35)
+                .build();
+
+        // Send telemetry message to signify robot waiting
         telemetry.addData("Status", "Ready to run");
         telemetry.update();
 
+        // Wait for program to start
         waitForStart();
         if (isStopRequested()) return;
-
-        drive = new VampireDrive(this, hardwareMap);
-        arm = new Arm(this, hardwareMap);
-        intake = new Intake(this, hardwareMap);
-        spin = new DuckDuckGo(this, hardwareMap);
-        webcam = new Webcam(this, hardwareMap);
-
-        webcam.debug();
-        //drive.debug();
-        arm.debug();
 
         // Get how many rings are stacked
         int position = 3;
@@ -54,28 +71,31 @@ public class RLWOut extends LinearOpMode {
 
         }
 
-        if (position == 3) {
-
-            drive.move(0.6, 27, 0);
-            drive.move(0.6, 13, 90);
-
-        } else drive.move(0.6, 29, 30);
-
-        arm.setLift(position);
-        drive.turn(1, 45);
-        intake.reverse();
-        sleep(3000);
-        intake.stop();
-        drive.turn(1, 45);
-        drive.move(0.5, 30, 95);
-        drive.move(0.4, 34,-178);
-
+        // Move to carousel
+        drive.followTrajectory(toCarousel);
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 4000) { spin.spin(true, false); }
+        while (opModeIsActive() && runtime.seconds() < 4) spin.spinRed();
         spin.stop();
 
-        drive.move(0.6, 28, -93);
+        // Drop off first freight
+        arm.setLift(position);
+        drive.followTrajectory(toHub);
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+        intake.stop();
+
+        // Grab duck
         arm.setLift(0);
+        drive.followTrajectory(backOut);
+
+        // Drop off duck
+        arm.setLift(1);
+        runtime.reset();
+        while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+        intake.stop();
+
+        // Park
+        drive.followTrajectory(park);
 
     }
 

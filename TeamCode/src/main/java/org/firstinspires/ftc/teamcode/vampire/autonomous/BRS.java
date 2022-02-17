@@ -41,6 +41,12 @@ public class BRS extends LinearOpMode {
 		Trajectory toHub = drive.trajectoryBuilder(toCarousel.end())
 			.lineToLinearHeading(new Pose2d(-26, 38, Math.toRadians(-45)))
 			.build();
+		Trajectory backOut = drive.trajectoryBuilder(toHub.end())
+			.lineToLinearHeading(new Pose2d(-36, 38, Math.toRadians(120)))
+			.build();
+		Trajectory park = drive.trajectoryBuilder(toHub.end())
+			.lineToLinearHeading(new Pose2d(-62, 36, 0))
+			.build();
 
 		// Send telemetry message to signify robot waiting
 		telemetry.addData("Status", "Ready to run");
@@ -64,11 +70,28 @@ public class BRS extends LinearOpMode {
 		// Move carousel
 		drive.followTrajectory(toCarousel);
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 4) {
+		while (opModeIsActive() && runtime.seconds() < 4) spin.spinBlue();
+		spin.stop();
 
+		// Drop off first freight
+		arm.setLift(position);
+		drive.followTrajectory(toHub);
+		runtime.reset();
+		while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+		intake.stop();
 
+		// Grab duck
+		arm.setLift(0);
+		drive.followTrajectory(backOut);
 
-		}
+		// Drop off duck
+		arm.setLift(1);
+		runtime.reset();
+		while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+		intake.stop();
+
+		// Park
+		drive.followTrajectory(park);
 
 	}
 

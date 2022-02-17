@@ -13,10 +13,14 @@ public class DuckDuckGo extends BaseHardware {
     private DcMotor duckSpin;
     private static final double INIT_POWER = 0.45;
     private static final double INIT_ACCEL = 0.01;
+	private static final double AUTO_POWER = 0.6;
     private static final double JERK = 0.001;
     private static final double FINAL_POWER = 1;
     private double speed = INIT_POWER;
     private double accel = INIT_ACCEL;
+	
+	// For autonomous
+	public static final double AUTO_TIME = 2;
 
     // Teleop constructor
     public DuckDuckGo(OpMode opMode, HardwareMap hwMap) {
@@ -59,15 +63,17 @@ public class DuckDuckGo extends BaseHardware {
 
     }
 
-    private void spinRed() {
+    public void spinRed() {
 
-        duckSpin.setPower(-speed);
+		if (opMode == null) duckSpin.setPower(-AUTO_POWER);
+		else duckSpin.setPower(-speed);
 
     }
 
-    private void spinBlue() {
+    public void spinBlue() {
 
-        duckSpin.setPower(speed);
+		if (opMode == null) duckSpin.setPower(AUTO_POWER);
+		else duckSpin.setPower(speed);
 
     }
 

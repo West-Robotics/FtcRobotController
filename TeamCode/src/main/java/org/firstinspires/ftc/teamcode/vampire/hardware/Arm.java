@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.vampire.hardware;
 
 import android.text.method.Touch;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -156,41 +157,53 @@ public class Arm extends BaseHardware {
     }
 
     public void setLift(int stage) {
+	
+		setLift(stage, 0);
 
-        new Thread() {
+	}
+        
 
-            @Override
-            public void run() {
+	public void setLift(int stage, double time) {
 
-                pidArm.reset();
-                pidArm.enable();
-                pidArm.setSetpoint(ARM_STAGES[stage]);
-                pidArm.setTolerance(100);
+		new Thread() {
 
-                do {
+			@Override
+			public void run() {
 
-                    // Telemetry
-                    print("Position Arm", liftMotor.getCurrentPosition());
-                    linearOpMode.telemetry.update();
+				// Wait for time amount
+				ElapsedTime runtime = new ElapsedTime();
+				runtime.reset();
+				while (runtime.seconds() < time) {}
 
-                    // Power the motors
-                    liftMotor.setPower(pidArm.performPID(liftMotor.getCurrentPosition()));
+				pidArm.reset();
+				pidArm.enable();
+				pidArm.setSetpoint(ARM_STAGES[stage]);
+				pidArm.setTolerance(100);
 
-                } while (!pidArm.onTarget() ||
-                        (stage == 0 && !armTouch.isPressed()));
+				do {
 
-                liftMotor.setPower(0);
-                if (stage == 0) {
+					// Telemetry
+					print("Position Arm", liftMotor.getCurrentPosition());
+					linearOpMode.telemetry.update();
 
-                    liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+					// Power the motors
+					liftMotor.setPower(pidArm.performPID(liftMotor.getCurrentPosition()));
 
-                }
+				} while (!pidArm.onTarget() ||
+						(stage == 0 && !armTouch.isPressed()));
 
-            }
+				liftMotor.setPower(0);
+				if (stage == 0) {
 
-        }.start();
+					liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+					liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-    }
+				}
+
+			}
+
+		}.start();
+
+	}
 
 }

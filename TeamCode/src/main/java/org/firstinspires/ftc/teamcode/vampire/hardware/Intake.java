@@ -65,13 +65,19 @@ public class Intake extends BaseHardware {
 
         // Control intake
         print("Distance", CRSensor.getDistance(DistanceUnit.INCH));
-        if (intake && CRSensor.getDistance(DistanceUnit.INCH) > DISTANCE_THRESHOLD) intake();
+        if (intake && !isFreight()) intake();
         else if (reverse) reverse();
         else stop();
 
         // Raise the flag if block is in
-        if (CRSensor.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD) flag.setPosition(POS_UP);
+        if (isFreight()) flag.setPosition(POS_UP);
         else flag.setPosition(POS_DOWN);
+
+    }
+
+    public boolean isFreight() {
+
+        return CRSensor.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD;
 
     }
 
