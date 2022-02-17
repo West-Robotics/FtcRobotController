@@ -24,8 +24,9 @@ public class Intake extends BaseHardware {
     private static final double POS_DOWN = 0.6;
 
     // For distance sensor
-    private static final double DISTANCE_THRESHOLD = 1.5;
+    private static final double DISTANCE_THRESHOLD = 1.6;
     private ColorRangeSensor CRSensor;
+    private boolean isOverride = false;
 
     // Teleop constructor
     public Intake(OpMode opMode, HardwareMap hwMap) {
@@ -65,7 +66,7 @@ public class Intake extends BaseHardware {
 
         // Control intake
         print("Distance", CRSensor.getDistance(DistanceUnit.INCH));
-        if (intake && !isFreight()) intake();
+        if (intake && (!isFreight() || isOverride)) intake();
         else if (reverse) reverse();
         else stop();
 
@@ -90,6 +91,12 @@ public class Intake extends BaseHardware {
     public void reverse() {
 
         intakeMotor.setPower(OUTTAKE_POWER);
+
+    }
+
+    public void toggleOverride(boolean button) {
+
+        if (button) isOverride = !isOverride;
 
     }
 

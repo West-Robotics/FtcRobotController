@@ -107,6 +107,7 @@ public class VampireTeleop extends OpMode {
         arm.lift(controller2.Y(), controller2.A());
         arm.changeStage(controller2.YOnce(), controller2.AOnce());
         arm.toggleAuto(controller2.backOnce());
+        intake.toggleOverride(controller2.backOnce());
 
         // The tape measure...
         tapeArm.horzMove(controller2.dpadRight(), controller2.dpadLeft());
