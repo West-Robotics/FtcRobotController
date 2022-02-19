@@ -13,11 +13,10 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
 import org.firstinspires.ftc.teamcode.vampire.hardware.TapeArm;
-import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 
-@Autonomous(name="Vampire: RLS", group="Vampire")
-public class RLS extends LinearOpMode {
+@Autonomous(name="Vampire: BRWIn", group="Vampire")
+public class BRWIn extends LinearOpMode {
 
 	@Override
 	public void runOpMode() throws InterruptedException {
@@ -38,25 +37,35 @@ public class RLS extends LinearOpMode {
 		arm.debug();
 
 		// Set start pose
-		Pose2d startPose = new Pose2d(-36, -65, Math.toRadians(90));
+		Pose2d startPose = new Pose2d(-36, 65, Math.toRadians(-90));
 		drive.setPoseEstimate(startPose);
+
+		// TODO: Make it push the shipping element instead
 
 		// Trajectories
 		Trajectory toCarousel = drive.trajectoryBuilder(startPose)
-			.splineToLinearHeading(new Pose2d(-50, -62, 0), 0)
-			.build();
+				.strafeTo(new Vector2d(-54, 58))
+				.build();
 		Trajectory toHub1 = drive.trajectoryBuilder(toCarousel.end())
-				.forward(10)
+				.lineToLinearHeading(new Pose2d(-54, 30, 0))
 				.build();
 		Trajectory toHub2 = drive.trajectoryBuilder(toHub1.end())
-				.lineToLinearHeading(new Pose2d(-28, -25, Math.toRadians(0)))
+				.lineToLinearHeading(new Pose2d(-29, 24, Math.toRadians(0)))
 				.build();
 		Trajectory backOut = drive.trajectoryBuilder(toHub2.end())
-			.lineToLinearHeading(new Pose2d(-36, -36, Math.toRadians(-100)))
-			.build();
-		Trajectory park = drive.trajectoryBuilder(toHub2.end())
-			.lineToLinearHeading(new Pose2d(-62, -40, 0))
-			.build();
+				.lineToLinearHeading(new Pose2d(-44, 30, Math.toRadians(100)))
+				.build();
+		Trajectory park1 = drive.trajectoryBuilder(toHub2.end())
+				.strafeTo(new Vector2d(-15, 55))
+				.build();
+		Trajectory park2 = drive.trajectoryBuilder(park1.end())
+				.lineToLinearHeading(new Pose2d(20, 45, Math.toRadians(180.1)))
+				.build();
+		Trajectory park3 = drive.trajectoryBuilder(park2.end())
+				.back(40,
+					MecanumDrive.getVelocityConstraint(DriveConstants.SLOW_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+					MecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+				.build();
 
 		// Send telemetry message to signify robot waiting
 		telemetry.addData("Status", "Ready to run");
@@ -82,13 +91,13 @@ public class RLS extends LinearOpMode {
 		runtime.reset();
 		while (opModeIsActive() && runtime.seconds() < 1.5) {
 
-			drive.setWeightedDrivePower(new Pose2d(-0.1, 0, 0));
+			drive.setWeightedDrivePower(new Pose2d(0, -0.1, 0));
 			drive.update();
 
 		}
 		drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 2) spin.spin(true, false);
+		while (opModeIsActive() && runtime.seconds() < 2) spin.spin(false, true);
 		spin.stop();
 
 		// Drop off first freight
@@ -115,23 +124,25 @@ public class RLS extends LinearOpMode {
 		}
 		intake.intake();
 		drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-			.strafeTo(new Vector2d(duckX, duckY))
-			.build());
+				.strafeTo(new Vector2d(duckX, duckY))
+				.build());
 		sleep(500);
 		intake.stop();
 
 		// Drop off duck
 		arm.setLift(3, 0.5);
 		drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-			.lineToLinearHeading(new Pose2d(-28, -30, Math.toRadians(0)))
-			.build());
+				.lineToLinearHeading(new Pose2d(-28, 28, Math.toRadians(0)))
+				.build());
 		runtime.reset();
 		while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
 		intake.stop();
 
 		// Park
 		arm.setLift(0, 1);
-		drive.followTrajectory(park);
+		drive.followTrajectory(park1);
+		drive.followTrajectory(park2);
+		drive.followTrajectory(park3);
 
 	}
 

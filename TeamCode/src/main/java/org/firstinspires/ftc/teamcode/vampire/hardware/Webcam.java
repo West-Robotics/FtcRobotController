@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.vampire.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 import org.opencv.core.Core;
@@ -56,7 +58,7 @@ public class Webcam extends BaseHardware {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         cargoPipeline = new CargoDeterminationPipeline();
         duckPipeline = new DuckPositionPipeline();
-        webcam.setPipeline(duckPipeline);
+        webcam.setPipeline(cargoPipeline);
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
         // Start video streaming
@@ -113,10 +115,15 @@ public class Webcam extends BaseHardware {
 
     }
 
-    private static class DuckPositionPipeline extends OpenCvPipeline {
+    public double[] getDuckPose() { return new double[] { duckPipeline.getXDist(), duckPipeline.getDepth(), duckPipeline.getAngle() }; }
 
-        private static final int REGION_WIDTH = 20;
-        private static final int REGION_HEIGHT = 20;
+    public double getDuckDistance() { return Math.hypot(getDuckPose()[0], getDuckPose()[1]); }
+
+    @Config
+    public static class DuckPositionPipeline extends OpenCvPipeline {
+
+        private static final int REGION_WIDTH = 25;
+        private static final int REGION_HEIGHT = 25;
         private static final int TOP_Y = 6;
         private static final int NUM_HORZ = WIDTH / REGION_WIDTH;
         private static final int NUM_VERT = HEIGHT / REGION_HEIGHT;
@@ -140,12 +147,12 @@ public class Webcam extends BaseHardware {
         private ArrayList<Integer> avgY = new ArrayList<>();
         private Map<Integer, Integer> mapY = new HashMap<>();
 
-        // Calculate depth
-        private final double CAMERA_HEIGHT = 11;
-        private final double MID_DEPTH = 24;
-        private final double MID_DIFF = 2;
-        private final double BOX_HEIGHT = MID_DIFF * Math.sin(getVertAngle(0));
-        private final double BOX_WIDTH = 3.5;
+        // Calculate duck position
+        public static double CAMERA_HEIGHT = 10;
+        public static double MID_DEPTH = 26.5;
+        public static double MID_DIFF = 3.8;
+        public static double X_OFFSET = 0;
+        public static double HALF_ANGLE = 0.5;
 
         private double getVertAngle(int index) {
 
@@ -159,7 +166,8 @@ public class Webcam extends BaseHardware {
             double lastAngle;
             if (index < 0) lastAngle = getVertAngle(index + 1);
             else lastAngle = getVertAngle(index - 1);
-            double numerator = BOX_HEIGHT * Math.sin(Math.PI / 2 + getVertAngle(0) - lastAngle);
+            double firstAngle = getVertAngle(0);
+            double numerator = MID_DIFF * Math.sin(firstAngle) * Math.sin(Math.PI / 2 + firstAngle - lastAngle);
             double denominator = Math.sin(lastAngle);
             return numerator / denominator;
 
@@ -207,7 +215,9 @@ public class Webcam extends BaseHardware {
 
         }
 
-        public double getXDist() { return BOX_WIDTH * (getXNum() - NUM_HORZ / 2); }
+        private double getXPerBox() { return (2 * getDepth() * Math.tan(HALF_ANGLE)) / NUM_HORZ; }
+
+        public double getXDist() { return getXPerBox() * (getXNum() - NUM_HORZ / 2) + X_OFFSET; }
 
         public double getDepth() { return getDepth(NUM_VERT / 2 - getYNum()); }
 

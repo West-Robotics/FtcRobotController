@@ -11,11 +11,12 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.MecanumDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
+import org.firstinspires.ftc.teamcode.vampire.hardware.TapeArm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 
-@Autonomous(name="Vampire: BLWOut", group="Vampire")
-public class BLWOut extends LinearOpMode {
+@Autonomous(name="Vampire: BLW", group="Vampire")
+public class BLW extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,6 +26,7 @@ public class BLWOut extends LinearOpMode {
         Arm arm = new Arm(this, hardwareMap);
         Intake intake = new Intake(this, hardwareMap);
         Webcam webcam = new Webcam(this, hardwareMap);
+        new TapeArm(this, hardwareMap);
 
         // Set timer
         ElapsedTime runtime = new ElapsedTime();
@@ -72,21 +74,28 @@ public class BLWOut extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
         intake.stop();
-        arm.setLift(0);
+        arm.setLift(0, 0.5);
         drive.followTrajectory(toWall);
 
         // Back and forth
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
 
             // Get freight
             intake.intake();
-            while (opModeIsActive() && !intake.isFreight())
-                drive.setWeightedDrivePower(new Pose2d(0, 0.5, 0));
+            while (opModeIsActive() && !intake.isFreight()) {
+
+                drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
+                drive.update();
+
+            }
             intake.stop();
+
+            //runtime.reset();
+            //while (opModeIsActive() && runtime.seconds() < 1) drive.setWeightedDrivePower(new Pose2d(-0.2, 0.2, 0));
 
             // Go to hub
             drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineTo(new Vector2d(12, -65))
+                    .lineTo(new Vector2d(12, 65))
                     .build());
             arm.setLift(3);
             drive.followTrajectory(toHub2);
@@ -95,7 +104,7 @@ public class BLWOut extends LinearOpMode {
             runtime.reset();
             while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
             intake.stop();
-            arm.setLift(0);
+            arm.setLift(0, 0.5);
             drive.followTrajectory(toWall);
 
         }

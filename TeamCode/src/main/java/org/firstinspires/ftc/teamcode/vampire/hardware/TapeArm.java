@@ -19,7 +19,7 @@ public class TapeArm extends BaseHardware {
     // Constants
     private static final double SLOW_SPEED = 0.003;
     private static final double FAST_SPEED = 0.015;
-    private static final double ROLL_POW = 0.75;
+    private static final double ROLL_POW = 1;
     private static final double MAX_POS = 0.75;
     private static final double INIT_POS = 0.2;
     private static final double VERT_MULTIPLIER = 2;

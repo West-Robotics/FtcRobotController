@@ -13,8 +13,10 @@ public class DuckDuckGo extends BaseHardware {
     private DcMotor duckSpin;
     private static final double INIT_POWER = 0.45;
     private static final double INIT_ACCEL = 0.01;
-	private static final double AUTO_POWER = 0.6;
+	private static final double AUTO_INIT_POWER = 0.35;
+	private static final double AUTO_INIT_ACCEL = 0.00015;
     private static final double JERK = 0.001;
+    private static final double AUTO_JERK = 0.000001;
     private static final double FINAL_POWER = 1;
     private double speed = INIT_POWER;
     private double accel = INIT_ACCEL;
@@ -44,6 +46,19 @@ public class DuckDuckGo extends BaseHardware {
         duckSpin = hwMap.get(DcMotor.class, "spin");
         duckSpin.setDirection(DcMotor.Direction.FORWARD);
 
+        // Set default values
+        if (linearOpMode == null) {
+
+            speed = INIT_POWER;
+            accel = INIT_ACCEL;
+
+        } else {
+
+            speed = AUTO_INIT_POWER;
+            accel = AUTO_INIT_ACCEL;
+
+        }
+
     }
 
     public void spin(boolean red, boolean blue) {
@@ -52,8 +67,17 @@ public class DuckDuckGo extends BaseHardware {
         print("Carousel Accel", accel);
         if (red || blue) {
 
-            speed += accel;
-            accel += JERK;
+            if (linearOpMode == null) {
+
+                speed += accel;
+                accel += JERK;
+
+            } else {
+
+                speed += accel;
+                accel += AUTO_JERK;
+
+            }
 
         }
         if (speed > FINAL_POWER) speed = FINAL_POWER;
@@ -65,22 +89,29 @@ public class DuckDuckGo extends BaseHardware {
 
     public void spinRed() {
 
-		if (opMode == null) duckSpin.setPower(-AUTO_POWER);
-		else duckSpin.setPower(-speed);
+		duckSpin.setPower(speed);
 
     }
 
     public void spinBlue() {
 
-		if (opMode == null) duckSpin.setPower(AUTO_POWER);
-		else duckSpin.setPower(speed);
+		duckSpin.setPower(-speed);
 
     }
 
     public void stop() {
 
-        speed = INIT_POWER;
-        accel = INIT_ACCEL;
+        if (linearOpMode == null) {
+
+            speed = INIT_POWER;
+            accel = INIT_ACCEL;
+
+        } else {
+
+            speed = AUTO_INIT_POWER;
+            accel = AUTO_INIT_ACCEL;
+
+        }
         duckSpin.setPower(0);
 
     }

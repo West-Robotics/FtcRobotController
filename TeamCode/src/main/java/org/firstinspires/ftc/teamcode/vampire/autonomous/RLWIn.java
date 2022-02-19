@@ -13,11 +13,10 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
 import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
 import org.firstinspires.ftc.teamcode.vampire.hardware.TapeArm;
-import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 
-@Autonomous(name="Vampire: RLS", group="Vampire")
-public class RLS extends LinearOpMode {
+@Autonomous(name="Vampire: RLWIn", group="Vampire")
+public class RLWIn extends LinearOpMode {
 
 	@Override
 	public void runOpMode() throws InterruptedException {
@@ -46,16 +45,24 @@ public class RLS extends LinearOpMode {
 			.splineToLinearHeading(new Pose2d(-50, -62, 0), 0)
 			.build();
 		Trajectory toHub1 = drive.trajectoryBuilder(toCarousel.end())
-				.forward(10)
-				.build();
+			.forward(10)
+			.build();
 		Trajectory toHub2 = drive.trajectoryBuilder(toHub1.end())
-				.lineToLinearHeading(new Pose2d(-28, -25, Math.toRadians(0)))
-				.build();
+			.lineToLinearHeading(new Pose2d(-28, -25, Math.toRadians(0)))
+			.build();
 		Trajectory backOut = drive.trajectoryBuilder(toHub2.end())
 			.lineToLinearHeading(new Pose2d(-36, -36, Math.toRadians(-100)))
 			.build();
-		Trajectory park = drive.trajectoryBuilder(toHub2.end())
-			.lineToLinearHeading(new Pose2d(-62, -40, 0))
+		Trajectory park1 = drive.trajectoryBuilder(toHub2.end())
+			.strafeTo(new Vector2d(-15, -55))
+			.build();
+		Trajectory park2 = drive.trajectoryBuilder(park1.end())
+			.lineToLinearHeading(new Pose2d(20, -45, Math.toRadians(-179.9)))
+			.build();
+		Trajectory park3 = drive.trajectoryBuilder(park2.end())
+			.back(40,
+				MecanumDrive.getVelocityConstraint(DriveConstants.SLOW_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+				MecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 			.build();
 
 		// Send telemetry message to signify robot waiting
@@ -69,7 +76,7 @@ public class RLS extends LinearOpMode {
 		// Get how many rings are stacked
 		int position = 3;
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 2) {
+		while (opModeIsActive() && runtime.seconds() < 1) {
 
 			position = webcam.getCargoPos();
 			webcam.update();
@@ -131,7 +138,9 @@ public class RLS extends LinearOpMode {
 
 		// Park
 		arm.setLift(0, 1);
-		drive.followTrajectory(park);
+		drive.followTrajectory(park1);
+		drive.followTrajectory(park2);
+		drive.followTrajectory(park3);
 
 	}
 

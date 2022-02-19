@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vampire;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,11 +18,11 @@ import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 @TeleOp(name = "VAMPIRE: TeleOp")
+@Config
 public class VampireTeleop extends OpMode {
 
     // Subsystems
     private VampireDrive drive;
-    private MecanumDrive driveRR;
     private Intake intake;
     private Arm arm;
     private DuckDuckGo spin;
@@ -29,6 +30,11 @@ public class VampireTeleop extends OpMode {
     private TapeArm tapeArm;
     private Controller controller1;
     private Controller controller2;
+
+    // For testing
+    //public static double duckx = 0;
+    //public static double ducky = 0;
+    //public static double angle = 0;
 
     // Variables for driving
     private static final int STORE_NUM = 8;
@@ -43,7 +49,6 @@ public class VampireTeleop extends OpMode {
 
         // Initialize subsystems
         drive = new VampireDrive(this, hardwareMap);
-        driveRR = new MecanumDrive(hardwareMap);
         intake = new Intake(this, hardwareMap);
         arm = new Arm(this, hardwareMap);
         spin = new DuckDuckGo(this, hardwareMap);
@@ -93,7 +98,6 @@ public class VampireTeleop extends OpMode {
 
         // Drive controls
         drive.drive(avgX, avgY, controller1.right_stick_x);
-        //driveRR.setWeightedDrivePower(new Pose2d(controller1.left_stick_x, -controller1.left_stick_y, -controller1.right_stick_x));
         //drive.togglePOV(controller1.backOnce());
 
         // Other subsystem controls
@@ -101,7 +105,7 @@ public class VampireTeleop extends OpMode {
         spin.spin(controller1.A(), controller1.X());
         arm.lift(controller1.dpadUp(), controller1.dpadDown());
         arm.changeStage(controller1.dpadUpOnce(), controller1.dpadDownOnce());
-        webcam.toggleMode(controller1.backOnce());
+        if (IS_WEBCAM) webcam.toggleMode(controller1.backOnce());
 
         // Second controller
         arm.lift(controller2.Y(), controller2.A());
@@ -114,6 +118,12 @@ public class VampireTeleop extends OpMode {
         tapeArm.vertMove(controller2.dpadUp(), controller2.dpadDown());
         tapeArm.roll(controller2.leftBumper(), controller2.rightBumper());
         tapeArm.toggleSpeed(controller2.X());
+/*
+        double duckX = duckx + webcam.getDuckDistance() * Math.sin(Math.PI / 2 - angle + webcam.getDuckPose()[2]);
+        double duckY = ducky + webcam.getDuckDistance() * Math.cos(Math.PI / 2 - angle + webcam.getDuckPose()[2]);
+        telemetry.addData("duckx", duckX);
+        telemetry.addData("ducky", duckY);
+ */
 
         // Update webcam values
         if (IS_WEBCAM) webcam.update();
