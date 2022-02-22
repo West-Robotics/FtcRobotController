@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 import org.opencv.core.Core;
@@ -80,6 +79,7 @@ public class Webcam extends BaseHardware {
         print("Threshold Left", cargoPipeline.avgL);
         print("Threshold Mid", cargoPipeline.avgM);
         print("Threshold Right", cargoPipeline.avgR);
+        print("HSV Difference", duckPipeline.HSVDiff);
         print("X", duckPipeline.getXNum());
         print("Y", duckPipeline.getYNum());
         print("Inch X", duckPipeline.getXDist());
@@ -122,9 +122,9 @@ public class Webcam extends BaseHardware {
     @Config
     public static class DuckPositionPipeline extends OpenCvPipeline {
 
-        private static final int REGION_WIDTH = 25;
-        private static final int REGION_HEIGHT = 25;
-        private static final int TOP_Y = 6;
+        public static int REGION_WIDTH = 25;
+        public static int REGION_HEIGHT = 25;
+        public static int TOP_Y = 8;
         private static final int NUM_HORZ = WIDTH / REGION_WIDTH;
         private static final int NUM_VERT = HEIGHT / REGION_HEIGHT;
         private static final Mat[][][] regions = new Mat[3][NUM_HORZ][NUM_VERT]; // H = 0, S = 1, V = 2
@@ -133,24 +133,26 @@ public class Webcam extends BaseHardware {
         private static final int[] GOAL = new int[] { 40, 100, 180 };
 
         // For testing
-        private static final int TEST_X = 5;
-        private static final int TEST_Y = 3;
+        private static final int TEST_X = 10;
+        private static final int TEST_Y = 9;
         private int[] testHSV = new int[3];
 
         // Calculate x, y, HSV
         private int[] desiredHSV = new int[3];
+        private double HSVDiff = 0;
+        public static double THRESHOLD_DIFF = 45;
         private int xNum = 0;
         private int yNum = 0;
         private static final int AVG_NUM = 30;
-        private ArrayList<Integer> avgX = new ArrayList<>();
+        private ArrayList<Integer> listX = new ArrayList<>();
         private Map<Integer, Integer> mapX = new HashMap<>();
-        private ArrayList<Integer> avgY = new ArrayList<>();
+        private ArrayList<Integer> listY = new ArrayList<>();
         private Map<Integer, Integer> mapY = new HashMap<>();
 
         // Calculate duck position
-        public static double CAMERA_HEIGHT = 10;
-        public static double MID_DEPTH = 26.5;
-        public static double MID_DIFF = 3.8;
+        public static double CAMERA_HEIGHT = 10.5;
+        public static double MID_DEPTH = 28;
+        public static double MID_DIFF = 2.85;
         public static double X_OFFSET = 0;
         public static double HALF_ANGLE = 0.5;
 
@@ -217,9 +219,9 @@ public class Webcam extends BaseHardware {
 
         private double getXPerBox() { return (2 * getDepth() * Math.tan(HALF_ANGLE)) / NUM_HORZ; }
 
-        public double getXDist() { return getXPerBox() * (getXNum() - NUM_HORZ / 2) + X_OFFSET; }
+        public double getXDist() { return getXNum() == -1 ? 0 : getXPerBox() * (getXNum() - NUM_HORZ / 2) + X_OFFSET; }
 
-        public double getDepth() { return getDepth(NUM_VERT / 2 - getYNum()); }
+        public double getDepth() { return getXNum() == -1 ? 0 : getDepth(NUM_VERT / 2 - getYNum()); }
 
         public double getTotalDist() { return Math.hypot(getXDist(), getDepth()); }
 
@@ -251,27 +253,28 @@ public class Webcam extends BaseHardware {
         public Mat processFrame(Mat input) {
 
             inputToHSV(input);
+            boolean isDuck = false;
+            for (int v = TOP_Y; v < NUM_VERT; v++) {
 
-            double closest = 10000;
-            for (int h = 0; h < NUM_HORZ; h++) {
-
-                for (int v = TOP_Y; v < NUM_VERT; v++) {
+                // From the top so it only considers the closest duck
+                for (int h = 0; h < NUM_HORZ; h++) {
 
                     int avgHue = (int) Core.mean(regions[0][h][v]).val[0];
                     int avgSaturation = (int) Core.mean(regions[1][h][v]).val[0];
                     int avgBrightness = (int) Core.mean(regions[2][h][v]).val[0];
 
                     // Calculate difference between goal hue and calculated average hue
-                    double difference = Math.hypot(Math.hypot(GOAL[0] - avgHue, GOAL[1] - avgSaturation), GOAL[2] - avgBrightness);
-                    if (difference < closest) {
+                    double diff = Math.hypot(Math.hypot(GOAL[0] - avgHue, GOAL[1] - avgSaturation), GOAL[2] - avgBrightness);
+                    if (diff < THRESHOLD_DIFF) {
 
+                        HSVDiff = diff;
                         desiredHSV[0] = avgHue;
                         desiredHSV[1] = avgSaturation;
                         desiredHSV[2] = avgBrightness;
 
-                        closest = difference;
                         xNum = h;
                         yNum = v;
+                        isDuck = true;
 
                     }
 
@@ -282,27 +285,36 @@ public class Webcam extends BaseHardware {
             // Check test
             for (int i = 0; i < 3; i++) testHSV[i] = (int) Core.mean(regions[i][TEST_X][TEST_Y]).val[0];
 
-            // Add to avgs
-            avgX.add(xNum);
-            avgY.add(yNum);
+            // Add to avgs if duck exists
+            if (!isDuck) {
+
+                xNum = -1;
+                yNum = -1;
+
+            }
+
+            listX.add(xNum);
+            listY.add(yNum);
+
+            // Add to map to calculate mode
             Integer freqX = mapX.get(xNum);
             mapX.put(xNum, freqX == null ? 1 : freqX + 1);
             Integer freqY = mapY.get(yNum);
             mapY.put(yNum, freqY == null ? 1 : freqY + 1);
 
             // Delete the extra
-            if (avgX.size() > AVG_NUM) {
+            if (listX.size() > AVG_NUM) {
 
-                freqX = mapX.get(avgX.get(0));
-                mapX.put(avgX.get(0), freqX - 1);
-                avgX.remove(0);
+                freqX = mapX.get(listX.get(0));
+                mapX.put(listX.get(0), freqX - 1);
+                listX.remove(0);
 
             }
-            if (avgY.size() > AVG_NUM) {
+            if (listY.size() > AVG_NUM) {
 
-                freqY = mapY.get(avgY.get(0));
-                mapY.put(avgY.get(0), freqY - 1);
-                avgY.remove(0);
+                freqY = mapY.get(listY.get(0));
+                mapY.put(listY.get(0), freqY - 1);
+                listY.remove(0);
 
             }
 

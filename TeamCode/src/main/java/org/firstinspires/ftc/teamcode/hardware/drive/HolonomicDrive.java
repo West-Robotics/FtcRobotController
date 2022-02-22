@@ -239,31 +239,15 @@ public abstract class HolonomicDrive extends BaseHardware {
         pidDrive.setSetpoint(prevAngle);
         correction = pidDrive.performPID(gyro.getAngleDegrees());
 
-        if (!thirdWheel) {
+        // If turning or not moving then don't correct
+        if (Math.abs(turn) != 0 || (x == 0 && y == 0)) {
 
-            // If turning or not moving then don't correct
-            if (Math.abs(turn) != 0 || (x == 0 && y == 0)) {
+            pidDrive.disable();
+            pidDrive.reset();
+            prevAngle = gyro.getAngleDegrees();
+            correction = 0;
 
-                pidDrive.disable();
-                pidDrive.reset();
-                prevAngle = gyro.getAngleDegrees();
-                correction = 0;
-
-            } else pidDrive.enable();
-
-        } else {
-
-            // Continuous tuning
-            if (Math.abs(turn) != 0) {
-
-                pidDrive.disable();
-                pidDrive.reset();
-                prevAngle = gyro.getAngleDegrees();
-                correction = 0;
-
-            } else pidDrive.enable();
-
-        }
+        } else pidDrive.enable();
 
         // If field oriented drive, then set angleCompensation to gyro angle
         double angleCompensation = 0;

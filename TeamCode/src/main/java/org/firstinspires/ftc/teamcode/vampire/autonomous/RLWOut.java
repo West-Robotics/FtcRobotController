@@ -71,7 +71,7 @@ public class RLWOut extends LinearOpMode {
 		// Get how many rings are stacked
 		int position = 3;
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 1) {
+		while (opModeIsActive() && runtime.seconds() < 1.5) {
 
 			position = webcam.getCargoPos();
 			webcam.update();
@@ -101,7 +101,7 @@ public class RLWOut extends LinearOpMode {
 		while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
 		intake.stop();
 
-		// Grab duck
+		// Calculate duck position
 		arm.setLift(0, 0.5);
 		drive.followTrajectory(backOut);
 		runtime.reset();
@@ -111,25 +111,40 @@ public class RLWOut extends LinearOpMode {
 		sleep(1000);
 		while (opModeIsActive() && runtime.seconds() < 2) {
 
-			duckX = drive.getPoseEstimate().getX() + (webcam.getDuckDistance() + 1) * Math.sin(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
-			duckY = drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 1) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
+			duckX = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getX() + (webcam.getDuckDistance() + 1) * Math.sin(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
+			duckY = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 1) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
 
 		}
-		intake.intake();
-		drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-			.strafeTo(new Vector2d(duckX, duckY))
-			.build());
-		sleep(500);
-		intake.stop();
+		double MAX_Y = 70;
+		if (Math.abs(duckY) < MAX_Y) {
 
-		// Drop off duck
-		arm.setLift(3, 0.5);
-		drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-			.lineToLinearHeading(new Pose2d(-28, -30, Math.toRadians(0)))
-			.build());
-		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
-		intake.stop();
+			// Set maximum Y position and scale it down
+			double ratio = Math.abs(duckY) / MAX_Y;
+			duckY = Math.copySign(MAX_Y, duckY);
+			duckX /= ratio;
+
+		}
+
+		if (!(duckX == 0 && duckY == 0)) {
+
+			// Grab duck only if duck exists
+			intake.intake();
+			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+					.strafeTo(new Vector2d(duckX, duckY))
+					.build());
+			sleep(500);
+			intake.stop();
+
+			// Drop off duck
+			arm.setLift(3, 0.5);
+			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+					.lineToLinearHeading(new Pose2d(-28, -30, Math.toRadians(0)))
+					.build());
+			runtime.reset();
+			while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+			intake.stop();
+
+		}
 
 		// Park
 		arm.setLift(0, 1);
