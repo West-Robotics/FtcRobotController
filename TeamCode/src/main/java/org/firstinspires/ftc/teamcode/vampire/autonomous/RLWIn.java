@@ -48,7 +48,7 @@ public class RLWIn extends LinearOpMode {
 			.forward(10)
 			.build();
 		Trajectory toHub2 = drive.trajectoryBuilder(toHub1.end())
-			.lineToLinearHeading(new Pose2d(-28, -25, Math.toRadians(0)))
+			.lineToLinearHeading(new Pose2d(-28, -24, Math.toRadians(0)))
 			.build();
 		Trajectory backOut = drive.trajectoryBuilder(toHub2.end())
 			.lineToLinearHeading(new Pose2d(-36, -36, Math.toRadians(-100)))
@@ -76,7 +76,7 @@ public class RLWIn extends LinearOpMode {
 		// Get how many rings are stacked
 		int position = 3;
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 1.5) {
+		while (opModeIsActive() && runtime.seconds() < 1) {
 
 			position = webcam.getCargoPos();
 			webcam.update();
@@ -120,8 +120,8 @@ public class RLWIn extends LinearOpMode {
 			duckY = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 1) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
 
 		}
-		double MAX_Y = 70;
-		if (Math.abs(duckY) < MAX_Y) {
+		double MAX_Y = 65;
+		if (Math.abs(duckY) > MAX_Y) {
 
 			// Set maximum Y position and scale it down
 			double ratio = Math.abs(duckY) / MAX_Y;
@@ -137,12 +137,14 @@ public class RLWIn extends LinearOpMode {
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
 					.strafeTo(new Vector2d(duckX, duckY))
 					.build());
-			sleep(500);
+			drive.turn(Math.toRadians(-20));
+			if (intake.isFreight()) intake.stop();
+			drive.turn(Math.toRadians(40));
 			intake.stop();
 
 			// Drop off duck
 			arm.setLift(3, 0.5);
-			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(20))))
 					.lineToLinearHeading(new Pose2d(-28, -30, Math.toRadians(0)))
 					.build());
 			runtime.reset();
@@ -152,7 +154,7 @@ public class RLWIn extends LinearOpMode {
 		}
 
 		// Park
-		arm.setLift(0, 1);
+		arm.setLift(0, 1.5);
 		drive.followTrajectory(park1);
 		drive.followTrajectory(park2);
 		drive.followTrajectory(park3);

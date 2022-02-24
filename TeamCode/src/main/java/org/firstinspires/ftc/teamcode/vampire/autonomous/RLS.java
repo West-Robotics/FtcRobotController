@@ -49,12 +49,15 @@ public class RLS extends LinearOpMode {
 				.forward(10)
 				.build();
 		Trajectory toHub2 = drive.trajectoryBuilder(toHub1.end())
-				.lineToLinearHeading(new Pose2d(-28, -25, Math.toRadians(0)))
+				.lineToLinearHeading(new Pose2d(-28, -24, Math.toRadians(0)))
 				.build();
 		Trajectory backOut = drive.trajectoryBuilder(toHub2.end())
 			.lineToLinearHeading(new Pose2d(-36, -36, Math.toRadians(-100)))
 			.build();
-		Trajectory park = drive.trajectoryBuilder(toHub2.end())
+		Trajectory park1 = drive.trajectoryBuilder(toHub2.end())
+			.strafeRight(30)
+			.build();
+		Trajectory park2 = drive.trajectoryBuilder(park1.end())
 			.lineToLinearHeading(new Pose2d(-62, -40, 0))
 			.build();
 
@@ -69,7 +72,7 @@ public class RLS extends LinearOpMode {
 		// Get how many rings are stacked
 		int position = 3;
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 1.5) {
+		while (opModeIsActive() && runtime.seconds() < 1) {
 
 			position = webcam.getCargoPos();
 			webcam.update();
@@ -109,12 +112,12 @@ public class RLS extends LinearOpMode {
 		sleep(1000);
 		while (opModeIsActive() && runtime.seconds() < 2) {
 
-			duckX = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getX() + (webcam.getDuckDistance() + 1) * Math.sin(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
-			duckY = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 1) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
+			duckX = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getX() + (webcam.getDuckDistance() + 2) * Math.sin(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
+			duckY = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 2) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
 
 		}
-		double MAX_Y = 70;
-		if (Math.abs(duckY) < MAX_Y) {
+		double MAX_Y = 65;
+		if (Math.abs(duckY) > MAX_Y) {
 
 			// Set maximum Y position and scale it down
 			double ratio = Math.abs(duckY) / MAX_Y;
@@ -130,12 +133,14 @@ public class RLS extends LinearOpMode {
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
 				.strafeTo(new Vector2d(duckX, duckY))
 				.build());
-			sleep(500);
+			drive.turn(Math.toRadians(-20));
+			if (intake.isFreight()) intake.stop();
+			drive.turn(Math.toRadians(40));
 			intake.stop();
 
 			// Drop off duck
 			arm.setLift(3, 0.5);
-			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(20))))
 				.lineToLinearHeading(new Pose2d(-28, -30, Math.toRadians(0)))
 				.build());
 			runtime.reset();
@@ -145,8 +150,9 @@ public class RLS extends LinearOpMode {
 		}
 
 		// Park
-		arm.setLift(0, 1);
-		drive.followTrajectory(park);
+		arm.setLift(0, 1.5);
+		drive.followTrajectory(park1);
+		drive.followTrajectory(park2);
 
 	}
 

@@ -6,17 +6,11 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.roadrunner.drive.MecanumDrive;
-import org.firstinspires.ftc.teamcode.vampire.hardware.Arm;
-import org.firstinspires.ftc.teamcode.vampire.hardware.DuckDuckGo;
-import org.firstinspires.ftc.teamcode.vampire.hardware.Intake;
-import org.firstinspires.ftc.teamcode.vampire.hardware.TapeArm;
-import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
-import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
+import org.firstinspires.ftc.teamcode.vampire.hardware.*;
 
-@Autonomous(name="Vampire: BLW", group="Vampire")
-public class BLW extends LinearOpMode {
+@Autonomous(name="Vampire: RRWIn", group="Vampire")
+public class RRWIn extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -30,23 +24,30 @@ public class BLW extends LinearOpMode {
 
         // Set timer
         ElapsedTime runtime = new ElapsedTime();
+        double FORWARD_TIME = 1;
 
         // Set start pose
-        Pose2d startPose = new Pose2d(12, 65, Math.toRadians(-90));
+        Pose2d startPose = new Pose2d(12, -65, Math.toRadians(90));
         drive.setPoseEstimate(startPose);
 
         // Trajectories
         Trajectory toHub1 = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(2, 38, Math.toRadians(-135)))
+                .lineToLinearHeading(new Pose2d(2, -38, Math.toRadians(135)))
                 .build();
-        Trajectory toWall = drive.trajectoryBuilder(new Pose2d(2, 38, Math.toRadians(-135)))
-                .lineToLinearHeading(new Pose2d(12, 65, 0))
+        Trajectory toWall1 = drive.trajectoryBuilder(toHub1.end())
+                .lineToLinearHeading(new Pose2d(12, -65, 0))
                 .build();
-        Trajectory toHub2 = drive.trajectoryBuilder(new Pose2d(12, 65, 0))
-                .lineToLinearHeading(new Pose2d(2, 38, Math.toRadians(-135)))
+        Trajectory toWall2 = drive.trajectoryBuilder(toWall1.end())
+                .forward(25)
                 .build();
-        Trajectory park = drive.trajectoryBuilder(new Pose2d(12, 65, 0))
-                .forward(35)
+        Trajectory toHub2 = drive.trajectoryBuilder(new Pose2d(12, -65, 0))
+                .lineToLinearHeading(new Pose2d(2, -38, Math.toRadians(125)))
+                .build();
+        Trajectory park1 = drive.trajectoryBuilder(toWall2.end())
+                .forward(10)
+                .build();
+        Trajectory park2 = drive.trajectoryBuilder(park1.end())
+                .strafeLeft(20)
                 .build();
 
         // Send telemetry message to signify robot waiting
@@ -60,7 +61,7 @@ public class BLW extends LinearOpMode {
         // Get how many rings are stacked
         int position = 3;
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < 1.5) {
+        while (opModeIsActive() && runtime.seconds() < 1) {
 
             position = webcam.getCargoPos();
             webcam.update();
@@ -75,28 +76,34 @@ public class BLW extends LinearOpMode {
         while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
         intake.stop();
         arm.setLift(0, 0.5);
-        drive.followTrajectory(toWall);
+        drive.followTrajectory(toWall1);
+        drive.followTrajectory(toWall2);
 
         // Back and forth
         for (int i = 0; i < 1; i++) {
 
             // Get freight
             intake.intake();
-            while (opModeIsActive() && !intake.isFreight()) {
+            while (!intake.isFreight()) {
 
-                drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
-                drive.update();
+                runtime.reset();
+                while (opModeIsActive() && runtime.seconds() < FORWARD_TIME) {
+
+                    drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
+                    drive.update();
+
+                }
+                drive.turn(Math.toRadians(-30));
+                drive.turn(Math.toRadians(60));
+                drive.turn(Math.toRadians(-30));
 
             }
             intake.stop();
 
-            //runtime.reset();
-            //while (opModeIsActive() && runtime.seconds() < 1) drive.setWeightedDrivePower(new Pose2d(-0.2, 0.2, 0));
-
             // Go to hub
             drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineTo(new Vector2d(12, 65))
-                    .build());
+                .lineTo(new Vector2d(12, -65))
+                .build());
             arm.setLift(3);
             drive.followTrajectory(toHub2);
 
@@ -105,12 +112,14 @@ public class BLW extends LinearOpMode {
             while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
             intake.stop();
             arm.setLift(0, 0.5);
-            drive.followTrajectory(toWall);
+            drive.followTrajectory(toWall1);
+            drive.followTrajectory(toWall2);
 
         }
 
         // Park
-        drive.followTrajectory(park);
+        drive.followTrajectory(park1);
+        drive.followTrajectory(park2);
 
     }
 

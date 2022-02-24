@@ -130,17 +130,17 @@ public class Webcam extends BaseHardware {
         private static final Mat[][][] regions = new Mat[3][NUM_HORZ][NUM_VERT]; // H = 0, S = 1, V = 2
         private Mat hsv = new Mat();
         private Mat[] hsvArray = new Mat[] { new Mat(), new Mat(), new Mat() };
-        private static final int[] GOAL = new int[] { 40, 100, 180 };
+        private static final int[] GOAL = new int[] { 40, 120, 200 };
 
         // For testing
-        private static final int TEST_X = 10;
-        private static final int TEST_Y = 9;
+        private static final int TEST_X = 18;
+        private static final int TEST_Y = 13;
         private int[] testHSV = new int[3];
 
         // Calculate x, y, HSV
         private int[] desiredHSV = new int[3];
         private double HSVDiff = 0;
-        public static double THRESHOLD_DIFF = 45;
+        public static double THRESHOLD_DIFF = 50;
         private int xNum = 0;
         private int yNum = 0;
         private static final int AVG_NUM = 30;
@@ -153,7 +153,7 @@ public class Webcam extends BaseHardware {
         public static double CAMERA_HEIGHT = 10.5;
         public static double MID_DEPTH = 28;
         public static double MID_DIFF = 2.85;
-        public static double X_OFFSET = 0;
+        public static double X_OFFSET = 1;
         public static double HALF_ANGLE = 0.5;
 
         private double getVertAngle(int index) {

@@ -21,7 +21,8 @@ public class TapeArm extends BaseHardware {
     private static final double FAST_SPEED = 0.015;
     private static final double ROLL_POW = 1;
     private static final double MAX_POS = 0.75;
-    private static final double INIT_POS = 0.2;
+    private static final double INIT_HORZ = 0.375;
+    private static final double INIT_VERT = 0.2;
     private static final double VERT_MULTIPLIER = 2;
     private double speed = SLOW_SPEED;
 
@@ -45,9 +46,9 @@ public class TapeArm extends BaseHardware {
 
         // Set up servos
         horz = hwMap.get(Servo.class, "horz");
-        horz.setPosition(0);
+        horz.setPosition(INIT_HORZ);
         vert = hwMap.get(Servo.class, "vert");
-        vert.setPosition(INIT_POS);
+        vert.setPosition(INIT_VERT);
         rollTop = hwMap.get(CRServo.class, "rollTop");
         rollBottom = hwMap.get(CRServo.class, "rollBottom");
 
