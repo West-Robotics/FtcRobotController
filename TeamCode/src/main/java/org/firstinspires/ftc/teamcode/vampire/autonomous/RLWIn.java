@@ -137,8 +137,8 @@ public class RLWIn extends LinearOpMode {
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
 					.strafeTo(new Vector2d(duckX, duckY))
 					.build());
+			intake.freightStop(3);
 			drive.turn(Math.toRadians(-20));
-			if (intake.isFreight()) intake.stop();
 			drive.turn(Math.toRadians(40));
 			intake.stop();
 

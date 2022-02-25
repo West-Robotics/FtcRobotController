@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 
@@ -24,7 +25,7 @@ public class Intake extends BaseHardware {
     private static final double POS_DOWN = 0.6;
 
     // For distance sensor
-    private static final double DISTANCE_THRESHOLD = 1.6;
+    private static final double DISTANCE_THRESHOLD = 1.4;
     private ColorRangeSensor CRSensor;
     private boolean isOverride = false;
 
@@ -97,6 +98,24 @@ public class Intake extends BaseHardware {
     public void toggleOverride(boolean button) {
 
         if (button) isOverride = !isOverride;
+
+    }
+
+    public void freightStop(double seconds) {
+
+        new Thread() {
+
+            @Override
+            public void run() {
+
+                ElapsedTime runtime = new ElapsedTime();
+                runtime.reset();
+                while (runtime.seconds() < seconds)
+                    if (isFreight()) Intake.this.stop();
+
+            }
+
+        }.start();
 
     }
 
