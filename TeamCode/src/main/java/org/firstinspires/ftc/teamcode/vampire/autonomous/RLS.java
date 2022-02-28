@@ -49,7 +49,7 @@ public class RLS extends LinearOpMode {
 				.forward(10)
 				.build();
 		Trajectory toHub2 = drive.trajectoryBuilder(toHub1.end())
-				.lineToLinearHeading(new Pose2d(-28, -24, Math.toRadians(0)))
+				.lineToLinearHeading(new Pose2d(-28, -25, Math.toRadians(0)))
 				.build();
 		Trajectory backOut = drive.trajectoryBuilder(toHub2.end())
 			.lineToLinearHeading(new Pose2d(-36, -36, Math.toRadians(-100)))
@@ -58,7 +58,7 @@ public class RLS extends LinearOpMode {
 			.strafeRight(30)
 			.build();
 		Trajectory park2 = drive.trajectoryBuilder(park1.end())
-			.lineToLinearHeading(new Pose2d(-62, -40, 0))
+			.lineToLinearHeading(new Pose2d(-62, -44, 0))
 			.build();
 
 		// Send telemetry message to signify robot waiting
@@ -141,7 +141,7 @@ public class RLS extends LinearOpMode {
 			// Drop off duck
 			arm.setLift(3, 0.5);
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(20))))
-				.lineToLinearHeading(new Pose2d(-28, -30, Math.toRadians(0)))
+				.lineToLinearHeading(new Pose2d(-28, -32, Math.toRadians(0)))
 				.build());
 			runtime.reset();
 			while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();

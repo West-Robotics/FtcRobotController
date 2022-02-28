@@ -84,7 +84,7 @@ public class RRWIn extends LinearOpMode {
 
             // Get freight
             intake.intake();
-            while (!intake.isFreight()) {
+            //while (!intake.isFreight()) {
 
                 runtime.reset();
                 while (opModeIsActive() && runtime.seconds() < FORWARD_TIME) {
@@ -97,23 +97,25 @@ public class RRWIn extends LinearOpMode {
                 drive.turn(Math.toRadians(60));
                 drive.turn(Math.toRadians(-30));
 
+            //}
+            intake.stop();
+            if (intake.isFreight()) {
+
+                // Go to hub
+                drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineTo(new Vector2d(12, -65))
+                        .build());
+                arm.setLift(3);
+                drive.followTrajectory(toHub2);
+
+                // Drop off freight and back to wall
+                runtime.reset();
+                while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+                intake.stop();
+                arm.setLift(0, 0.5);
+                drive.followTrajectory(toWall1);
+                drive.followTrajectory(toWall2);
             }
-            intake.stop();
-
-            // Go to hub
-            drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                .lineTo(new Vector2d(12, -65))
-                .build());
-            arm.setLift(3);
-            drive.followTrajectory(toHub2);
-
-            // Drop off freight and back to wall
-            runtime.reset();
-            while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
-            intake.stop();
-            arm.setLift(0, 0.5);
-            drive.followTrajectory(toWall1);
-            drive.followTrajectory(toWall2);
 
         }
 

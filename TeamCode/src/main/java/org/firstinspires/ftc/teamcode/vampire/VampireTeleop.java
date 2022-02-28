@@ -42,7 +42,7 @@ public class VampireTeleop extends OpMode {
     private ArrayList<Double> y = new ArrayList<>();
 
     // Use webcam?
-    private static final boolean IS_WEBCAM = true;
+    private static final boolean IS_WEBCAM = false;
 
     @Override
     public void init() {

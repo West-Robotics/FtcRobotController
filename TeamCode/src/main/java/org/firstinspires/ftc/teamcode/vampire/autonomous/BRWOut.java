@@ -45,7 +45,7 @@ public class BRWOut extends LinearOpMode {
 				.strafeTo(new Vector2d(-54, 58))
 				.build();
 		Trajectory toHub1 = drive.trajectoryBuilder(toCarousel.end())
-				.lineToLinearHeading(new Pose2d(-40, 52, 0))
+				.lineToLinearHeading(new Pose2d(-42, 50, 0))
 				.build();
 		Trajectory toHub2 = drive.trajectoryBuilder(toHub1.end())
 				.lineToLinearHeading(new Pose2d(-29, 25, Math.toRadians(0)))
@@ -143,7 +143,7 @@ public class BRWOut extends LinearOpMode {
 			// Drop off duck
 			arm.setLift(3, 0.5);
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(20))))
-					.lineToLinearHeading(new Pose2d(-27, 29, Math.toRadians(0)))
+					.lineToLinearHeading(new Pose2d(-27, 31, Math.toRadians(0)))
 					.build());
 			runtime.reset();
 			while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();

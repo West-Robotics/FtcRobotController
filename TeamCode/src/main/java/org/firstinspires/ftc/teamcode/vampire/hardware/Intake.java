@@ -111,7 +111,12 @@ public class Intake extends BaseHardware {
                 ElapsedTime runtime = new ElapsedTime();
                 runtime.reset();
                 while (runtime.seconds() < seconds)
-                    if (isFreight()) Intake.this.stop();
+                    if (isFreight()) {
+
+                        linearOpMode.sleep(500);
+                        Intake.this.stop();
+
+                    }
 
             }
 
