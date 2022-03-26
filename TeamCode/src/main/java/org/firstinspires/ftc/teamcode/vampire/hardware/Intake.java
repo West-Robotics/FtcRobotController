@@ -2,11 +2,7 @@ package org.firstinspires.ftc.teamcode.vampire.hardware;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorRangeSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -17,7 +13,8 @@ public class Intake extends BaseHardware {
     // Motor and motor power
     private DcMotor intakeMotor;
     private static final double INTAKE_POWER = 1;
-    private static final double OUTTAKE_POWER = 0.7;
+    private static final double OUTTAKE_POWER = 0.35    ;
+    public static final double OUTTAKE_TIME = 2;
 
     // Servo
     private Servo flag;

@@ -11,16 +11,12 @@ public class DuckDuckGo extends BaseHardware {
 
     // Motor and motor power
     private DcMotor duckSpin;
-    private static final double INIT_POWER = 0.45;
-    private static final double INIT_ACCEL = 0.01;
-	private static final double AUTO_INIT_POWER = 0.35;
-	private static final double AUTO_INIT_ACCEL = 0.00015;
-    private static final double JERK = 0.001;
-    private static final double AUTO_JERK = 0.000001;
-    private static final double FINAL_POWER = 1;
-    private double speed = INIT_POWER;
-    private double accel = INIT_ACCEL;
-	
+    private static final double SLOW_SPEED = 0.6;
+    private static final double FAST_SPEED = 1;
+    private static final int SPEED_TICKS = 3000;
+    private static final int STOP_TICKS = 4000;
+    private double speed = SLOW_SPEED;
+
 	// For autonomous
 	public static final double AUTO_TIME = 2;
 
@@ -42,78 +38,41 @@ public class DuckDuckGo extends BaseHardware {
 
     private void setup(HardwareMap hwMap) {
 
-        // Set up servo
+        // Set up motor
         duckSpin = hwMap.get(DcMotor.class, "spin");
         duckSpin.setDirection(DcMotor.Direction.FORWARD);
-
-        // Set default values
-        if (linearOpMode == null) {
-
-            speed = INIT_POWER;
-            accel = INIT_ACCEL;
-
-        } else {
-
-            speed = AUTO_INIT_POWER;
-            accel = AUTO_INIT_ACCEL;
-
-        }
+        duckSpin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        duckSpin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        duckSpin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // TODO: Check if RUN_USING_ENCODER is better
 
     }
 
     public void spin(boolean red, boolean blue) {
 
+        // Print out values
         print("Carousel Speed", speed);
-        print("Carousel Accel", accel);
-        if (red || blue) {
+        print("Carousel Position", duckSpin.getCurrentPosition());
 
-            if (linearOpMode == null) {
+        // Variable speed depending on encoder value
+        if (isStopPosition()) speed = 0;
+        else if (Math.abs(duckSpin.getCurrentPosition()) > SPEED_TICKS) speed = FAST_SPEED;
+        else speed = SLOW_SPEED;
 
-                speed += accel;
-                accel += JERK;
-
-            } else {
-
-                speed += accel;
-                accel += AUTO_JERK;
-
-            }
-
-        }
-        if (speed > FINAL_POWER) speed = FINAL_POWER;
-        if (red) spinRed();
-        else if (blue) spinBlue();
+        // Power the motors (stop if above the stopping threshold)
+        if (red) duckSpin.setPower(speed);
+        else if (blue) duckSpin.setPower(-speed);
         else stop();
-
-    }
-
-    public void spinRed() {
-
-		duckSpin.setPower(speed);
-
-    }
-
-    public void spinBlue() {
-
-		duckSpin.setPower(-speed);
 
     }
 
     public void stop() {
 
-        if (linearOpMode == null) {
-
-            speed = INIT_POWER;
-            accel = INIT_ACCEL;
-
-        } else {
-
-            speed = AUTO_INIT_POWER;
-            accel = AUTO_INIT_ACCEL;
-
-        }
         duckSpin.setPower(0);
+        duckSpin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        duckSpin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // TODO: Here too
 
     }
+
+    public boolean isStopPosition() { return Math.abs(duckSpin.getCurrentPosition()) > STOP_TICKS; }
 
 }
