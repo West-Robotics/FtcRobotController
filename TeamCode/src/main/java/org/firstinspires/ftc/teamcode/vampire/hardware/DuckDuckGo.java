@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.vampire.hardware;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
@@ -11,10 +12,10 @@ public class DuckDuckGo extends BaseHardware {
 
     // Motor and motor power
     private DcMotor duckSpin;
-    private static final double SLOW_SPEED = 0.6;
+    private static final double SLOW_SPEED = 0.4;
     private static final double FAST_SPEED = 1;
-    private static final int SPEED_TICKS = 3000;
-    private static final int STOP_TICKS = 4000;
+    private static final int SPEED_TICKS = 1675;
+    private static final int STOP_TICKS = 2300;
     private double speed = SLOW_SPEED;
 
 	// For autonomous
@@ -40,7 +41,7 @@ public class DuckDuckGo extends BaseHardware {
 
         // Set up motor
         duckSpin = hwMap.get(DcMotor.class, "spin");
-        duckSpin.setDirection(DcMotor.Direction.FORWARD);
+        duckSpin.setDirection(DcMotor.Direction.REVERSE);
         duckSpin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         duckSpin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         duckSpin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // TODO: Check if RUN_USING_ENCODER is better
