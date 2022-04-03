@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.PIDController;
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 import org.firstinspires.ftc.teamcode.hardware.Gyro;
@@ -49,10 +50,12 @@ public abstract class HolonomicDrive extends BaseHardware {
     protected double prevAngle;
     protected double correction;
     protected boolean isPID = true;
+    protected ElapsedTime runtime = new ElapsedTime();
+    protected double PIDWaitTime = 0.5;
 
     // Static variables
     protected static final double SLOW_MULTIPLIER = 0.5;
-    protected static final double TURN_REDUCTION = 1.5;
+    protected static final double TURN_REDUCTION = 1.8;
 
     // Set pidDrive values
     protected void setPidDrive(double p, double i, double d) {
@@ -219,12 +222,8 @@ public abstract class HolonomicDrive extends BaseHardware {
         if (isSquaredInputs) {
 
             // Store sign of value
-            double signX;
-            double signY;
-            if (x < 0) signX = -1;
-            else signX = 1;
-            if (y < 0) signY = -1;
-            else signY = 1;
+            double signX = x < 0 ? -1 : 1;
+            double signY = y < 0 ? -1 : 1;
 
             // Square the inputs
             x = Math.pow(x, 2) * signX;
@@ -240,7 +239,8 @@ public abstract class HolonomicDrive extends BaseHardware {
         correction = pidDrive.performPID(gyro.getAngleDegrees());
 
         // If turning or not moving then don't correct
-        if (Math.abs(turn) != 0 || (x == 0 && y == 0)) {
+        if (Math.abs(turn) > 0) runtime.reset();
+        if (runtime.seconds() < PIDWaitTime || Math.abs(turn) > 0 || (x == 0 && y == 0)) {
 
             pidDrive.disable();
             pidDrive.reset();
@@ -248,6 +248,7 @@ public abstract class HolonomicDrive extends BaseHardware {
             correction = 0;
 
         } else pidDrive.enable();
+
 
         // If field oriented drive, then set angleCompensation to gyro angle
         double angleCompensation = 0;
