@@ -18,14 +18,10 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -54,8 +50,20 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
  */
 @Config
 public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive {
+
+    private static final double FRONT_OFFSET = 7;
+    private static final double LEFT_OFFSET = 7;
+    private static final double RIGHT_OFFSET = 7;
+    private static final double FILTER_THRESHOLD = 5;
+    private double leftDistance = 0;
+    private double rightDistance = 0;
+    private double frontDistance = 0;
+    //private DistanceSensor leftDistanceSensor;
+    //private DistanceSensor rightDistanceSensor;
+    //private DistanceSensor frontDistanceSensor;
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 0, 0); // 2 and 1 in slow mode, 3, 2.5 in normal mode
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2.5, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1.27;
 
@@ -105,11 +113,7 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
         //             |
         //      _______|_____________     +Y axis
         //     /       |_____________/|__________
-        //    /   REV / EXPANSION   //
-        //   /       / HUB         //
-        //  /_______/_____________//
-        // |_______/_____________|/
-        //        /
+        //    /   REV / EXPANSION   // //   /       / HUB         // //  /_______/_____________// // |_______/_____________|/ //        /
         //       / +X axis
         //
         // This diagram is derived from the axes in section 3.4 https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
@@ -118,6 +122,11 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
         BNO055IMUUtil.remapZAxis(imu, AxisDirection.POS_Y);
+
+        // Set up distance sensors
+        //leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "leftDistance");
+        //rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "rightDistance");
+        //frontDistanceSensor = hardwareMap.get(DistanceSensor.class, "frontDistance");
 
         leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
         leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
@@ -290,10 +299,60 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
+
         leftFront.setPower(v);
         leftRear.setPower(v1);
         rightRear.setPower(v2);
         rightFront.setPower(v3);
+
+    }
+
+    public void updateSensorDistance() {
+/*
+        double f = frontDistanceSensor.getDistance(DistanceUnit.INCH);
+        double l = leftDistanceSensor.getDistance(DistanceUnit.INCH);
+        double r = rightDistanceSensor.getDistance(DistanceUnit.INCH);
+        double xUnfiltered = (f + FRONT_OFFSET) * Math.cos(Math.abs(getPoseEstimate().getHeading()));
+        double lYUnfiltered = (l + LEFT_OFFSET) * Math.cos(Math.abs(getPoseEstimate().getHeading()));
+        double rYUnfiltered = (r + RIGHT_OFFSET) * Math.cos(Math.abs(getPoseEstimate().getHeading()));
+
+        if (Math.abs(xUnfiltered - getPoseEstimate().getX()) < FILTER_THRESHOLD) frontDistance = f;
+        if (Math.abs(lYUnfiltered - getPoseEstimate().getY()) < FILTER_THRESHOLD) leftDistance = l;
+        if (Math.abs(rYUnfiltered - getPoseEstimate().getY()) < FILTER_THRESHOLD) rightDistance = r;
+ */
+    }
+
+    public double[] getForwardDistances() {
+
+        return new double[] {
+
+            (frontDistance + FRONT_OFFSET) * Math.cos(Math.abs(getPoseEstimate().getHeading())),
+            (frontDistance + FRONT_OFFSET) * Math.sin(Math.abs(getPoseEstimate().getHeading()))
+
+        };
+
+    }
+
+    public double[] getLeftDistances() {
+
+        return new double[] {
+
+            (leftDistance + LEFT_OFFSET) * Math.cos(Math.abs(getPoseEstimate().getHeading())),
+            (leftDistance + LEFT_OFFSET) * Math.sin(Math.abs(getPoseEstimate().getHeading()))
+
+        };
+
+    }
+
+    public double[] getRightDistances() {
+
+        return new double[] {
+
+            (rightDistance + RIGHT_OFFSET) * Math.cos(Math.abs(getPoseEstimate().getHeading())),
+            (rightDistance + RIGHT_OFFSET) * Math.sin(Math.abs(getPoseEstimate().getHeading()))
+
+        };
+
     }
 
     @Override
@@ -321,4 +380,5 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
+
 }
