@@ -12,9 +12,9 @@ public class Intake extends BaseHardware {
 
     // Motor and motor power
     private DcMotor intakeMotor;
-    private static final double INTAKE_POWER = 1;
-    private static final double OUTTAKE_POWER = 0.35    ;
-    public static final double OUTTAKE_TIME = 2;
+    private static final double INTAKE_POWER = 1.5;
+    private static final double OUTTAKE_POWER = 0.4;
+    public static final double OUTTAKE_TIME = 1;
 
     // Servo
     private Servo flag;
@@ -22,7 +22,7 @@ public class Intake extends BaseHardware {
     private static final double POS_DOWN = 0.6;
 
     // For distance sensor
-    private static final double DISTANCE_THRESHOLD = 1.4;
+    private static final double DISTANCE_THRESHOLD = 1;
     private ColorRangeSensor CRSensor;
     private boolean isOverride = false;
 

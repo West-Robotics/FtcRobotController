@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.vampire;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,7 +14,6 @@ import org.firstinspires.ftc.teamcode.vampire.hardware.VampireDrive;
 import org.firstinspires.ftc.teamcode.vampire.hardware.Webcam;
 
 import java.util.ArrayList;
-import java.util.stream.IntStream;
 
 @TeleOp(name = "VAMPIRE: TeleOp")
 @Config
@@ -32,6 +30,7 @@ public class VampireTeleop extends OpMode {
     private Controller controller2;
 
     // For testing
+    private MecanumDrive testDrive;
     //public static double duckx = 0;
     //public static double ducky = 0;
     //public static double angle = 0;
@@ -62,12 +61,15 @@ public class VampireTeleop extends OpMode {
 
         // Debug mode
         intake.debug();
-        //drive.debug();
+        drive.debug();
         //arm.debug();
         spin.debug();
         tapeArm.debug();
 
         if (IS_WEBCAM) webcam.debug();
+
+        // For testing
+        testDrive = new MecanumDrive(hardwareMap);
 
     }
 
@@ -124,6 +126,9 @@ public class VampireTeleop extends OpMode {
         telemetry.addData("duckx", duckX);
         telemetry.addData("ducky", duckY);
  */
+        telemetry.addData("Right", testDrive.getRightDistances()[0] + " " + testDrive.getRightDistances()[1]);
+        telemetry.addData("Left", testDrive.getLeftDistances()[0] + " " + testDrive.getLeftDistances()[1]);
+        telemetry.addData("Forward", testDrive.getForwardDistances()[0] + " " + testDrive.getForwardDistances()[1]);
 
         // Update webcam values
         if (IS_WEBCAM) webcam.update();

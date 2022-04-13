@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.vampire.hardware;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
@@ -12,11 +11,13 @@ public class DuckDuckGo extends BaseHardware {
 
     // Motor and motor power
     private DcMotor duckSpin;
-    private static final double SLOW_SPEED = 0.4;
-    private static final double FAST_SPEED = 1;
-    private static final int SPEED_TICKS = 1675;
-    private static final int STOP_TICKS = 2300;
-    private double speed = SLOW_SPEED;
+    private static final double SLOW_AUTO = 0.38;
+    private static final double SLOW_TELEOP = 0.55;
+    private static final int SPEED_TICKS_AUTO = 1650;
+    private static final int SPEED_TICKS_TELEOP = 1550;
+    private static final int STOP_TICKS_TELEOP = 2300;
+    private static final int STOP_TICKS_AUTO = 2300;
+    private double speed = SLOW_AUTO;
 
 	// For autonomous
 	public static final double AUTO_TIME = 2;
@@ -44,7 +45,7 @@ public class DuckDuckGo extends BaseHardware {
         duckSpin.setDirection(DcMotor.Direction.REVERSE);
         duckSpin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         duckSpin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        duckSpin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // TODO: Check if RUN_USING_ENCODER is better
+        duckSpin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -55,13 +56,23 @@ public class DuckDuckGo extends BaseHardware {
         print("Carousel Position", duckSpin.getCurrentPosition());
 
         // Variable speed depending on encoder value
-        if (isStopPosition()) speed = 0;
-        else if (Math.abs(duckSpin.getCurrentPosition()) > SPEED_TICKS) speed = FAST_SPEED;
-        else speed = SLOW_SPEED;
+        if (opMode != null) {
+
+            if (isStopPosition()) speed = 0;
+            else if (Math.abs(duckSpin.getCurrentPosition()) > SPEED_TICKS_TELEOP) speed = 1;
+            else speed = SLOW_TELEOP;
+
+        } else {
+
+            if (isStopPosition()) speed = 0;
+            else if (Math.abs(duckSpin.getCurrentPosition()) > SPEED_TICKS_AUTO) speed = 1;
+            else speed = SLOW_AUTO;
+
+        }
 
         // Power the motors (stop if above the stopping threshold)
-        if (red) duckSpin.setPower(speed);
-        else if (blue) duckSpin.setPower(-speed);
+        if (red) duckSpin.setPower(-speed);
+        else if (blue) duckSpin.setPower(speed);
         else stop();
 
     }
@@ -70,10 +81,15 @@ public class DuckDuckGo extends BaseHardware {
 
         duckSpin.setPower(0);
         duckSpin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        duckSpin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // TODO: Here too
+        duckSpin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
-    public boolean isStopPosition() { return Math.abs(duckSpin.getCurrentPosition()) > STOP_TICKS; }
+    public boolean isStopPosition() {
+
+        if (opMode != null) return Math.abs(duckSpin.getCurrentPosition()) > STOP_TICKS_AUTO;
+        else return Math.abs(duckSpin.getCurrentPosition()) > STOP_TICKS_TELEOP;
+
+    }
 
 }
