@@ -29,7 +29,6 @@ public class BLWOut extends LinearOpMode {
 
         // Set timer
         ElapsedTime runtime = new ElapsedTime();
-        double FORWARD_TIME = 1;
 
         // Set start pose
         Pose2d startPose = new Pose2d(12, 65, Math.toRadians(-90));
@@ -39,17 +38,17 @@ public class BLWOut extends LinearOpMode {
         Trajectory toHub1 = drive.trajectoryBuilder(startPose)
                 .lineToLinearHeading(new Pose2d(2, 38, Math.toRadians(-135)))
                 .build();
-        Trajectory toWall1 = drive.trajectoryBuilder(toHub1.end())
-                .lineToLinearHeading(new Pose2d(12, 65, 0))
-                .build();
-        Trajectory toWall2 = drive.trajectoryBuilder(toWall1.end())
-                .forward(25)
+        Trajectory toWall = drive.trajectoryBuilder(toHub1.end())
+                .lineToLinearHeading(new Pose2d(13, 65, 0))
                 .build();
         Trajectory toHub2 = drive.trajectoryBuilder(new Pose2d(12, 65, 0))
                 .lineToLinearHeading(new Pose2d(2, 38, Math.toRadians(-125)))
                 .build();
-        Trajectory park = drive.trajectoryBuilder(toWall2.end())
-                .forward(10)
+        Trajectory back = drive.trajectoryBuilder(new Pose2d(25, 65, 0))
+                .lineToLinearHeading(new Pose2d(12, 65, 0))
+                .build();
+        Trajectory park = drive.trajectoryBuilder(toWall.end())
+                .forward(30)
                 .build();
 
         // Send telemetry message to signify robot waiting
@@ -75,47 +74,41 @@ public class BLWOut extends LinearOpMode {
         arm.setLift(position);
         drive.followTrajectory(toHub1);
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+        while (opModeIsActive() && runtime.seconds() < Intake.OUTTAKE_TIME) intake.reverse();
         intake.stop();
         arm.setLift(0, 0.5);
-        drive.followTrajectory(toWall1);
-        drive.followTrajectory(toWall2);
+        drive.followTrajectory(toWall);
 
         // Back and forth
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
 
             // Get freight
             intake.intake();
             while (!intake.isFreight()) {
 
-                runtime.reset();
-                while (opModeIsActive() && runtime.seconds() < FORWARD_TIME) {
-
-                    drive.setWeightedDrivePower(new Pose2d(0.2, 0, 0));
-                    drive.update();
-
-                }
-                drive.turn(Math.toRadians(-30));
-                drive.turn(Math.toRadians(60));
-                drive.turn(Math.toRadians(-30));
+                if (drive.getPoseEstimate().getX() < 45)
+                    drive.setWeightedDrivePower(new Pose2d(0.3, 0, 0));
+                else
+                    drive.setWeightedDrivePower(new Pose2d(0.3, -0.15, 0));
+                drive.update();
 
             }
             intake.stop();
 
             // Go to hub
             drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineTo(new Vector2d(12, 65))
+                    .lineToLinearHeading(new Pose2d(30, 65, 0))
                     .build());
+            drive.followTrajectory(back);
             arm.setLift(3);
             drive.followTrajectory(toHub2);
 
             // Drop off freight and back to wall
             runtime.reset();
-            while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+            while (opModeIsActive() && runtime.seconds() < Intake.OUTTAKE_TIME) intake.reverse();
             intake.stop();
             arm.setLift(0, 0.5);
-            drive.followTrajectory(toWall1);
-            drive.followTrajectory(toWall2);
+            drive.followTrajectory(toWall);
 
         }
 
