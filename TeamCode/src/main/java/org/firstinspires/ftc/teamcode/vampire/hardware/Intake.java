@@ -12,9 +12,10 @@ public class Intake extends BaseHardware {
 
     // Motor and motor power
     private DcMotor intakeMotor;
-    private static final double INTAKE_POWER = 1.5;
+    private static final double INTAKE_POWER = 0.8;
+    private static final double INTAKE_SLOW = 0.6;
     private static final double OUTTAKE_POWER = 0.4;
-    public static final double OUTTAKE_TIME = 1;
+    public static final double OUTTAKE_TIME = 1.25;
 
     // Servo
     private Servo flag;
@@ -22,7 +23,10 @@ public class Intake extends BaseHardware {
     private static final double POS_DOWN = 0.6;
 
     // For distance sensor
-    private static final double DISTANCE_THRESHOLD = 1;
+    private int counter = 0;
+    private ElapsedTime runtime = new ElapsedTime();
+    private static final double WAIT_TIME = 1;
+    private static final double DISTANCE_THRESHOLD = 2;
     private ColorRangeSensor CRSensor;
     private boolean isOverride = false;
 
@@ -55,8 +59,8 @@ public class Intake extends BaseHardware {
         flag.setPosition(POS_DOWN);
 
         // Set up distance sensor
-        //distanceSensor = hwMap.get(DistanceSensor.class, "distance");
         CRSensor = hwMap.get(ColorRangeSensor.class, "CR");
+        runtime.reset();
 
     }
 
@@ -64,13 +68,26 @@ public class Intake extends BaseHardware {
 
         // Control intake
         print("Distance", CRSensor.getDistance(DistanceUnit.INCH));
-        if (intake && (!isFreight() || isOverride)) intake();
+        if ((intake && ((!isFreight() && runtime.seconds() > WAIT_TIME)) || isOverride)) intake();
         else if (reverse) reverse();
         else stop();
 
         // Raise the flag if block is in
-        if (isFreight()) flag.setPosition(POS_UP);
-        else flag.setPosition(POS_DOWN);
+        if (isFreight()) {
+
+            counter++;
+            flag.setPosition(POS_UP);
+
+        }
+        else {
+
+            counter = 0;
+            flag.setPosition(POS_DOWN);
+
+        }
+
+        // First time the freight is detected
+        if (counter == 1) runtime.reset();
 
     }
 
@@ -83,6 +100,12 @@ public class Intake extends BaseHardware {
     public void intake() {
 
         intakeMotor.setPower(-INTAKE_POWER);
+
+    }
+
+    public void intakeSlow() {
+
+        intakeMotor.setPower(-INTAKE_SLOW);
 
     }
 

@@ -39,7 +39,7 @@ public class RRWIn extends LinearOpMode {
         Trajectory toHub2 = drive.trajectoryBuilder(new Pose2d(12, -65, 0))
                 .lineToLinearHeading(new Pose2d(2, -38, Math.toRadians(125)))
                 .build();
-        Trajectory back = drive.trajectoryBuilder(new Pose2d(25, -65, 0))
+        Trajectory back = drive.trajectoryBuilder(new Pose2d(30, -65, 0))
                 .lineToLinearHeading(new Pose2d(12, -65, 0))
                 .build();
         Trajectory park = drive.trajectoryBuilder(toWall.end())
