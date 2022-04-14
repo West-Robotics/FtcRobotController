@@ -82,31 +82,44 @@ public class BLWIn extends LinearOpMode {
 
             // Get freight
             intake.intake();
+            boolean isContinue = true;
             while (!intake.isFreight()) {
 
                 if (drive.getPoseEstimate().getX() < 45)
                     drive.setWeightedDrivePower(new Pose2d(0.3, 0, 0));
                 else
                     drive.setWeightedDrivePower(new Pose2d(0.3, -0.15, 0));
+
+                if (drive.getPoseEstimate().getX() > 55) {
+
+                    i = 2;
+                    isContinue = false;
+
+                }
+
                 drive.update();
 
             }
             intake.stop();
 
-            // Go to hub
-            drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .lineToLinearHeading(new Pose2d(30, 65, 0))
-                    .build());
-            drive.followTrajectory(back);
-            arm.setLift(3);
-            drive.followTrajectory(toHub2);
+            if (isContinue) {
 
-            // Drop off freight and back to wall
-            runtime.reset();
-            while (opModeIsActive() && runtime.seconds() < Intake.OUTTAKE_TIME) intake.reverse();
-            intake.stop();
-            arm.setLift(0, 0.5);
-            drive.followTrajectory(toWall);
+                // Go to hub
+                drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .lineToLinearHeading(new Pose2d(30, 65, 0))
+                        .build());
+                drive.followTrajectory(back);
+                arm.setLift(3);
+                drive.followTrajectory(toHub2);
+
+                // Drop off freight and back to wall
+                runtime.reset();
+                while (opModeIsActive() && runtime.seconds() < Intake.OUTTAKE_TIME) intake.reverse();
+                intake.stop();
+                arm.setLift(0, 0.5);
+                drive.followTrajectory(toWall);
+
+            }
 
         }
 
