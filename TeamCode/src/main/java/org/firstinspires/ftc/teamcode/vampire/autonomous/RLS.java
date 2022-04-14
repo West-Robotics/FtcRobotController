@@ -49,7 +49,7 @@ public class RLS extends LinearOpMode {
 				.forward(10)
 				.build();
 		Trajectory toHub2 = drive.trajectoryBuilder(toHub1.end())
-				.lineToLinearHeading(new Pose2d(-28, -25, Math.toRadians(0)))
+				.lineToLinearHeading(new Pose2d(-27, -25, Math.toRadians(0)))
 				.build();
 		Trajectory backOut = drive.trajectoryBuilder(toHub2.end())
 			.lineToLinearHeading(new Pose2d(-36, -36, Math.toRadians(-100)))
@@ -58,7 +58,7 @@ public class RLS extends LinearOpMode {
 			.strafeRight(30)
 			.build();
 		Trajectory park2 = drive.trajectoryBuilder(park1.end())
-			.lineToLinearHeading(new Pose2d(-62, -44, 0))
+			.lineToLinearHeading(new Pose2d(-62, -42, 0))
 			.build();
 
 		// Send telemetry message to signify robot waiting
@@ -83,7 +83,7 @@ public class RLS extends LinearOpMode {
 		// Move to carousel
 		drive.followTrajectory(toCarousel);
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 1.5) {
+		while (opModeIsActive() && runtime.seconds() < 1) {
 
 			drive.setWeightedDrivePower(new Pose2d(-0.1, 0, 0));
 			drive.update();
@@ -91,7 +91,7 @@ public class RLS extends LinearOpMode {
 		}
 		drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < 2) spin.spin(true, false);
+		while (opModeIsActive() && !spin.isStopPosition()) spin.spin(true, false);
 		spin.stop();
 
 		// Drop off first freight
@@ -99,21 +99,21 @@ public class RLS extends LinearOpMode {
 		drive.followTrajectory(toHub1);
 		drive.followTrajectory(toHub2);
 		runtime.reset();
-		while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+		while (opModeIsActive() && runtime.seconds() < Intake.OUTTAKE_TIME) intake.reverse();
 		intake.stop();
 
 		// Calculate duck position
-		arm.setLift(0, 0.5);
+		arm.setLift(0, 0.3);
 		drive.followTrajectory(backOut);
 		runtime.reset();
 		double duckX = 0;
 		double duckY = 0;
 		webcam.toggleMode(true);
 		sleep(1000);
-		while (opModeIsActive() && runtime.seconds() < 2) {
+		while (opModeIsActive() && runtime.seconds() < 1.5) {
 
-			duckX = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getX() + (webcam.getDuckDistance() + 2) * Math.sin(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
-			duckY = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 2) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
+			duckX = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getX() + (webcam.getDuckDistance() + 4) * Math.sin(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
+			duckY = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 4) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
 
 		}
 		double MAX_Y = 65;
@@ -129,11 +129,11 @@ public class RLS extends LinearOpMode {
 		if (!(duckX == 0 && duckY == 0)) {
 
 			// Grab duck only if duck exists
-			intake.intake();
+			intake.intakeSlow();
+			intake.freightStop(6);
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
 				.strafeTo(new Vector2d(duckX, duckY))
 				.build());
-			intake.freightStop(3);
 			drive.turn(Math.toRadians(-20));
 			drive.turn(Math.toRadians(40));
 			intake.stop();
@@ -141,10 +141,13 @@ public class RLS extends LinearOpMode {
 			// Drop off duck
 			arm.setLift(3, 0.5);
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(20))))
-				.lineToLinearHeading(new Pose2d(-28, -32, Math.toRadians(0)))
-				.build());
+					.lineToLinearHeading(
+							new Pose2d(-26, -32, Math.toRadians(0)),
+							MecanumDrive.getVelocityConstraint(DriveConstants.MID_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+							MecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+					.build());
 			runtime.reset();
-			while (opModeIsActive() && runtime.seconds() < DuckDuckGo.AUTO_TIME) intake.reverse();
+			while (opModeIsActive() && runtime.seconds() < Intake.OUTTAKE_TIME) intake.reverse();
 			intake.stop();
 
 		}
