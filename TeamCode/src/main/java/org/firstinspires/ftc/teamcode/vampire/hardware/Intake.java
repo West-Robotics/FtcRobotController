@@ -13,7 +13,7 @@ public class Intake extends BaseHardware {
     // Motor and motor power
     private DcMotor intakeMotor;
     private static final double INTAKE_POWER = 0.8;
-    private static final double INTAKE_SLOW = 0.6;
+    private static final double INTAKE_SLOW = 0.8;
     private static final double OUTTAKE_POWER = 0.4;
     public static final double OUTTAKE_TIME = 1.25;
 
@@ -26,8 +26,10 @@ public class Intake extends BaseHardware {
     private int counter = 0;
     private ElapsedTime runtime = new ElapsedTime();
     private static final double WAIT_TIME = 1;
-    private static final double DISTANCE_THRESHOLD = 2;
-    private ColorRangeSensor CRSensor;
+    private static final double DISTANCE_THRESHOLD_HIGH = 1.25;
+    private static final double DISTANCE_THRESHOLD_LOW = 1.6;
+    private ColorRangeSensor CRSensorHigh;
+    private ColorRangeSensor CRSensorLow;
     private boolean isOverride = false;
 
     // Teleop constructor
@@ -59,7 +61,8 @@ public class Intake extends BaseHardware {
         flag.setPosition(POS_DOWN);
 
         // Set up distance sensor
-        CRSensor = hwMap.get(ColorRangeSensor.class, "CR");
+        CRSensorHigh = hwMap.get(ColorRangeSensor.class, "CRHigh");
+        CRSensorLow = hwMap.get(ColorRangeSensor.class, "CRLow");
         runtime.reset();
 
     }
@@ -67,7 +70,7 @@ public class Intake extends BaseHardware {
     public void intake(boolean intake, boolean reverse) {
 
         // Control intake
-        print("Distance", CRSensor.getDistance(DistanceUnit.INCH));
+        print("Distance", CRSensorLow.getDistance(DistanceUnit.INCH));
         if ((intake && ((!isFreight() && runtime.seconds() > WAIT_TIME)) || isOverride)) intake();
         else if (reverse) reverse();
         else stop();
@@ -78,8 +81,7 @@ public class Intake extends BaseHardware {
             counter++;
             flag.setPosition(POS_UP);
 
-        }
-        else {
+        } else {
 
             counter = 0;
             flag.setPosition(POS_DOWN);
@@ -93,7 +95,8 @@ public class Intake extends BaseHardware {
 
     public boolean isFreight() {
 
-        return CRSensor.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD;
+        return CRSensorLow.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD_LOW
+                || CRSensorHigh.getDistance(DistanceUnit.INCH) < DISTANCE_THRESHOLD_HIGH;
 
     }
 
@@ -131,12 +134,7 @@ public class Intake extends BaseHardware {
                 ElapsedTime runtime = new ElapsedTime();
                 runtime.reset();
                 while (runtime.seconds() < seconds)
-                    if (isFreight()) {
-
-                        linearOpMode.sleep(500);
-                        Intake.this.stop();
-
-                    }
+                    if (isFreight()) Intake.this.stop();
 
             }
 

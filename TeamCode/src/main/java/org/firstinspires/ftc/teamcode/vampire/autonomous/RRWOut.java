@@ -80,19 +80,19 @@ public class RRWOut extends LinearOpMode {
         drive.followTrajectory(toWall);
 
         // Back and forth
+        boolean isContinue = true;
         for (int i = 0; i < 2; i++) {
 
             // Get freight
             intake.intake();
-            boolean isContinue = true;
-            while (!intake.isFreight()) {
+            while (!intake.isFreight() && isContinue) {
 
                 if (drive.getPoseEstimate().getX() < 45)
                     drive.setWeightedDrivePower(new Pose2d(0.3, 0, 0));
                 else
                     drive.setWeightedDrivePower(new Pose2d(0.3, 0.15, 0));
 
-                if (drive.getPoseEstimate().getX() > 55) {
+                if (drive.getPoseEstimate().getX() > 68) {
 
                     i = 2;
                     isContinue = false;
@@ -126,7 +126,7 @@ public class RRWOut extends LinearOpMode {
         }
 
         // Park
-        drive.followTrajectory(park);
+        if (isContinue) drive.followTrajectory(park);
 
     }
 

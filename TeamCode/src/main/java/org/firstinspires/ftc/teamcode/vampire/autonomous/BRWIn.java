@@ -42,7 +42,7 @@ public class BRWIn extends LinearOpMode {
 
 		// Trajectories
 		Trajectory toCarousel = drive.trajectoryBuilder(startPose)
-				.strafeTo(new Vector2d(-54, 58))
+				.strafeTo(new Vector2d(-54, 59))
 				.build();
 		Trajectory toHub1 = drive.trajectoryBuilder(toCarousel.end())
 				.lineToLinearHeading(new Pose2d(-42, 50, 0))
@@ -132,7 +132,7 @@ public class BRWIn extends LinearOpMode {
 			intake.intakeSlow();
 			intake.freightStop(6);
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-					.strafeTo(new Vector2d(duckX, duckY))
+					.strafeTo(new Vector2d(duckX - 2, duckY))
 					.build());
 			drive.turn(Math.toRadians(-20));
 			drive.turn(Math.toRadians(40));
@@ -142,7 +142,7 @@ public class BRWIn extends LinearOpMode {
 			arm.setLift(3, 0.5);
 			drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate().plus(new Pose2d(0, 0, Math.toRadians(20))))
 					.lineToLinearHeading(
-							new Pose2d(-28, 32, Math.toRadians(0)),
+							new Pose2d(-27, 30, Math.toRadians(0)),
 							MecanumDrive.getVelocityConstraint(DriveConstants.MID_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
 							MecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
 					.build());
