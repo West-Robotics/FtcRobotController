@@ -116,7 +116,7 @@ public class BRWIn extends LinearOpMode {
 
 		}
 		// Scale to MAX_Y
-		double MAX_Y = 65;
+		double MAX_Y = 63;
 		if (Math.abs(duckY) > MAX_Y) {
 
 			// Set maximum Y position and scale it down

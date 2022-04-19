@@ -24,7 +24,6 @@ public class VampireTeleop extends OpMode {
     private Intake intake;
     private Arm arm;
     private DuckDuckGo spin;
-    private Webcam webcam;
     private TapeArm tapeArm;
     private Controller controller1;
     private Controller controller2;
@@ -51,7 +50,6 @@ public class VampireTeleop extends OpMode {
         intake = new Intake(this, hardwareMap);
         arm = new Arm(this, hardwareMap);
         spin = new DuckDuckGo(this, hardwareMap);
-        if (IS_WEBCAM) webcam = new Webcam(this, hardwareMap);
         tapeArm = new TapeArm(this, hardwareMap);
         controller1 = new Controller(gamepad1);
         controller2 = new Controller(gamepad2);
@@ -65,8 +63,6 @@ public class VampireTeleop extends OpMode {
         //arm.debug();
         spin.debug();
         tapeArm.debug();
-
-        if (IS_WEBCAM) webcam.debug();
 
         // For testing
         testDrive = new MecanumDrive(hardwareMap);
@@ -107,31 +103,21 @@ public class VampireTeleop extends OpMode {
         spin.spin(controller1.A(), controller1.X());
         arm.lift(controller1.dpadUp(), controller1.dpadDown());
         arm.changeStage(controller1.dpadUpOnce(), controller1.dpadDownOnce());
-        if (IS_WEBCAM) webcam.toggleMode(controller1.backOnce());
 
         // Second controller
         arm.lift(controller2.Y(), controller2.A());
         arm.changeStage(controller2.YOnce(), controller2.AOnce());
-        arm.toggleAuto(controller2.backOnce());
-        intake.toggleOverride(controller2.backOnce());
+        intake.toggleOverride(controller1.backOnce());
 
         // The tape measure...
         tapeArm.horzMove(controller2.dpadRight(), controller2.dpadLeft());
         tapeArm.vertMove(controller2.dpadUp(), controller2.dpadDown());
         tapeArm.roll(controller2.leftBumper(), controller2.rightBumper());
         tapeArm.toggleSpeed(controller2.X());
-/*
-        double duckX = duckx + webcam.getDuckDistance() * Math.sin(Math.PI / 2 - angle + webcam.getDuckPose()[2]);
-        double duckY = ducky + webcam.getDuckDistance() * Math.cos(Math.PI / 2 - angle + webcam.getDuckPose()[2]);
-        telemetry.addData("duckx", duckX);
-        telemetry.addData("ducky", duckY);
- */
+
         telemetry.addData("Right", testDrive.getRightDistances()[0] + " " + testDrive.getRightDistances()[1]);
         telemetry.addData("Left", testDrive.getLeftDistances()[0] + " " + testDrive.getLeftDistances()[1]);
         telemetry.addData("Forward", testDrive.getForwardDistances()[0] + " " + testDrive.getForwardDistances()[1]);
-
-        // Update webcam values
-        if (IS_WEBCAM) webcam.update();
 
         telemetry.update();
 

@@ -116,7 +116,7 @@ public class BRS extends LinearOpMode {
 			duckY = webcam.getDuckDistance() == 0 ? 0 : drive.getPoseEstimate().getY() + (webcam.getDuckDistance() + 4) * Math.cos(Math.PI / 2 - drive.getPoseEstimate().getHeading() + webcam.getDuckPose()[2]);
 
 		}
-		double MAX_Y = 65;
+		double MAX_Y = 63;
 		if (Math.abs(duckY) > MAX_Y) {
 
 			// Set maximum Y position and scale it down

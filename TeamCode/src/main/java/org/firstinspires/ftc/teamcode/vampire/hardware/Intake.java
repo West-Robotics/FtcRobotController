@@ -71,7 +71,7 @@ public class Intake extends BaseHardware {
 
         // Control intake
         print("Distance", CRSensorLow.getDistance(DistanceUnit.INCH));
-        if ((intake && ((!isFreight() && runtime.seconds() > WAIT_TIME)) || isOverride)) intake();
+        if (intake && (((!isFreight() && runtime.seconds() > WAIT_TIME)) || isOverride)) intake();
         else if (reverse) reverse();
         else stop();
 
