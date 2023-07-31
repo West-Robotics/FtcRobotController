@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class NodeScheduler {
-    // TODO: add logging as a special node because it will write the entire data map
+    // TODO: finish logging, add time stamps
     // TODO: add special case if a node does not subscribe to anything
     // TODO: add error handling so you don't get obliterated by NPEs
     // TODO: add type handling so you don't have to explicitly cast every get
