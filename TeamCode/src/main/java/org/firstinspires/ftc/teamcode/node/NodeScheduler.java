@@ -37,8 +37,8 @@ public class NodeScheduler {
     // Reserved topics: default, d_t
 
     List<Node> nodes;
-    HashMap<String, Object> data;
-    HashMap<Node, List<String>> subscriptions;
+    HashMap<String, Object> data = new HashMap<String, Object>();
+    HashMap<Node, List<String>> subscriptions = new HashMap<Node, List<String>>();
 
     boolean logging = false;
     Path path;
