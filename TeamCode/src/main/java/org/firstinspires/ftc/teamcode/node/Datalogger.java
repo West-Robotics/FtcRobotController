@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier;
 
+import org.apache.commons.math3.analysis.function.Log;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.BufferedWriter;
@@ -33,10 +34,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
 
 public class Datalogger
 {
-    private LoggableField[] fields;
+    public LoggableField[] fields;
     private BufferedCsvWriter bufferedCsvWriter;
 
     /*
@@ -133,30 +135,18 @@ public class Datalogger
         }
     }
 
-    public static abstract class LoggableField
+    public static class LoggableField
     {
         protected final String name;
+        private String str = "";
+        private static final String STR_FALSE = "false";
+        private static final String STR_TRUE = "true";
 
         public LoggableField(String name)
         {
             this.name = name;
         }
 
-        public abstract void writeToBuffer(StringBuilder out);
-    }
-
-    public static class GenericField extends LoggableField
-    {
-        private String str = "";
-        private static final String STR_FALSE = "false";
-        private static final String STR_TRUE = "true";
-
-        public GenericField(String name)
-        {
-            super(name);
-        }
-
-        @Override
         public void writeToBuffer(StringBuilder out)
         {
             out.append(str);
@@ -261,9 +251,9 @@ public class Datalogger
             return this;
         }
 
-        public Builder setFields(LoggableField[] fields)
+        public Builder setFields(List<LoggableField> fields)
         {
-            this.fields = fields;
+            this.fields = fields.toArray(new LoggableField[0]);
             return this;
         }
 

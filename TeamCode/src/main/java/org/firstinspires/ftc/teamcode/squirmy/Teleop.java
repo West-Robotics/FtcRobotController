@@ -16,7 +16,7 @@ public class Teleop extends OpMode {
 
     @Override
     public void init() {
-        nodeScheduler = new NodeScheduler(false, new LoopTimerNode(), new DrivetrainNode(hardwareMap), new GamepadNode(gamepad1));
+        nodeScheduler = new NodeScheduler(true, new LoopTimerNode(), new DrivetrainNode(hardwareMap), new GamepadNode(gamepad1));
         nodeScheduler.init();
     }
 

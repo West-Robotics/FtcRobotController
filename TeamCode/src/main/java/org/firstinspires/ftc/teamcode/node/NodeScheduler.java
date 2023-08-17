@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.node;
 
-import android.os.Environment;
 import androidx.annotation.NonNull;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousFileChannel;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,8 +18,7 @@ public class NodeScheduler {
     // TODO: add type handling so you don't have to explicitly cast every get
     // INFO: why node-based programming? it's deterministic (more predictable robot actions), highly
     // modular, easy for the programmer to use, functional-style, and the structure makes it trivial
-    // to achieve thorough logging, which gives us the capability to perform exact replays of an
-    // opmode run from a software control perspective.
+    // to achieve thorough logging, which gives us the capability to perform replays of an opmode run.
     // also atomic (kind of) and safe, the only thing a node can do is publish and receive data
     // and whatever it does in its loop
     // style points for being ROS-inspired
@@ -40,49 +36,52 @@ public class NodeScheduler {
     HashMap<String, Object> data = new HashMap<String, Object>();
     HashMap<Node, List<String>> subscriptions = new HashMap<Node, List<String>>();
 
+    Datalogger datalog;
+    List<Datalogger.LoggableField> fields = new ArrayList<Datalogger.LoggableField>();
+    List<String> topics = new ArrayList<String>();
     boolean logging = false;
-    Path path;
-    AsynchronousFileChannel asyncFileChannel;
-    ByteBuffer buffer;
-    List<String> topics;
+    boolean replay = false;
 
     public NodeScheduler(boolean log, Node... nodeList) {
         nodes = Arrays.asList(nodeList);
-        data.put("default", null);
+        data.put("default", 0);
         logging = log;
     }
 
     public void init() {
-        if (logging) {
-            path = Paths.get(Environment.getExternalStorageDirectory().getPath() + "/FIRST/" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss") + ".csv");
-            try {
-                asyncFileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            buffer = ByteBuffer.allocate(1024);
-            publish();
-            exchange();
-            topics.addAll(data.keySet());
-            buffer.put(String.join(",", topics).getBytes());
-        }
         for (Node n : nodes) {
             n.init();
         }
         for (Node n : nodes) {
             subscriptions.put(n, n.getSubscriptions());
         }
+        if (logging) {
+            // FIX: data has no entries at the beginning
+//            publish();
+//            exchange();
+//            update();
+            // publish and exchange data
+            publish();
+//            exchange();
+            // loop through node actions
+//            for (Node n : nodes) {
+//                n.loop();
+//            }
+            topics.addAll(new ArrayList<>(data.keySet()));
+            for (String topic : topics) {
+                fields.add(new Datalogger.LoggableField(topic));
+            }
+            datalog = new Datalogger.Builder()
+                    .setFilename(String.valueOf(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date())))
+//                    .setFilename(String.valueOf(new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(ZonedDateTime.now()))) <-- this causes robot restart
+                    .setAutoTimestamp(Datalogger.AutoTimestamp.DECIMAL_SECONDS)
+                    .setFields(fields)
+                    .build();
+        }
     }
     public void end() {
         for (Node n : nodes) {
             n.end();
-        }
-        if (logging) {
-            try {
-                asyncFileChannel.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
     public void update() {
@@ -94,21 +93,22 @@ public class NodeScheduler {
             n.loop();
         }
         if (logging) {
-            // TODO: async thread for logging operations
-            // TODO: use file locks for data integrity
-            // WARNING: currently there will probably be multiple attempted concurrent writes
-            // so don't use logging right now
-            buffer.clear();
-            for (String topic : topics) {
-                buffer.put((Byte) data.get(topic));
-                buffer.put((byte) ',');
+            for (int i = 0; i < topics.size(); i++) {
+                // +1 to fields because timestamp is added as the first header
+                if (data.get(topics.get(i)) instanceof Double) {
+                    datalog.fields[i+1].set((Double) data.get(topics.get(i)));
+                } else if (data.get(topics.get(i)) instanceof Boolean) {
+                    datalog.fields[i+1].set((Boolean) data.get(topics.get(i)));
+                } else if (data.get(topics.get(i)) instanceof Integer) {
+                    datalog.fields[i+1].set((Integer) data.get(topics.get(i)));
+                } else if (data.get(topics.get(i)) instanceof String) {
+                    datalog.fields[i+1].set((String) data.get(topics.get(i)));
+                } else if (data.get(topics.get(i)) instanceof Float) {
+                    datalog.fields[i+1].set((Float) data.get(topics.get(i)));
+                }
+
             }
-            buffer.flip();
-            try {
-                asyncFileChannel.write(buffer, asyncFileChannel.size());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            datalog.writeLine();
         }
     }
     // for anything external (not a node) that needs data, e.g. opmode telemetry
