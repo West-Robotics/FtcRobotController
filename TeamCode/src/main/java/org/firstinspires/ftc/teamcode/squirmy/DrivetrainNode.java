@@ -14,7 +14,6 @@ public class DrivetrainNode extends Node {
     SampleTankDrive drive;
     public DrivetrainNode(HardwareMap hardwareMap) {
         drive = new SampleTankDrive(hardwareMap);
-        subscriptions.add("gamepad_left_x");
         subscriptions.add("gamepad_left_y");
         subscriptions.add("gamepad_right_x");
     }
@@ -24,7 +23,7 @@ public class DrivetrainNode extends Node {
     }
     @Override
     public void loop() {
-        drive.setWeightedDrivePower(new Pose2d(-(float) data.get("gamepad_left_y"),
+        drive.setWeightedDrivePower(new Pose2d((float) data.get("gamepad_left_y"),
                                                0,
                                                (float) data.get("gamepad_right_x")));
     }
