@@ -44,7 +44,7 @@ public class NodeScheduler {
 
     public NodeScheduler(boolean log, Node... nodeList) {
         nodes = Arrays.asList(nodeList);
-        data.put("default", 0);
+        data.put("default", null);
         logging = log;
     }
 
