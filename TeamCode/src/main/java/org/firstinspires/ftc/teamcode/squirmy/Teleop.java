@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "Squirmy TeleOp")
 public class Teleop extends OpMode {
+    PhotonCore.enable();
+
     NodeScheduler nodeScheduler;
     ElapsedTime timer = new ElapsedTime();
 
