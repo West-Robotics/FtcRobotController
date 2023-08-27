@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.squirmy;
 
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,13 +12,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "Squirmy TeleOp")
 public class Teleop extends OpMode {
-    PhotonCore.enable();
-
     NodeScheduler nodeScheduler;
     ElapsedTime timer = new ElapsedTime();
 
     @Override
     public void init() {
+//        PhotonCore.enable();
         nodeScheduler = new NodeScheduler(true, new LoopTimerNode(), new DrivetrainNode(hardwareMap), new GamepadNode(gamepad1));
         nodeScheduler.init();
     }
