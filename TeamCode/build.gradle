@@ -57,5 +57,5 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
     implementation 'org.team11260:fast-load:0.1'
-//    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v2.0.4'
+//    implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v2.0.0-alpha'
 }
