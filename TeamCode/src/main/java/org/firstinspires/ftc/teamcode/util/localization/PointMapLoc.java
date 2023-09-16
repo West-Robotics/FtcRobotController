@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
 import org.firstinspires.ftc.teamcode.utils.localization.Point;
 
 import com.acmerobotics.roadrunner.drive.Drive;
@@ -21,7 +20,7 @@ enum State {
     SEARCH, HORIZ, VERT, DONE
 }
 
-public class PointMapLoc extends BaseHardware {
+public class PointMapLoc {
     public Drive drive;
     protected ModernRoboticsI2cRangeSensor f;
     protected ModernRoboticsI2cRangeSensor l;
@@ -41,12 +40,10 @@ public class PointMapLoc extends BaseHardware {
     protected double distFromCenter = 2;
 
     public PointMapLoc(LinearOpMode opMode, HardwareMap hwMap, Drive d) {
-        super(opMode);
         init(hwMap, d);
     }
 
     public PointMapLoc(OpMode opMode, HardwareMap hwMap, Drive d) {
-        super(opMode);
         init(hwMap, d);
     }
 
