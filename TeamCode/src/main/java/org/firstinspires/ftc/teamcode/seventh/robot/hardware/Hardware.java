@@ -4,13 +4,15 @@ import android.util.Size;
 
 import androidx.annotation.GuardedBy;
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -32,6 +34,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class Hardware {
     private static Hardware instance = null;
 
+    // TODO: uh what was my reasoning for not having dt first in the loop again
+    // maybe it was only doing dt every other loop?
     public DcMotorEx leftFront;
     public DcMotorEx leftRear;
     public DcMotorEx rightRear;
@@ -53,7 +57,8 @@ public class Hardware {
     public Motor.Encoder liftLeftEnc;
     public Motor.Encoder liftRightEnc;
 
-    public DcMotorEx flip;
+    public DcMotorEx intake;
+    public ServoEx outerPivot;
 
     public DcMotorEx hang;
 
@@ -88,20 +93,20 @@ public class Hardware {
 
         // power:
         //  ___________________
-        // |   | chub  | ehub |
-        // | 0 | flip  | lf   |
-        // | 1 | liftL | lr   |
-        // | 2 | liftR | rr   |
-        // | 3 | hang  | rf   |
+        // |   | chub   | ehub |
+        // | 0 | intake | lf   |
+        // | 1 | liftL  | lr   |
+        // | 2 | liftR  | rr   |
+        // | 3 | hang   | rf   |
         // --------------------
 
         // encoder:
         //  ___________________
-        // |   | chub  | ehub |
-        // | 0 | pl    |      |
-        // | 1 | liftL |      |
-        // | 2 | liftR/flip |      |
-        // | 3 | pp    |      |
+        // |   | chub   | ehub |
+        // | 0 | pl     |      |
+        // | 1 | liftL  |      |
+        // | 2 | liftR  |      |
+        // | 3 | pp     |      |
         // --------------------
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -117,7 +122,8 @@ public class Hardware {
         liftLeftEnc = new MotorEx(hardwareMap, "liftLeft").encoder;
         liftRightEnc = new MotorEx(hardwareMap, "liftRight").encoder;
 
-        flip = hardwareMap.get(DcMotorEx.class, "flip");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        outerPivot = new SimpleServo(hardwareMap, "outerPivot", 0, 270, AngleUnit.DEGREES);
 
         hang = hardwareMap.get(DcMotorEx.class, "hang");
 
@@ -138,7 +144,7 @@ public class Hardware {
             visionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "inCam"))
                     .setCameraResolution(new Size(1280, 720))
-                    .enableCameraMonitoring(true)
+                    .enableLiveView(true)
                     .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .setAutoStopLiveView(false)
                     .addProcessor(aprilTag)
@@ -195,7 +201,7 @@ public class Hardware {
         liftRightEnc.reset();
     }
 
-    public void getVoltage() {
+    public double getVoltage() {
         return voltage;
     }
 }
