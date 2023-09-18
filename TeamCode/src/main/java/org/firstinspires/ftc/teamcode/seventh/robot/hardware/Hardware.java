@@ -109,23 +109,23 @@ public class Hardware {
         // | 3 | pp     |      |
         // --------------------
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-
-        plPod = new Encoder(hardwareMap.get(DcMotorEx.class, "plEnc"));
-        ppPod = new Encoder(hardwareMap.get(DcMotorEx.class, "ppEnc"));
-
-        liftLeft = hardwareMap.get(DcMotorEx.class, "liftLeft");
-        liftRight = hardwareMap.get(DcMotorEx.class, "liftRight");
-        liftLeftEnc = new MotorEx(hardwareMap, "liftLeft").encoder;
-        liftRightEnc = new MotorEx(hardwareMap, "liftRight").encoder;
+//        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+//        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+//        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+//        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+//
+//        plPod = new Encoder(hardwareMap.get(DcMotorEx.class, "plEnc"));
+//        ppPod = new Encoder(hardwareMap.get(DcMotorEx.class, "ppEnc"));
+//
+//        liftLeft = hardwareMap.get(DcMotorEx.class, "liftLeft");
+//        liftRight = hardwareMap.get(DcMotorEx.class, "liftRight");
+//        liftLeftEnc = new MotorEx(hardwareMap, "liftLeft").encoder;
+//        liftRightEnc = new MotorEx(hardwareMap, "liftRight").encoder;
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         outerPivot = new SimpleServo(hardwareMap, "outerPivot", 0, 270, AngleUnit.DEGREES);
 
-        hang = hardwareMap.get(DcMotorEx.class, "hang");
+//        hang = hardwareMap.get(DcMotorEx.class, "hang");
 
         voltageTimer = new ElapsedTime();
 

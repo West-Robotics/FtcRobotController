@@ -32,19 +32,21 @@ public class IntakeSubsystem {
         hardware.intake.setDirection(DcMotorSimple.Direction.FORWARD);
         hardware.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hardware.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        hardware.outerPivot.setInverted(true);
         update(IntakeState.STOP, OuterState.STACK_1);
     }
 
     public void update(IntakeState is, OuterState os) {
         switch (is) {
             case INTAKE:
-                power = 1.0;
+                power = 0.8;
                 break;
             case STOP:
                 power = 0.0;
                 break;
             case SPIT:
-                power = -0.25;
+                power = -0.4;
                 break;
         }
         switch (os) {

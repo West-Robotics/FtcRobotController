@@ -25,10 +25,10 @@ public class Globals {
     public static double LIFT_F = 0.0;
 
     // outer roller auto stack angle for servo in degrees
-    public static int STACK_5 = 0;
-    public static int STACK_4 = 0;
-    public static int STACK_3 = 0;
-    public static int STACK_2 = 0;
+    public static int STACK_5 = 180;
+    public static int STACK_4 = 90;
+    public static int STACK_3 = 60;
+    public static int STACK_2 = 30;
     public static int STACK_1 = 0;
 
     public static boolean AUTO = false;
