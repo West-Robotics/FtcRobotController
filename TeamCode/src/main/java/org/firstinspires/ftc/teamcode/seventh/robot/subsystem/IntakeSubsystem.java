@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.seventh.robot.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
@@ -24,23 +26,26 @@ public class IntakeSubsystem {
 
     private double lastPower = 0.0;
     private double power = 0.0;
-    private int lastAngle = 0;
-    private int angle = 0;
+    private double lastAngle = 0;
+    private double angle = 0;
 
     public IntakeSubsystem(Hardware hardware) {
         this.hardware = hardware;
         hardware.intake.setDirection(DcMotorSimple.Direction.FORWARD);
         hardware.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hardware.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        hardware.outerPivot.setInverted(true);
+        hardware.intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        hardware.outerPivotLeft.setDirection(Servo.Direction.FORWARD);
+        hardware.outerPivotLeft.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        hardware.outerPivotRight.setDirection(Servo.Direction.REVERSE);
+        hardware.outerPivotRight.setPwmRange(new PwmControl.PwmRange(500, 2500));
         update(IntakeState.STOP, OuterState.STACK_1);
     }
 
     public void update(IntakeState is, OuterState os) {
         switch (is) {
             case INTAKE:
-                power = 0.8;
+                power = 1;
                 break;
             case STOP:
                 power = 0.0;
@@ -101,14 +106,15 @@ public class IntakeSubsystem {
         return OuterState.STACK_1;
     }
 
-    private void write(double p, int a) {
+    private void write(double p, double a) {
         if (lastPower != p) {
             lastPower = p;
             hardware.intake.setPower(p);
         }
         if (lastAngle != a) {
             lastAngle = a;
-            hardware.outerPivot.turnToAngle(a);
+            hardware.outerPivotLeft.setPosition(a);
+            hardware.outerPivotRight.setPosition(a);
         }
     }
 }

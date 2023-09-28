@@ -7,12 +7,11 @@ import androidx.annotation.GuardedBy;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -58,7 +57,8 @@ public class Hardware {
     public Motor.Encoder liftRightEnc;
 
     public DcMotorEx intake;
-    public ServoEx outerPivot;
+    public ServoImplEx outerPivotLeft;
+    public ServoImplEx outerPivotRight;
 
     public DcMotorEx hang;
 
@@ -123,7 +123,8 @@ public class Hardware {
 //        liftRightEnc = new MotorEx(hardwareMap, "liftRight").encoder;
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        outerPivot = new SimpleServo(hardwareMap, "outerPivot", 0, 270, AngleUnit.DEGREES);
+        outerPivotLeft = hardwareMap.get(ServoImplEx.class, "outerPivotLeft");
+        outerPivotRight = hardwareMap.get(ServoImplEx.class, "outerPivotRight");
 
 //        hang = hardwareMap.get(DcMotorEx.class, "hang");
 
