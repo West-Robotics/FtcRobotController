@@ -4,30 +4,34 @@ import org.firstinspires.ftc.teamcode.util.geometry.Angle;
 import org.firstinspires.ftc.teamcode.util.geometry.Point;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Path {
-    Vector<PathSegment> path;
+    ArrayList<PathSegment> path;
 
     public Path(PathBuilder builder) {
         path = builder.path;
     }
 
     public static class PathBuilder {
-        Vector<PathSegment> path;
+        ArrayList<PathSegment> path;
         Pose2d initPose;
+        Pose2d lastPose;
 
         public PathBuilder(Pose2d initPose) {
             this.initPose = initPose;
+            lastPose = initPose;
         }
 
         public PathBuilder lineTo(Pose2d pose) {
-            path.add(new Line(new Point(0, 0), new Point(0, 0)));
+            path.add(new Line(lastPose.getPosition(), pose.getPosition()));
+            lastPose = pose;
             return this;
         }
 
         public PathBuilder biarcTo(Pose2d pose) {
-            path.add(new Arc(1, new Angle(0), new Angle(Math.PI)));
+            path.add(new Biarc(lastPose, pose));
+            lastPose = pose;
             return this;
         }
 
