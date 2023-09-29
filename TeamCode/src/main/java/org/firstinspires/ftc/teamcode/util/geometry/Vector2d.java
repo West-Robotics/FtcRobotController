@@ -8,6 +8,10 @@ public class Vector2d {
         this.u = u;
         this.v = v;
     }
+    public Vector2d() {
+        this.u = 0;
+        this.v = 0;
+    }
 
     public double getMag() {
         // can you have an integer exponent on a double and not lose info?

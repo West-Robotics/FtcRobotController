@@ -8,6 +8,10 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+    public Point() {
+        this.x = 0;
+        this.y = 0;
+    }
 
     public double displacement(Point p) {
         return new Vector2d(p.x - x, p.y - y).getMag();

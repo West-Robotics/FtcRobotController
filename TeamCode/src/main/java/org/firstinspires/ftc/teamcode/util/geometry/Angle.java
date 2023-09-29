@@ -7,6 +7,9 @@ public class Angle {
     public Angle(double theta) {
         this.theta = wrap(theta);
     }
+    public Angle() {
+        this.theta = 0;
+    }
 
     public double getAng() {
         return wrap(theta);
