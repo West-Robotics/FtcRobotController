@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util.path;
 import org.firstinspires.ftc.teamcode.util.geometry.Angle;
 import org.firstinspires.ftc.teamcode.util.geometry.Point;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
+import org.firstinspires.ftc.teamcode.util.geometry.Vector2d;
 
 import java.util.ArrayList;
 
@@ -11,6 +12,34 @@ public class Path {
 
     public Path(PathBuilder builder) {
         path = builder.path;
+    }
+
+    public Vector2d getTau(Point p) {
+        return path.get(getClosestIndex(p)).getTau();
+    }
+
+    public Vector2d getError(Point p) {
+        return path.get(getClosestIndex(p))
+                .getClosestPoint(p)
+                .toVector()
+                .sub(p.toVector());
+    }
+
+    public int getClosestIndex(Point p) {
+        double closestDist = Double.MAX_VALUE;
+        int index = 0;
+        for (int i = 0; i < path.size()-1; i++) {
+            if (path.get(i).getClosestPoint(p).displacement(p) < closestDist) {
+                // maybe clean up double call here
+                closestDist = path.get(i).getClosestPoint(p).displacement(p);
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    public Point getClosestPoint(Point p) {
+        return path.get(getClosestIndex(p)).getClosestPoint(p);
     }
 
     public static class PathBuilder {
