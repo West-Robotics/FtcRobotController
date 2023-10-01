@@ -25,6 +25,10 @@ public class Vector2d {
     public Vector2d scale(double s) {
         return new Vector2d(u*s, v*s);
     }
+    public Vector2d getUnitV() { return new Vector2d(u/getMag(), v/getMag()); }
+
+    public Vector2d add(Vector2d vector) { return new Vector2d(u + vector.u, v + vector.v); }
+    public Vector2d sub(Vector2d vector) { return new Vector2d(u - vector.u, v - vector.v); }
 
     public Point toPoint() {
         return new Point(u, v);

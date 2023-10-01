@@ -20,4 +20,6 @@ public class Point {
     public Angle getOrigAng() {
         return new Angle(Math.atan2(y, x));
     }
+
+    public Vector2d toVector() { return new Vector2d(x, y); }
 }
