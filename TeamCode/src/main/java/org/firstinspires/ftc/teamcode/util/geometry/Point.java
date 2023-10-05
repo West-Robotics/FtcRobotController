@@ -13,6 +13,8 @@ public class Point {
         this.y = 0;
     }
 
+    public Point move(Vector2d v) { return new Point(x + v.u, y + v.v); }
+
     public double displacement(Point p) {
         return new Vector2d(p.x - x, p.y - y).getMag();
     }

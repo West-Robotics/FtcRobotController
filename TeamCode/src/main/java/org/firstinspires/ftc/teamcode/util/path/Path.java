@@ -20,9 +20,9 @@ public class Path {
 
     public Vector2d getError(Point p) {
         return path.get(getClosestIndex(p))
-                .getClosestPoint(p)
-                .toVector()
-                .sub(p.toVector());
+                   .getClosestPoint(p)
+                   .toVector()
+                   .sub(p.toVector());
     }
 
     public int getClosestIndex(Point p) {

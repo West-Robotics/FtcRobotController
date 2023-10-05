@@ -2,20 +2,21 @@ package org.firstinspires.ftc.teamcode.util.geometry;
 
 public class Pose2d {
     Point position;
-    Angle heading;
+    // TODO: make sure this is always normalized
+    Vector2d heading;
 
     public Pose2d() {
         this.position = new Point();
-        this.heading = new Angle();
+        this.heading = new Vector2d();
     }
-    public Pose2d(Point position, Angle heading) {
+    public Pose2d(Point position, Vector2d heading) {
         this.position = position;
-        this.heading = heading;
+        this.heading = heading.normalize();
     }
 
-    public double getHeading() {
-        return heading.getAng();
-    }
+    public Vector2d getHeading() { return heading; }
+
+    public Angle toAng() { return heading.getAng(); }
 
     public Point getPosition() {
         return position;

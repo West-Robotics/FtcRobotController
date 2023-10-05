@@ -4,8 +4,9 @@ import org.firstinspires.ftc.teamcode.util.geometry.Angle;
 import org.firstinspires.ftc.teamcode.util.geometry.Point;
 import org.firstinspires.ftc.teamcode.util.geometry.Vector2d;
 
-public class Arc extends PathSegment {
-    Point center = new Point(0, 0);
+public class Arc {
+    // this isn't technically a legal path segment, still implement PathSegment?
+    Point center = new Point();
 
     double r;
     Angle theta_i;
@@ -15,7 +16,8 @@ public class Arc extends PathSegment {
     Point endPoint;
 
     // we need the central angle because it gives directional information
-    public Arc(double r, Angle theta_i, Angle centralA) {
+    public Arc(Point center, double r, Angle theta_i, Angle centralA) {
+        this.center = center;
         this.r = r;
         this.theta_i = theta_i;
         this.centralA = centralA;
@@ -26,7 +28,6 @@ public class Arc extends PathSegment {
                              r*Math.sin(theta_f.getAng()) + center.y);
     }
 
-    @Override
     public Point getClosestPoint(Point p) {
         Point projection = projectToCircle(p);
         if (contains(projection.getOrigAng())) {

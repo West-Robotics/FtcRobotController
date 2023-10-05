@@ -17,6 +17,6 @@ public class GVF {
     public Vector2d getVector(Point p) {
         return path.getTau(p)
                 .add(path.getError(p).scale(kN))
-                .getUnitV();
+                .normalize();
     }
 }

@@ -4,9 +4,11 @@ import org.firstinspires.ftc.teamcode.util.geometry.Point;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Vector2d;
 
-public class PathSegment {
-    public Vector2d getEndVector() { return new Vector2d(); }
-    public Point getClosestPoint(Point p) { return new Point(); }
-    public Pose2d getEndPose() { return new Pose2d(); }
-    public Vector2d getTau() { return new Vector2d(); }
+public interface PathSegment {
+    // always return a normalized vector
+    // i don't think this is actually necessary given we have getEndPose()
+    public Vector2d getEndVector();
+    public Point getClosestPoint(Point p);
+    public Pose2d getEndPose();
+    public Vector2d getTau();
 }

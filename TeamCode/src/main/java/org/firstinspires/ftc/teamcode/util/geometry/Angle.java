@@ -25,4 +25,6 @@ public class Angle {
     public Angle sub(Angle a) {
         return new Angle(wrap(getAng() - a.getAng()));
     }
+
+    public Vector2d toVector() { return new Vector2d(Math.cos(theta), Math.sin(theta)); }
 }
