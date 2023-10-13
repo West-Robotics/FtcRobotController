@@ -6,22 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.sfdev.assembly.state.StateMachine;
-import com.sfdev.assembly.state.StateMachineBuilder;
-import com.sun.source.doctree.StartElementTree;
 
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem;
 
 @TeleOp(name = "OuttakeTest")
 public class OuttakeTest extends LinearOpMode {
 
     Hardware hardware = Hardware.getInstance();
-    OuttakeSubsystem out;
+    OutputSubsystem out;
 
     GamepadEx gamepad;
 
@@ -29,7 +22,7 @@ public class OuttakeTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         hardware.init(hardwareMap);
         gamepad = new GamepadEx(gamepad1);
-        out = new OuttakeSubsystem(hardware);
+        out = new OutputSubsystem(hardware);
 
 //        hardware.pivot.setDirection(Servo.Direction.FORWARD);
 //        hardware.pivot.setPwmRange(new PwmControl.PwmRange(500, 2500));
@@ -54,15 +47,15 @@ public class OuttakeTest extends LinearOpMode {
 //            hardware.fingerLeft.setPosition(gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)+0.4);
 //            hardware.fingerRight.setPosition(gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)+0.34);
             if (gamepad.getButton(GamepadKeys.Button.A)) {
-                out.update(OuttakeSubsystem.OuttakeState.TRANSFER);
+                out.update(OutputSubsystem.OutputState.INTAKE);
             } else if (gamepad.getButton(GamepadKeys.Button.B)) {
-                out.update(OuttakeSubsystem.OuttakeState.LOCK);
+                out.update(OutputSubsystem.OutputState.LOCK);
             } else if (gamepad.getButton(GamepadKeys.Button.X)) {
-                out.update(OuttakeSubsystem.OuttakeState.INTERMEDIARY);
+                out.update(OutputSubsystem.OutputState.INTERMEDIARY);
             } else if (gamepad.getButton(GamepadKeys.Button.Y)) {
-                out.update(OuttakeSubsystem.OuttakeState.OUTTAKE_READY);
+                out.update(OutputSubsystem.OutputState.READY);
             } else if (gamepad.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-                out.update(OuttakeSubsystem.OuttakeState.OUTTAKE_DROP);
+                out.update(OutputSubsystem.OutputState.DROP);
             }
             if (gamepad.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 hardware.intake.setPower(-1);

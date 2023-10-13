@@ -3,56 +3,46 @@ package org.firstinspires.ftc.teamcode.seventh.robot.command;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem;
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OuttakeSubsystem;
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem;
 
 public class ScoreCommand {
     LiftSubsystem lift;
-    OuttakeSubsystem out;
-    OuttakeSubsystem.OuttakeState os;
+    OutputSubsystem out;
+    OutputSubsystem.OutputState outState = OutputSubsystem.OutputState.LOCK;
 
     public enum ScoreState {
-        TRANSFER,
+        INTAKE,
         LOCK,
-        OUTTAKE_READY,
-        OUTTAKE_DROP,
-        OUTTAKE_DROP_L,
-        OUTTAKE_DROP_R
-    } ScoreState scoreState = ScoreState.TRANSFER;
+        READY,
+        GROUND
+    } ScoreState scoreState = ScoreState.LOCK;
 
     public ScoreCommand(Hardware hardware) {
         lift = new LiftSubsystem(hardware);
-        out = new OuttakeSubsystem(hardware);
+        out = new OutputSubsystem(hardware);
     }
 
-    public void update(ScoreState ss, double p) {
+    public void update(ScoreState ss, OutputSubsystem.OutputState os, double p) {
         lift.update(p);
         // this function has to capability to request
         // the lift encoder pos a million times: does this matter with bulk reading?
-        if (lift.getRightDistance() < Globals.INTERMEDIARY_ZONE_1) {
-            if (ss == ScoreState.TRANSFER) {
-                os = OuttakeSubsystem.OuttakeState.TRANSFER;
+        if (lift.getLeftDistance() < Globals.INTERMEDIARY_ZONE_1) {
+            if (os == OutputSubsystem.OutputState.INTAKE) {
+                outState = OutputSubsystem.OutputState.INTAKE;
             } else {
                 // always assume we want to lock unless specifically requested to open
-                os = OuttakeSubsystem.OuttakeState.LOCK;
+                outState = OutputSubsystem.OutputState.LOCK;
             }
-        } else if (Globals.INTERMEDIARY_ZONE_1 <= lift.getRightDistance() && lift.getRightDistance() <= Globals.INTERMEDIARY_ZONE_2) {
-            os = OuttakeSubsystem.OuttakeState.INTERMEDIARY;
-        } else if (Globals.INTERMEDIARY_ZONE_2 < lift.getRightDistance()) {
-            if (ss == ScoreState.OUTTAKE_READY) {
-                os = OuttakeSubsystem.OuttakeState.OUTTAKE_READY;
-            } else if (ss == ScoreState.OUTTAKE_DROP) {
-                os = OuttakeSubsystem.OuttakeState.OUTTAKE_DROP;
-            } else if (ss == ScoreState.OUTTAKE_DROP_L) {
-                os = OuttakeSubsystem.OuttakeState.OUTTAKE_DROP_L;
-            } else if (ss == ScoreState.OUTTAKE_DROP_R) {
-                os = OuttakeSubsystem.OuttakeState.OUTTAKE_DROP_R;
-            } else if (ss == ScoreState.LOCK){
-                os = OuttakeSubsystem.OuttakeState.INTERMEDIARY;
-            } else if (ss == ScoreState.TRANSFER) {
-                os = OuttakeSubsystem.OuttakeState.INTERMEDIARY;
+        } else if (Globals.INTERMEDIARY_ZONE_1 <= lift.getLeftDistance() && lift.getLeftDistance() <= Globals.INTERMEDIARY_ZONE_2) {
+            outState = OutputSubsystem.OutputState.INTERMEDIARY;
+        } else if (Globals.INTERMEDIARY_ZONE_2 < lift.getLeftDistance()) {
+            if (!(os == OutputSubsystem.OutputState.LOCK || os == OutputSubsystem.OutputState.INTAKE)) {
+                outState = os;
+            } else {
+                outState = OutputSubsystem.OutputState.INTERMEDIARY;
             }
         }
-        out.update(os);
+        out.update(outState);
     }
 
     public double getLeftDist() {
