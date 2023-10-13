@@ -31,14 +31,13 @@ public class IntakeSubsystem {
 
     public IntakeSubsystem(Hardware hardware) {
         this.hardware = hardware;
-        hardware.intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        hardware.intake.setDirection(DcMotorSimple.Direction.REVERSE);
         hardware.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hardware.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hardware.intake.setDirection(DcMotorSimple.Direction.FORWARD);
-        hardware.outerPivotLeft.setDirection(Servo.Direction.FORWARD);
-        hardware.outerPivotLeft.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        hardware.outerPivotRight.setDirection(Servo.Direction.REVERSE);
-        hardware.outerPivotRight.setPwmRange(new PwmControl.PwmRange(500, 2500));
+//        hardware.outerPivotLeft.setDirection(Servo.Direction.FORWARD);
+//        hardware.outerPivotLeft.setPwmRange(new PwmControl.PwmRange(500, 2500));
+//        hardware.outerPivotRight.setDirection(Servo.Direction.REVERSE);
+//        hardware.outerPivotRight.setPwmRange(new PwmControl.PwmRange(500, 2500));
         update(IntakeState.STOP, OuterState.STACK_1);
     }
 
@@ -113,8 +112,8 @@ public class IntakeSubsystem {
         }
         if (lastAngle != a) {
             lastAngle = a;
-            hardware.outerPivotLeft.setPosition(a);
-            hardware.outerPivotRight.setPosition(a);
+//            hardware.outerPivotLeft.setPosition(a);
+//            hardware.outerPivotRight.setPosition(a);
         }
     }
 }

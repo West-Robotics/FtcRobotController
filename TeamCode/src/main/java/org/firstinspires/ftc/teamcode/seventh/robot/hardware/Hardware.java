@@ -7,11 +7,13 @@ import androidx.annotation.GuardedBy;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -55,6 +57,10 @@ public class Hardware {
     public DcMotorEx liftRight;
     public Motor.Encoder liftLeftEnc;
     public Motor.Encoder liftRightEnc;
+    public TouchSensor limit;
+    public ServoImplEx pivot;
+    public ServoImplEx fingerLeft;
+    public ServoImplEx fingerRight;
 
     public DcMotorEx intake;
     public ServoImplEx outerPivotLeft;
@@ -109,22 +115,26 @@ public class Hardware {
         // | 3 | pp     |      |
         // --------------------
 
-//        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-//        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-//        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-//        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 //
 //        plPod = new Encoder(hardwareMap.get(DcMotorEx.class, "plEnc"));
 //        ppPod = new Encoder(hardwareMap.get(DcMotorEx.class, "ppEnc"));
 //
-//        liftLeft = hardwareMap.get(DcMotorEx.class, "liftLeft");
-//        liftRight = hardwareMap.get(DcMotorEx.class, "liftRight");
-//        liftLeftEnc = new MotorEx(hardwareMap, "liftLeft").encoder;
-//        liftRightEnc = new MotorEx(hardwareMap, "liftRight").encoder;
+        liftLeft = hardwareMap.get(DcMotorEx.class, "liftLeft");
+        liftRight = hardwareMap.get(DcMotorEx.class, "liftRight");
+        liftLeftEnc = new MotorEx(hardwareMap, "liftLeft").encoder;
+        liftRightEnc = new MotorEx(hardwareMap, "liftRight").encoder;
+        limit = hardwareMap.get(TouchSensor.class, "limit");
+        pivot = hardwareMap.get(ServoImplEx.class, "pivot");
+        fingerLeft = hardwareMap.get(ServoImplEx.class, "fingerLeft");
+        fingerRight = hardwareMap.get(ServoImplEx.class, "fingerRight");
 
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        outerPivotLeft = hardwareMap.get(ServoImplEx.class, "outerPivotLeft");
-        outerPivotRight = hardwareMap.get(ServoImplEx.class, "outerPivotRight");
+//        outerPivotLeft = hardwareMap.get(ServoImplEx.class, "outerPivotLeft");
+//        outerPivotRight = hardwareMap.get(ServoImplEx.class, "outerPivotRight");
 
 //        hang = hardwareMap.get(DcMotorEx.class, "hang");
 
