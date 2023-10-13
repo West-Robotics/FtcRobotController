@@ -15,7 +15,7 @@ public class Vector2d {
 
     public double getMag() {
         // can you have an integer exponent on a double and not lose info?
-        return Math.sqrt(Math.pow(u, 2) + Math.pow(v, 2));
+        return Math.hypot(u, v);
     }
 
     public Angle getAng() {
