@@ -31,7 +31,7 @@ public class Globals {
     public static double LIFT_MIN = -0.2;
     public static double INTERMEDIARY_ZONE_1 = 0.87;
     public static double INTERMEDIARY_ZONE_2 = 0;
-    public static double PIVOT_INTAKE = 0.8;
+    public static double PIVOT_INTAKE = 0.79;
     public static double PIVOT_INTERMEDIARY = 0.70;
     public static double PIVOT_INTERMEDIARY_2 = 0.55;
     public static double PIVOT_OUTTAKE = 0.38;
