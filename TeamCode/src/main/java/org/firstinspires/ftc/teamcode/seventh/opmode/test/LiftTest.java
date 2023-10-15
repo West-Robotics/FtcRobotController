@@ -31,7 +31,7 @@ public class LiftTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            lift.update(gamepad.getLeftY()/2.0);
+//            lift.update(gamepad.getLeftY()/2.0);
             telemetry.addData("power", gamepad.getLeftY()/2.0);
 //            telemetry.addData("dist", lift.getDistance());
             telemetry.update();
