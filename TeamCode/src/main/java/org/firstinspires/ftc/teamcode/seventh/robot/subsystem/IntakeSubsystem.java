@@ -8,26 +8,30 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
 
-public class IntakeSubsystem {
-    private Hardware hardware;
-
+public class IntakeSubsystem extends Subsystem {
     public enum IntakeState {
         INTAKE,
         STOP,
-        SPIT
-    } IntakeState intakeState = IntakeState.STOP;
-    public enum OuterState {
-        STACK_5,
-        STACK_4,
-        STACK_3,
-        STACK_2,
-        STACK_1
-    } OuterState outerState = OuterState.STACK_1;
+        SPIT;
 
-    private double lastPower = 0.0;
+        private int rollerHeight = 1;
+        public void raise() {
+            if (rollerHeight != 5) {
+                rollerHeight++;
+            }
+        }
+        public void lower() {
+            if (rollerHeight != 1) {
+                rollerHeight--;
+            }
+        }
+    } IntakeState intakeState = IntakeState.STOP;
+
     private double power = 0.0;
-    private double lastAngle = 0;
-    private double angle = 0;
+    private double lastPower = 0.0;
+//    private double lastAngle = 0;
+//    private double angle = 0;
+    private Hardware hardware;
 
     public IntakeSubsystem(Hardware hardware) {
         this.hardware = hardware;
@@ -38,11 +42,15 @@ public class IntakeSubsystem {
 //        hardware.outerPivotLeft.setPwmRange(new PwmControl.PwmRange(500, 2500));
 //        hardware.outerPivotRight.setDirection(Servo.Direction.REVERSE);
 //        hardware.outerPivotRight.setPwmRange(new PwmControl.PwmRange(500, 2500));
-        update(IntakeState.STOP, OuterState.STACK_1);
+        update(intakeState);
     }
 
-    public void update(IntakeState is, OuterState os) {
-        switch (is) {
+    // maybe add jam detection?
+    @Override
+    public void read() {}
+
+    public void update(IntakeState s) {
+        switch (s) {
             case INTAKE:
                 power = 1;
                 break;
@@ -53,67 +61,23 @@ public class IntakeSubsystem {
                 power = -0.4;
                 break;
         }
-        switch (os) {
-            case STACK_1:
-                angle = Globals.STACK_1;
-                break;
-            case STACK_2:
-                angle = Globals.STACK_2;
-                break;
-            case STACK_3:
-                angle = Globals.STACK_3;
-                break;
-            case STACK_4:
-                angle = Globals.STACK_4;
-                break;
-            case STACK_5:
-                angle = Globals.STACK_5;
-                break;
-        }
-        write(power, angle);
+        write();
     }
 
-    public OuterState higher(OuterState s) {
-        switch (s) {
-            case STACK_1:
-                return OuterState.STACK_2;
-            case STACK_2:
-                return OuterState.STACK_3;
-            case STACK_3:
-                return OuterState.STACK_4;
-            case STACK_4:
-                return OuterState.STACK_5;
-            case STACK_5:
-                return OuterState.STACK_5;
+    @Override
+    public void write() {
+        if (lastPower != power) {
+            lastPower = power;
+            hardware.intake.setPower(power);
         }
-        return OuterState.STACK_1;
-    }
-
-    public OuterState lower(OuterState s) {
-        switch (s) {
-            case STACK_1:
-                return OuterState.STACK_1;
-            case STACK_2:
-                return OuterState.STACK_1;
-            case STACK_3:
-                return OuterState.STACK_2;
-            case STACK_4:
-                return OuterState.STACK_3;
-            case STACK_5:
-                return OuterState.STACK_4;
-        }
-        return OuterState.STACK_1;
-    }
-
-    private void write(double p, double a) {
-        if (lastPower != p) {
-            lastPower = p;
-            hardware.intake.setPower(p);
-        }
-        if (lastAngle != a) {
-            lastAngle = a;
+//        if (lastAngle != a) {
+//            lastAngle = a;
 //            hardware.outerPivotLeft.setPosition(a);
 //            hardware.outerPivotRight.setPosition(a);
-        }
+//        }
+    }
+
+    public IntakeState getState() {
+        return intakeState;
     }
 }

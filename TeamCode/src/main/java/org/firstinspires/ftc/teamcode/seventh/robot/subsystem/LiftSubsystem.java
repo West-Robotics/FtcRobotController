@@ -6,14 +6,24 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.PIDController;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
 
-public class LiftSubsystem {
-    private Hardware hardware;
+public class LiftSubsystem extends Subsystem {
+    public enum LiftState {
+        DOWN,
+        UP
+    } LiftState liftState = LiftState.DOWN;
 
+
+    private double position = 0.0;
+    private double power = 0.0;
     private double lastPower = 0.0;
+    private boolean pressed = true;
 //    private double power = 0.0;
+    PIDController liftPid = new PIDController(Globals.LIFT_P, Globals.LIFT_I, Globals.LIFT_D);
+    private Hardware hardware;
 
     public LiftSubsystem(Hardware hardware) {
         this.hardware = hardware;
@@ -29,33 +39,43 @@ public class LiftSubsystem {
         hardware.liftRightEnc.setDirection(Motor.Direction.FORWARD);
         hardware.liftRightEnc.setDistancePerPulse(Globals.LIFT_DISTANCE_PER_PULSE);
         hardware.liftRightEnc.reset();
-        update(0);
+        liftPid.setOutputRange(0, 0.4);
+        liftPid.reset();
+        liftPid.enable();
+        update(liftState);
     }
 
-    public void update(double p) {
-        if (hardware.limit.isPressed()) {
+    public void read() {
+        position = hardware.liftLeftEnc.getDistance();
+        pressed = hardware.limit.isPressed();
+    }
+
+    public void update(LiftState s) {
+        switch (s) {
+            case UP:
+                liftPid.setSetpoint(Globals.LIFT_MAX);
+                break;
+            case DOWN:
+                liftPid.setSetpoint(Globals.LIFT_MIN);
+                break;
+        }
+        power = liftPid.performPID(position);
+        write();
+    }
+
+    public void write() {
+        if (pressed) {
             hardware.liftLeftEnc.reset();
-            hardware.liftRightEnc.reset();
+            power = 0;
+        } else if (power < 0) {
+            power = power/2;
         }
-        write(p);
-    }
-
-    private void write(double p) {
-        if ((hardware.liftLeftEnc.getDistance() <= Globals.LIFT_MIN && p < 0)
-                || (Globals.LIFT_MAX < hardware.liftLeftEnc.getDistance() && p > 0)) {
-            p = p/2;
-        }
-        if (lastPower != p) {
-            lastPower = p;
-            hardware.liftLeft.setPower(p);
-            hardware.liftRight.setPower(p);
+        if (lastPower != power) {
+            lastPower = power;
+            hardware.liftLeft.setPower(power);
+            hardware.liftRight.setPower(power);
         }
     }
 
-    public double getLeftDistance() {
-        return hardware.liftLeftEnc.getDistance();
-    }
-    public double getRightDistance() {
-        return hardware.liftRightEnc.getDistance();
-    }
+    public double getDistance() { return position; }
 }

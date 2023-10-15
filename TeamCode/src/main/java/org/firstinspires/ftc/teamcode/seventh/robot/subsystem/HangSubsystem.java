@@ -7,34 +7,48 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
 
-public class HangSubsystem {
-    private Hardware hardware;
-
+public class HangSubsystem extends Subsystem {
+    public enum HangState {
+        STOP,
+        RAISE,
+        LOWER
+    } HangState state = HangState.STOP;
     private double power = 0.0;
+    private double lastPower = 0.0;
+
+    private Hardware hardware;
 
     public HangSubsystem(Hardware hardware) {
         this.hardware = hardware;
         hardware.hang.setDirection(DcMotorSimple.Direction.FORWARD);
-        hardware.hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // does this actually save any power lol, i don't think it does cause just back emf
+        hardware.hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hardware.hang.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        stop();
+        update(state);
     }
 
-    public void raise() {
-        write(1.0);
+    @Override
+    public void read() {}
+
+    public void update(HangState s) {
+        state = s;
+        switch (state) {
+            case STOP:
+                power = 0.0;
+                break;
+            case RAISE:
+                power = 1.0;
+                break;
+            case LOWER:
+                power = -1.0;
+                break;
+        }
     }
 
-    public void stop() {
-        write(0.0);
-    }
-
-    public void lower() {
-        write(-1.0);
-    }
-
-    private void write(double power) {
-        if (this.power != power) {
-            this.power = power;
+    @Override
+    public void write() {
+        if (lastPower != power) {
+            lastPower = power;
             hardware.hang.setPower(power);
         }
     }

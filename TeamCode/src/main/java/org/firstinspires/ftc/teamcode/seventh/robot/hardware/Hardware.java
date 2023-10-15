@@ -22,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline;
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -68,6 +69,7 @@ public class Hardware {
 
     public DcMotorEx hang;
 
+    // TODO: read EasyOpenCV guide on vision portal
     // randomization task, maybe detect waffles, also does AprilTags
     public OpenCvCamera inCam;
     // auto-stop to not hit the board
@@ -79,6 +81,7 @@ public class Hardware {
     public VisionPortal visionPortal;
     public GetPropPositionPipeline propPosition;
 
+    // TODO: replace with Photon voltage reader
     private double voltage = 0.0;
     private ElapsedTime voltageTimer;
 
@@ -177,6 +180,18 @@ public class Hardware {
             });
         }
         voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+    }
+
+    public void read(Subsystem... subsystems) {
+        for (Subsystem s : subsystems) {
+            s.read();
+        }
+    }
+
+    public void write(Subsystem... subsystems) {
+        for (Subsystem s : subsystems) {
+            s.write();
+        }
     }
 
     public void stopCameras() {

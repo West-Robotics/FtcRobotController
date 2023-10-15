@@ -6,9 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
 
-public class OutputSubsystem {
-    private Hardware hardware;
-
+public class OutputSubsystem extends Subsystem {
     public enum OutputState {
         INTAKE,
         LOCK,
@@ -19,10 +17,14 @@ public class OutputSubsystem {
         DROP_R
     } OutputState outputState = OutputState.INTAKE;
 
+    private double pivAngle = 0;
+    private double leftAng = 0;
+    private double rightAng = 0;
     private double lastPivotAngle = 0;
     private double lastLeftAngle = 0;
     private double lastRightAngle = 0;
 
+    private Hardware hardware;
     public OutputSubsystem(Hardware hardware) {
         this.hardware = hardware;
         // this doesn't work cause blue can't be programmed lol
@@ -35,45 +37,61 @@ public class OutputSubsystem {
         update(outputState);
     }
 
+    public void read() {}
+
     public void update(OutputState os) {
         switch (os) {
             case INTAKE:
-                write(Globals.PIVOT_INTAKE, Globals.FINGER_L_OPEN, Globals.FINGER_R_OPEN);
+                pivAngle = Globals.PIVOT_INTAKE;
+                leftAng = Globals.FINGER_L_OPEN;
+                rightAng = Globals.FINGER_R_OPEN;
                 break;
             case LOCK:
-                write(Globals.PIVOT_INTAKE, Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE);
+                pivAngle = Globals.PIVOT_INTAKE;
+                leftAng = Globals.FINGER_L_CLOSE;
+                rightAng = Globals.FINGER_R_CLOSE;
                 break;
             case INTERMEDIARY:
-                write(Globals.PIVOT_INTERMEDIARY, Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE);
+                pivAngle = Globals.PIVOT_INTERMEDIARY;
+                leftAng = Globals.FINGER_L_CLOSE;
+                rightAng = Globals.FINGER_R_CLOSE;
                 break;
             case READY:
-                write(Globals.PIVOT_OUTTAKE, Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE);
+                pivAngle = Globals.PIVOT_OUTTAKE;
+                leftAng = Globals.FINGER_L_CLOSE;
+                rightAng = Globals.FINGER_R_CLOSE;
                 break;
             case DROP:
-                write(Globals.PIVOT_OUTTAKE, Globals.FINGER_L_OPEN, Globals.FINGER_R_OPEN);
+                pivAngle = Globals.PIVOT_OUTTAKE;
+                leftAng = Globals.FINGER_L_OPEN;
+                rightAng = Globals.FINGER_R_OPEN;
                 break;
             case DROP_L:
-                write(Globals.PIVOT_OUTTAKE, Globals.FINGER_L_OPEN, Globals.FINGER_R_CLOSE);
+                pivAngle = Globals.PIVOT_OUTTAKE;
+                leftAng = Globals.FINGER_L_OPEN;
+                rightAng = Globals.FINGER_R_CLOSE;
                 break;
             case DROP_R:
-                write(Globals.PIVOT_OUTTAKE, Globals.FINGER_L_CLOSE, Globals.FINGER_R_OPEN);
+                pivAngle = Globals.PIVOT_OUTTAKE;
+                leftAng = Globals.FINGER_L_CLOSE;
+                rightAng = Globals.FINGER_R_OPEN;
                 break;
         }
     }
 
-    private void write(double p, double l, double r) {
-        // TODO: add small tolerances cause imperfections
-        if (lastPivotAngle != p) {
-            lastPivotAngle = p;
-            hardware.pivot.setPosition(p);
+    public void write() {
+        // TODO: add small tolerances because imperfections
+        if (pivAngle != lastPivotAngle) {
+            lastPivotAngle = pivAngle;
+            hardware.pivot.setPosition(pivAngle);
         }
-        if (lastLeftAngle != l) {
-            lastLeftAngle = l;
-            hardware.fingerLeft.setPosition(l);
+        if (leftAng != lastLeftAngle) {
+            lastLeftAngle = leftAng;
+            hardware.fingerLeft.setPosition(leftAng);
         }
-        if (lastRightAngle != r) {
-            lastRightAngle = r;
-            hardware.fingerRight.setPosition(r);
+        if (rightAng != lastRightAngle) {
+            lastRightAngle = rightAng;
+            hardware.fingerRight.setPosition(rightAng);
         }
     }
 }

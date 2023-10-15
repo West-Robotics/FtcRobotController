@@ -82,6 +82,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
+    private Pose2d lastDrivePower = new Pose2d();
 
     public SampleMecanumDrive(Hardware hardware, HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -260,7 +261,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             ).div(denom);
         }
 
-        setDrivePower(vel);
+        if (vel != lastDrivePower) {
+            lastDrivePower = vel;
+            setDrivePower(vel);
+        }
     }
 
     @NonNull
