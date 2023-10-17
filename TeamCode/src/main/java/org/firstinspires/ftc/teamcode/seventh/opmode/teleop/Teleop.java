@@ -79,7 +79,7 @@ public class Teleop extends LinearOpMode {
     double x = 0.0;
     double y = 0.0;
     double turn = 0.0;
-    final static double SLEW_RATE = 0.1;
+    final static double SLEW_RATE = 4;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -105,6 +105,9 @@ public class Teleop extends LinearOpMode {
             double dt = loop - loopTime;
             loopTime = loop;
 
+            primary.readButtons();
+            secondary.readButtons();
+
             // update state machines
             cycleMachine.update();
             outMachine.update();
@@ -115,9 +118,25 @@ public class Teleop extends LinearOpMode {
             hardware.write(intake, lift, out);
 
             // only change dt powers by at max the slew rate
-            x += Math.max(-SLEW_RATE*dt, Math.min(primary.getLeftY() - x, SLEW_RATE*dt/1000000000.0));
-            y += Math.max(-SLEW_RATE*dt, Math.min(-primary.getLeftX() - y, SLEW_RATE*dt/1000000000.0));
-            turn += Math.max(-SLEW_RATE*dt, Math.min(-primary.getRightX() - turn, SLEW_RATE*dt/1000000000.0));
+            if (Math.abs(primary.getLeftY() - x) < SLEW_RATE*dt/1000000000.0) {
+                x += primary.getLeftY() - x;
+                telemetry.addData("dx", primary.getLeftY() - x);
+                telemetry.addLine("less than slew");
+            } else {
+                x += Math.signum(primary.getLeftY() - x) * SLEW_RATE*dt/1000000000.0;
+                telemetry.addData("dx", Math.signum(primary.getLeftY() - x) * SLEW_RATE*dt/1000000000.0);
+                telemetry.addLine("greater than slew");
+            }
+            if (Math.abs(-primary.getLeftX() - y) < SLEW_RATE*dt/1000000000.0) {
+                y += -primary.getLeftX() - y;
+            } else {
+                y += Math.signum(-primary.getLeftX() - y) * SLEW_RATE*dt/1000000000.0;
+            }
+            if (Math.abs(-primary.getRightX() - turn) < SLEW_RATE*dt/1000000000.0) {
+                turn += -primary.getRightX() - turn;
+            } else {
+                turn += Math.signum(-primary.getRightX() - turn) * SLEW_RATE*dt/1000000000.0;
+            }
 
             if (cycleState == CycleCommand.CycleState.READY
                     || intake.getState() == IntakeSubsystem.IntakeState.INTAKE

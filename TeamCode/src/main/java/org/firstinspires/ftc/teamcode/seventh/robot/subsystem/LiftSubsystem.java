@@ -64,9 +64,11 @@ public class LiftSubsystem extends Subsystem {
     }
 
     public void write() {
-        if (pressed) {
+        if (hardware.limit.isPressed()) {
             hardware.liftLeftEnc.reset();
-            power = 0;
+            if (power < 0) {
+                power = 0;
+            }
         } else if (power < 0) {
             power = power/2;
         }
