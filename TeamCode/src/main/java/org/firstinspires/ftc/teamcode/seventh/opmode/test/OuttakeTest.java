@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals;
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem;
 
@@ -33,6 +34,7 @@ public class OuttakeTest extends LinearOpMode {
 //        double position = 0.5;
 
         waitForStart();
+        hardware.liftLeftEnc.setDistancePerPulse(Globals.LIFT_DISTANCE_PER_PULSE);
         hardware.intake.setDirection(DcMotorSimple.Direction.FORWARD);
         hardware.intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hardware.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -57,6 +59,7 @@ public class OuttakeTest extends LinearOpMode {
             } else if (gamepad.getButton(GamepadKeys.Button.DPAD_DOWN)) {
                 out.update(OutputSubsystem.OutputState.DROP);
             }
+            out.write();
             if (gamepad.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 hardware.intake.setPower(-1);
             } else if (gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
@@ -67,6 +70,7 @@ public class OuttakeTest extends LinearOpMode {
             telemetry.addData("pivot pos", hardware.pivot.getPosition());
             telemetry.addData("left pos", hardware.fingerLeft.getPosition());
             telemetry.addData("right pos", hardware.fingerRight.getPosition());
+            telemetry.addData("lift dist", hardware.liftLeftEnc.getDistance());
             telemetry.update();
         }
     }

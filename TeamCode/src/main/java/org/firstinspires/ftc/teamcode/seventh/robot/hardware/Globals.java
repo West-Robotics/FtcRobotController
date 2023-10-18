@@ -27,18 +27,19 @@ public class Globals {
     public static double LIFT_F = 0.0;
     // 16/24 ratio * 0.03937 * mm to inch * 111.715 mm spool circum / 103.8 ppr, in inches
     public static double LIFT_DISTANCE_PER_PULSE = 0.6666*0.03937*111.715/103.8;
-    public static double LIFT_MAX = 11.54;
+    public static double LIFT_MAX = 11.3;
     public static double LIFT_MIN = -0.2;
-    public static double INTERMEDIARY_ZONE_1 = 0.87;
+    public static double INTERMEDIARY_ZONE_1 = 0.3;
     public static double INTERMEDIARY_ZONE_2 = 0;
-    public static double PIVOT_INTAKE = 0.79;
-    public static double PIVOT_INTERMEDIARY = 0.70;
+    // 0.79 -> 0.7 -> 0.38
+    public static double PIVOT_INTAKE = 0.49;
+    public static double PIVOT_INTERMEDIARY = 0.44;
     public static double PIVOT_INTERMEDIARY_2 = 0.55;
-    public static double PIVOT_OUTTAKE = 0.38;
-    public static double FINGER_L_OPEN = 0.48;
-    public static double FINGER_L_CLOSE = 0.395;
-    public static double FINGER_R_OPEN = 0.58;
-    public static double FINGER_R_CLOSE = 0.675;
+    public static double PIVOT_OUTTAKE = 0.0;
+    public static double FINGER_L_OPEN = 0.45;
+    public static double FINGER_L_CLOSE = 0.39;
+    public static double FINGER_R_OPEN = 0.60;
+    public static double FINGER_R_CLOSE = 0.68;
 
     // outer roller auto stack angle for servo in degrees
     public static double STACK_5 = 1;
