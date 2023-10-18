@@ -141,9 +141,9 @@ public class Teleop extends LinearOpMode {
             if (cycleState == CycleCommand.CycleState.READY
                     || intake.getState() == IntakeSubsystem.IntakeState.INTAKE
                     || primary.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-                drive.setWeightedDrivePower(new Pose2d(x/2, y/2, turn/2));
+                drive.setWeightedDrivePower(new Pose2d(Math.pow(x/2, 3), Math.pow(y/2, 3), Math.pow(turn/2, 3)));
             } else {
-                drive.setWeightedDrivePower(new Pose2d(x, y, turn/1.5));
+                drive.setWeightedDrivePower(new Pose2d(Math.pow(x, 3), Math.pow(y, 3), Math.pow(turn/1.5, 3)));
             }
             telemetry.addData("pivot pos", hardware.pivot.getPosition());
             telemetry.addData("left pos", hardware.fingerLeft.getPosition());
