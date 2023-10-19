@@ -39,7 +39,7 @@ public class LiftSubsystem extends Subsystem {
         hardware.liftRightEnc.setDirection(Motor.Direction.FORWARD);
         hardware.liftRightEnc.setDistancePerPulse(Globals.LIFT_DISTANCE_PER_PULSE);
         hardware.liftRightEnc.reset();
-        liftPid.setOutputRange(0, 0.8);
+        liftPid.setOutputRange(0, 0.6);
         liftPid.reset();
         liftPid.enable();
         update(liftState);

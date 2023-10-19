@@ -30,7 +30,7 @@ public class Globals {
     public static double LIFT_MAX = 11.3;
     public static double LIFT_MIN = -0.2;
     public static double INTERMEDIARY_ZONE_1 = 0.18;
-    public static double INTERMEDIARY_ZONE_2 = 11;
+    public static double INTERMEDIARY_ZONE_2 = 10.6;
     // 0.79 -> 0.7 -> 0.38
     public static double PIVOT_INTAKE = 0.79;
     public static double PIVOT_INTERMEDIARY = 0.72;
