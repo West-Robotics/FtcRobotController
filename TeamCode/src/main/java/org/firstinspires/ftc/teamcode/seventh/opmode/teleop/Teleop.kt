@@ -5,11 +5,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.sfdev.assembly.state.StateMachineBuilder
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand.CycleState
+import org.firstinspires.ftc.teamcode.seventh.robot.command.TeleMachines
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
@@ -30,58 +30,14 @@ public class Teleop : LinearOpMode() {
         // lock robot to face exactly backdrop
         // mecanum feedforward
 
-        val hardware: Hardware = Hardware.getInstance()
-        hardware.init(hardwareMap)
+        val hardware: Hardware = Hardware(hardwareMap)
         val drive: SampleMecanumDrive = SampleMecanumDrive(hardware, hardwareMap)
         val intake: IntakeSubsystem = IntakeSubsystem(hardware)
         val lift: LiftSubsystem = LiftSubsystem(hardware)
         val out: OutputSubsystem = OutputSubsystem(hardware)
-        val cycle: CycleCommand = CycleCommand(intake, lift, out)
+
         val primary: GamepadEx = GamepadEx(gamepad1)
         val secondary: GamepadEx = GamepadEx(gamepad2)
-        val cycleState = CycleCommand.CycleState.INTAKE
-        val cycleMachine = StateMachineBuilder()
-            .state(CycleCommand.CycleState.LOCK)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.A) }, CycleCommand.CycleState.INTAKE)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) }, CycleCommand.CycleState.READY)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) }, CycleCommand.CycleState.SPIT)
-            .state(CycleCommand.CycleState.INTAKE)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.B) }, CycleCommand.CycleState.LOCK)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) }, CycleCommand.CycleState.SPIT)
-            .state(CycleCommand.CycleState.READY)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, CycleCommand.CycleState.LOCK)
-            .state(CycleCommand.CycleState.SPIT)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.A) }, CycleCommand.CycleState.INTAKE)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.B) }, CycleCommand.CycleState.LOCK)
-            .build()
-        val outMachine = StateMachineBuilder()
-            .state(OutputSubsystem.OutputState.LOCK)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.A) }, OutputSubsystem.OutputState.INTAKE)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) }, OutputSubsystem.OutputState.READY)
-            // this is actually just spit
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) }, CycleCommand.CycleState.INTAKE)
-            .state(OutputSubsystem.OutputState.INTAKE)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.B) }, OutputSubsystem.OutputState.LOCK)
-            .state(OutputSubsystem.OutputState.READY)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, OutputSubsystem.OutputState.LOCK)
-            .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, OutputSubsystem.OutputState.DROP)
-            .transition({ primary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9 }, OutputSubsystem.OutputState.DROP_L)
-            .transition({ primary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9 }, OutputSubsystem.OutputState.DROP_R)
-            .state(OutputSubsystem.OutputState.DROP)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, OutputSubsystem.OutputState.LOCK)
-            .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, OutputSubsystem.OutputState.READY)
-            .transition({ primary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9 }, OutputSubsystem.OutputState.DROP_L)
-            .transition({ primary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9 }, OutputSubsystem.OutputState.DROP_R)
-            .state(OutputSubsystem.OutputState.DROP_L)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, OutputSubsystem.OutputState.LOCK)
-            .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, OutputSubsystem.OutputState.DROP)
-            .transition({ primary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9 }, OutputSubsystem.OutputState.DROP_R)
-            .state(OutputSubsystem.OutputState.DROP_R)
-            .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, OutputSubsystem.OutputState.LOCK)
-            .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, OutputSubsystem.OutputState.DROP)
-            .transition({ primary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9 }, OutputSubsystem.OutputState.DROP_L)
-            .build()
-
         var x = 0.0
         var y = 0.0
         var turn = 0.0
@@ -89,6 +45,11 @@ public class Teleop : LinearOpMode() {
         val SLEW_RATE = 4.0*1e-3
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
+
+        // is this bad? maybe switch to a singleton
+        val cycle: CycleCommand = CycleCommand(intake, lift, out)
+        val cycleMachine = TeleMachines(primary, secondary).cycle
+        val outMachine = TeleMachines(primary, secondary).out
 
         cycleMachine.start()
         outMachine.start()
@@ -116,9 +77,9 @@ public class Teleop : LinearOpMode() {
             hardware.write(intake, lift, out);
 
             // only change dt powers by at max the slew rate
-            x += (primary.leftY - x).let {if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
-            y += (-primary.leftY - y).let {if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
-            turn += (-primary.rightX - turn).let {if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
+            x += (primary.leftY - x).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
+            y += (-primary.leftY - y).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
+            turn += (-primary.rightX - turn).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
 
             val multiplier = when {
                 cycleMachine.state == CycleState.READY              -> 0.5
@@ -127,6 +88,7 @@ public class Teleop : LinearOpMode() {
                 else                                                -> 1.0
             }
             drive.setWeightedDrivePower(Pose2d(x*multiplier, y*multiplier, turn/1.5*multiplier))
+
             telemetry.addData("pivot pos", hardware.pivot.position);
             telemetry.addData("left pos", hardware.fingerLeft.position);
             telemetry.addData("right pos", hardware.fingerRight.position)

@@ -17,14 +17,11 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem;
 
 @TeleOp(name = "LiftTest")
 public class LiftTest extends LinearOpMode {
-
-    Hardware hardware = Hardware.getInstance();
-    LiftSubsystem lift;
-    GamepadEx gamepad;
-
     @Override
     public void runOpMode() throws InterruptedException {
-        hardware.init(hardwareMap);
+        Hardware hardware = new Hardware(hardwareMap);
+        LiftSubsystem lift;
+        GamepadEx gamepad;
         gamepad = new GamepadEx(gamepad1);
         lift = new LiftSubsystem(hardware);
 
