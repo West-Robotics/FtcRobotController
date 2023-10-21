@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem.OutputState
 import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
@@ -30,24 +31,24 @@ public class Teleop : LinearOpMode() {
         // lock robot to face exactly backdrop
         // mecanum feedforward
 
-        val hardware: Hardware = Hardware(hardwareMap)
-        val drive: SampleMecanumDrive = SampleMecanumDrive(hardware, hardwareMap)
-        val intake: IntakeSubsystem = IntakeSubsystem(hardware)
-        val lift: LiftSubsystem = LiftSubsystem(hardware)
-        val out: OutputSubsystem = OutputSubsystem(hardware)
+        val hardware = Hardware(hardwareMap)
+        val drive = SampleMecanumDrive(hardware, hardwareMap)
+        val intake = IntakeSubsystem(hardware)
+        val lift = LiftSubsystem(hardware)
+        val out = OutputSubsystem(hardware)
 
-        val primary: GamepadEx = GamepadEx(gamepad1)
-        val secondary: GamepadEx = GamepadEx(gamepad2)
+        val primary = GamepadEx(gamepad1)
+        val secondary = GamepadEx(gamepad2)
         var x = 0.0
         var y = 0.0
         var turn = 0.0
         // change per millisecond
-        val SLEW_RATE = 4.0*1e-3
+        val SLEW_RATE = 6.0*1e-3
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
 
         // is this bad? maybe switch to a singleton
-        val cycle: CycleCommand = CycleCommand(intake, lift, out)
+        val cycle = CycleCommand(intake, lift, out)
         val cycleMachine = TeleMachines(primary, secondary).cycle
         val outMachine = TeleMachines(primary, secondary).out
 
@@ -78,7 +79,7 @@ public class Teleop : LinearOpMode() {
 
             // only change dt powers by at max the slew rate
             x += (primary.leftY - x).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
-            y += (-primary.leftY - y).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
+            y += (-primary.leftX - y).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
             turn += (-primary.rightX - turn).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
 
             val multiplier = when {
@@ -87,12 +88,13 @@ public class Teleop : LinearOpMode() {
                 primary.isDown(GamepadKeys.Button.LEFT_BUMPER)      -> 0.5
                 else                                                -> 1.0
             }
-            drive.setWeightedDrivePower(Pose2d(x*multiplier, y*multiplier, turn/1.5*multiplier))
+            drive.setWeightedDrivePower(Pose2d(x.pow(3)*multiplier, y.pow(3)*multiplier, (turn/1.5).pow(3)*multiplier))
 
             telemetry.addData("pivot pos", hardware.pivot.position);
             telemetry.addData("left pos", hardware.fingerLeft.position);
             telemetry.addData("right pos", hardware.fingerRight.position)
             telemetry.addData("lift dist", lift.distance)
+            telemetry.addData("list state", lift.state)
             telemetry.addData("hz ", 1000 / dt)
             telemetry.update()
         }

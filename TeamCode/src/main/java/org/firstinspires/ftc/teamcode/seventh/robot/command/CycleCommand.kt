@@ -30,14 +30,19 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
         }
 
         out.update(when {
-            lift.distance < Globals.INTERMEDIARY_ZONE_1 -> when (os) {
+            lift.distance < when (lift.state) { LiftSubsystem.LiftState.UP -> Globals.INTERMEDIARY_ZONE_1
+                                                LiftSubsystem.LiftState.DOWN -> Globals.INTERMEDIARY_ZONE_3 }
+                -> when (os) {
                             OutputSubsystem.OutputState.INTAKE -> OutputSubsystem.OutputState.INTAKE
                             // always assume we want to lock unless specifically requested to open
                             else -> OutputSubsystem.OutputState.LOCK }
-            lift.distance < Globals.INTERMEDIARY_ZONE_2 -> OutputSubsystem.OutputState.INTERMEDIARY
-            Globals.INTERMEDIARY_ZONE_2 <= lift.distance -> when (os) {
-                            OutputSubsystem.OutputState.LOCK, OutputSubsystem.OutputState.INTAKE -> OutputSubsystem.OutputState.INTERMEDIARY
-                            else -> os }
+            lift.distance < Globals.INTERMEDIARY_ZONE_2
+                -> OutputSubsystem.OutputState.INTERMEDIARY
+            Globals.INTERMEDIARY_ZONE_2 <= lift.distance
+                -> when (os) {
+                        OutputSubsystem.OutputState.LOCK,
+                        OutputSubsystem.OutputState.INTAKE -> OutputSubsystem.OutputState.INTERMEDIARY
+                        else -> os }
             else -> OutputSubsystem.OutputState.LOCK
         })
     }

@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.hardware
 
-import android.util.Size
-
-import androidx.annotation.GuardedBy
-
 import com.arcrobotics.ftclib.hardware.ServoEx
 import com.arcrobotics.ftclib.hardware.SimpleServo
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -22,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem
 import org.firstinspires.ftc.teamcode.util.Encoder
@@ -93,6 +91,7 @@ class Hardware(hardwareMap: HardwareMap) {
 
     init {
         imu = hardwareMap.get(IMU::class.java, "imu")
+        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
 
         instance = Hardware(hardwareMap)
 
@@ -196,14 +195,12 @@ class Hardware(hardwareMap: HardwareMap) {
     // }
 
     fun updateIMU() {
-        imuAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle - imuOffset
+        imuAngle = imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS) - imuOffset
         imuAngularVelo = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate.toDouble()
     }
-                    // uhhhh which one do i use
-                    // imuAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)
 
     fun reset() {
-        imuOffset = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).firstAngle.toDouble()
+        imuOffset = imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS) - imuOffset
         liftLeftEnc.reset()
         liftRightEnc.reset()
     }

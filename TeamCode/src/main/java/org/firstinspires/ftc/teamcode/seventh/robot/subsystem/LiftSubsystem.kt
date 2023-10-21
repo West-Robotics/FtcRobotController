@@ -37,7 +37,7 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
         hardware.liftRightEnc.setDirection(Motor.Direction.FORWARD)
         hardware.liftRightEnc.setDistancePerPulse(Globals.LIFT_DISTANCE_PER_PULSE)
         hardware.liftRightEnc.reset()
-        liftPid.setOutputRange(0.0, 0.4)
+        liftPid.setOutputRange(0.0, 0.5)
         liftPid.reset()
         liftPid.enable()
         update(state)
@@ -49,10 +49,10 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
     }
 
     fun update(s: LiftState) {
+        state = s
         liftPid.setpoint = when (s) {
             LiftState.UP    -> Globals.LIFT_MAX
             LiftState.DOWN  -> Globals.LIFT_MIN
-            else -> 0.0
         }
         power = liftPid.performPID(distance)
         write()
@@ -61,12 +61,14 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
     override fun write() {
         // can this be cleaner?
         if (hardware.limit.isPressed) {
-            hardware.liftLeftEnc.reset()
+            if (distance != 0.0) {
+                hardware.liftLeftEnc.reset()
+            }
             if (power < 0.0) {
                 power = 0.0
             }
         } else if (power < 0.0) {
-            power /= 2.0
+            power /= 1.5
         }
         if (lastPower != power) {
             lastPower = power

@@ -15,6 +15,10 @@ class OutputSubsystem(val hardware: Hardware) : Subsystem {
         DROP,
         DROP_L,
         DROP_R,
+        PLOP_READY,
+        PLOP_L,
+        PLOP_R,
+        POOP,
     } var state = OutputState.LOCK
         private set
 
@@ -47,6 +51,10 @@ class OutputSubsystem(val hardware: Hardware) : Subsystem {
             OutputState.DROP            -> Triple(Globals.PIVOT_OUTTAKE,        Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
             OutputState.DROP_L          -> Triple(Globals.PIVOT_OUTTAKE,        Globals.FINGER_L_OPEN,  Globals.FINGER_R_CLOSE)
             OutputState.DROP_R          -> Triple(Globals.PIVOT_OUTTAKE,        Globals.FINGER_L_CLOSE, Globals.FINGER_R_OPEN)
+            OutputState.PLOP_READY      -> Triple(Globals.PIVOT_PLOP,           Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
+            OutputState.PLOP_R          -> Triple(Globals.PIVOT_PLOP,           Globals.FINGER_L_OPEN,  Globals.FINGER_R_CLOSE)
+            OutputState.PLOP_R          -> Triple(Globals.PIVOT_PLOP,           Globals.FINGER_L_CLOSE, Globals.FINGER_R_OPEN)
+            OutputState.POOP            -> Triple(Globals.PIVOT_POOP,           Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
         }.let {
             pivAng = it.first
             leftAng = it.second

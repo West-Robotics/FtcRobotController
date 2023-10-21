@@ -21,24 +21,28 @@ object Globals {
 
     @JvmField var HEADING_P = 0.01
     @JvmField var HEADING_D = 0.0
-    @JvmField var LIFT_P = 0.03
+    // TODO: WHY DID THIS WORK FINE AT 0.03 BEFORE
+    @JvmField var LIFT_P = 0.6
     @JvmField var LIFT_I = 0.0
     @JvmField var LIFT_D = 0.0
     @JvmField var LIFT_F = 0.0
     // 16/24 ratio * 0.03937 * mm to inch * 111.715 mm spool circum / 103.8 ppr, in inches
     @JvmField var LIFT_DISTANCE_PER_PULSE = 0.6666*0.03937*111.715/103.8
-    @JvmField var LIFT_MAX = 11.54
+    @JvmField var LIFT_MAX = 11.5
     @JvmField var LIFT_MIN = -0.2
-    @JvmField var INTERMEDIARY_ZONE_1 = 0.87
-    @JvmField var INTERMEDIARY_ZONE_2 = 0
-    @JvmField var PIVOT_INTAKE = 0.79
-    @JvmField var PIVOT_INTERMEDIARY = 0.70
+    @JvmField var INTERMEDIARY_ZONE_1 = 0.01
+    @JvmField var INTERMEDIARY_ZONE_2 = 10.6
+    @JvmField var INTERMEDIARY_ZONE_3 = 2
+    @JvmField var PIVOT_INTAKE = 0.76
+    @JvmField var PIVOT_INTERMEDIARY = 0.72
     @JvmField var PIVOT_INTERMEDIARY_2 = 0.55
-    @JvmField var PIVOT_OUTTAKE = 0.38
-    @JvmField var FINGER_L_OPEN = 0.48
-    @JvmField var FINGER_L_CLOSE = 0.395
-    @JvmField var FINGER_R_OPEN = 0.58
-    @JvmField var FINGER_R_CLOSE = 0.675
+    @JvmField var PIVOT_OUTTAKE = 0.34
+    @JvmField var PIVOT_PLOP = 0.34
+    @JvmField var PIVOT_POOP = 0.28
+    @JvmField var FINGER_L_OPEN = 0.45
+    @JvmField var FINGER_L_CLOSE = 0.39
+    @JvmField var FINGER_R_OPEN = 0.60
+    @JvmField var FINGER_R_CLOSE = 0.68
 
     // outer roller auto stack angle for servo in degrees
     @JvmField var STACK_5 = 1
