@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline;
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem;
 import org.firstinspires.ftc.teamcode.util.Encoder;
@@ -96,9 +98,8 @@ public class Hardware {
 
     public void init(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
-        synchronized (imuLock) {
-            imu = hardwareMap.get(IMU.class, "imu");
-        }
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)));
 
         // power:
         //  ___________________
@@ -200,10 +201,12 @@ public class Hardware {
     }
 
     public double getAngle() {
+        imuAngle = (double) imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         return imuAngle - imuOffset;
     }
 
     public double getAngularVelocity() {
+        imuAngularVelo = (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
         return imuAngularVelo;
     }
 

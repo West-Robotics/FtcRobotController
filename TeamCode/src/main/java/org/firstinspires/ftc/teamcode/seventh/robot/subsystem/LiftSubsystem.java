@@ -14,7 +14,7 @@ public class LiftSubsystem extends Subsystem {
     public enum LiftState {
         DOWN,
         UP
-    } LiftState liftState = LiftState.DOWN;
+    } public LiftState liftState = LiftState.DOWN;
 
 
     private double position = 0.0;
@@ -39,7 +39,7 @@ public class LiftSubsystem extends Subsystem {
         hardware.liftRightEnc.setDirection(Motor.Direction.FORWARD);
         hardware.liftRightEnc.setDistancePerPulse(Globals.LIFT_DISTANCE_PER_PULSE);
         hardware.liftRightEnc.reset();
-        liftPid.setOutputRange(0, 0.6);
+        liftPid.setOutputRange(0, 0.5);
         liftPid.reset();
         liftPid.enable();
         update(liftState);
@@ -54,9 +54,11 @@ public class LiftSubsystem extends Subsystem {
         switch (s) {
             case UP:
                 liftPid.setSetpoint(Globals.LIFT_MAX);
+                liftState = LiftState.UP;
                 break;
             case DOWN:
                 liftPid.setSetpoint(Globals.LIFT_MIN);
+                liftState = LiftState.DOWN;
                 break;
         }
         power = liftPid.performPID(position);
@@ -64,13 +66,15 @@ public class LiftSubsystem extends Subsystem {
     }
 
     public void write() {
-        if (hardware.limit.isPressed()) {
-            hardware.liftLeftEnc.reset();
+        if (pressed) {
+            if (position != 0.0) {
+                hardware.liftLeftEnc.reset();
+            }
             if (power < 0) {
                 power = 0;
             }
         } else if (power < 0) {
-            power = power/2;
+            power = power/1.5;
         }
         if (lastPower != power) {
             lastPower = power;

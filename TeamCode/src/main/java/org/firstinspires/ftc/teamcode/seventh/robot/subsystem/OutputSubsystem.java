@@ -11,11 +11,16 @@ public class OutputSubsystem extends Subsystem {
         INTAKE,
         LOCK,
         INTERMEDIARY,
+        INTERMEDIARY_1,
         READY,
         DROP,
         DROP_L,
-        DROP_R
-    } OutputState outputState = OutputState.INTAKE;
+        DROP_R,
+        PLOP_READY,
+        PLOP_L,
+        PLOP_R,
+        POOP,
+    } OutputState outputState = OutputState.LOCK;
 
     private double pivAngle = 0;
     private double leftAng = 0;
@@ -76,6 +81,22 @@ public class OutputSubsystem extends Subsystem {
                 leftAng = Globals.FINGER_L_CLOSE;
                 rightAng = Globals.FINGER_R_OPEN;
                 break;
+            case PLOP_READY:
+                pivAngle = Globals.PIVOT_PLOP;
+                leftAng = Globals.FINGER_L_CLOSE;
+                rightAng = Globals.FINGER_R_CLOSE;
+            case PLOP_L:
+                pivAngle = Globals.PIVOT_PLOP;
+                leftAng = Globals.FINGER_L_OPEN;
+                rightAng = Globals.FINGER_R_CLOSE;
+            case PLOP_R:
+                pivAngle = Globals.PIVOT_PLOP;
+                leftAng = Globals.FINGER_L_CLOSE;
+                rightAng = Globals.FINGER_R_CLOSE;
+            case POOP:
+                pivAngle = Globals.PIVOT_POOP;
+                leftAng = Globals.FINGER_L_CLOSE;
+                rightAng = Globals.FINGER_R_CLOSE;
         }
     }
 

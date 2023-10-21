@@ -21,21 +21,24 @@ public class Globals {
 
     public static double HEADING_P = 0.01;
     public static double HEADING_D = 0.0;
-    public static double LIFT_P = 0.3;
+    public static double LIFT_P = 0.6;
     public static double LIFT_I = 0.0;
     public static double LIFT_D = 0.0;
     public static double LIFT_F = 0.0;
     // 16/24 ratio * 0.03937 * mm to inch * 111.715 mm spool circum / 103.8 ppr, in inches
     public static double LIFT_DISTANCE_PER_PULSE = 0.6666*0.03937*111.715/103.8;
-    public static double LIFT_MAX = 11.3;
+    public static double LIFT_MAX = 11.5;
     public static double LIFT_MIN = -0.2;
-    public static double INTERMEDIARY_ZONE_1 = 0.18;
+    public static double INTERMEDIARY_ZONE_1 = 0.01;
     public static double INTERMEDIARY_ZONE_2 = 10.6;
+    public static double INTERMEDIARY_ZONE_3 = 2;
     // 0.79 -> 0.7 -> 0.38
-    public static double PIVOT_INTAKE = 0.79;
+    public static double PIVOT_INTAKE = 0.76;
     public static double PIVOT_INTERMEDIARY = 0.72;
     public static double PIVOT_INTERMEDIARY_2 = 0.55;
-    public static double PIVOT_OUTTAKE = 0.38;
+    public static double PIVOT_OUTTAKE = 0.34;
+    public static double PIVOT_PLOP = 0.34;
+    public static double PIVOT_POOP = 0.28;
     public static double FINGER_L_OPEN = 0.45;
     public static double FINGER_L_CLOSE = 0.39;
     public static double FINGER_R_OPEN = 0.60;

@@ -73,6 +73,18 @@ public class Teleop extends LinearOpMode {
             .transition(() -> secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN), OutputSubsystem.OutputState.LOCK)
             .transition(() -> primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER), OutputSubsystem.OutputState.DROP)
             .transition(() -> primary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9, OutputSubsystem.OutputState.DROP_L)
+            .state(OutputSubsystem.OutputState.PLOP_READY)
+            .transition(() -> primary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9, OutputSubsystem.OutputState.PLOP_L)
+            .transition(() -> primary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9, OutputSubsystem.OutputState.PLOP_R)
+            .transition(() -> secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN), OutputSubsystem.OutputState.READY)
+            .state(OutputSubsystem.OutputState.PLOP_L)
+            .transition(() -> primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER), OutputSubsystem.OutputState.POOP)
+            .transition(() -> secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN), OutputSubsystem.OutputState.READY)
+            .state(OutputSubsystem.OutputState.PLOP_R)
+            .transition(() -> primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER), OutputSubsystem.OutputState.POOP)
+            .transition(() -> secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN), OutputSubsystem.OutputState.READY)
+            .state(OutputSubsystem.OutputState.POOP)
+            .transition(() -> secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN), OutputSubsystem.OutputState.READY)
             .build();
 
     double loopTime = 0.0;
@@ -141,7 +153,7 @@ public class Teleop extends LinearOpMode {
             if (cycleState == CycleCommand.CycleState.READY
                     || intake.getState() == IntakeSubsystem.IntakeState.INTAKE
                     || primary.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-                drive.setWeightedDrivePower(new Pose2d(Math.pow(x/1.5, 3), Math.pow(y/1.5, 3), Math.pow(turn/2, 3)));
+                drive.setWeightedDrivePower(new Pose2d(Math.pow(x, 3)/2, Math.pow(y, 3)/2, Math.pow(turn, 3)/2));
             } else {
                 drive.setWeightedDrivePower(new Pose2d(Math.pow(x, 3), Math.pow(y, 3), Math.pow(turn/1.25, 3)));
             }
@@ -149,6 +161,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("left pos", hardware.fingerLeft.getPosition());
             telemetry.addData("right pos", hardware.fingerRight.getPosition());
             telemetry.addData("lift dist", lift.getDistance());
+            telemetry.addData("lift dist", lift.liftState.toString());
             telemetry.addData("hz ", 1000000000 / dt);
             telemetry.update();
         }

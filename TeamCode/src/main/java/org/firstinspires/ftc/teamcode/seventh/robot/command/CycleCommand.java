@@ -50,20 +50,39 @@ public class CycleCommand {
                 break;
         }
 
-        if (lift.getDistance() < Globals.INTERMEDIARY_ZONE_1) {
-            if (os == OutputSubsystem.OutputState.INTAKE) {
-                outState = OutputSubsystem.OutputState.INTAKE;
-            } else {
-                // always assume we want to lock unless specifically requested to open
-                outState = OutputSubsystem.OutputState.LOCK;
-            }
-        } else if (Globals.INTERMEDIARY_ZONE_1 <= lift.getDistance() && lift.getDistance() <= Globals.INTERMEDIARY_ZONE_2) {
-            outState = OutputSubsystem.OutputState.INTERMEDIARY;
-        } else if (Globals.INTERMEDIARY_ZONE_2 < lift.getDistance()) {
-            if (!(os == OutputSubsystem.OutputState.LOCK || os == OutputSubsystem.OutputState.INTAKE)) {
-                outState = os;
-            } else {
+        if (lift.liftState == LiftSubsystem.LiftState.UP) {
+            if (lift.getDistance() < Globals.INTERMEDIARY_ZONE_1) {
+                if (os == OutputSubsystem.OutputState.INTAKE) {
+                    outState = OutputSubsystem.OutputState.INTAKE;
+                } else {
+                    // always assume we want to lock unless specifically requested to open
+                    outState = OutputSubsystem.OutputState.LOCK;
+                }
+            } else if (Globals.INTERMEDIARY_ZONE_1 <= lift.getDistance() && lift.getDistance() <= Globals.INTERMEDIARY_ZONE_2) {
                 outState = OutputSubsystem.OutputState.INTERMEDIARY;
+            } else if (Globals.INTERMEDIARY_ZONE_2 < lift.getDistance()) {
+                if (!(os == OutputSubsystem.OutputState.LOCK || os == OutputSubsystem.OutputState.INTAKE)) {
+                    outState = os;
+                } else {
+                    outState = OutputSubsystem.OutputState.INTERMEDIARY;
+                }
+            }
+        } else if (lift.liftState == LiftSubsystem.LiftState.DOWN) {
+            if (lift.getDistance() < Globals.INTERMEDIARY_ZONE_3) {
+                if (os == OutputSubsystem.OutputState.INTAKE) {
+                    outState = OutputSubsystem.OutputState.INTAKE;
+                } else {
+                    // always assume we want to lock unless specifically requested to open
+                    outState = OutputSubsystem.OutputState.LOCK;
+                }
+            } else if (Globals.INTERMEDIARY_ZONE_3 <= lift.getDistance() && lift.getDistance() <= Globals.INTERMEDIARY_ZONE_2) {
+                outState = OutputSubsystem.OutputState.INTERMEDIARY;
+            } else if (Globals.INTERMEDIARY_ZONE_2 < lift.getDistance()) {
+                if (!(os == OutputSubsystem.OutputState.LOCK || os == OutputSubsystem.OutputState.INTAKE)) {
+                    outState = os;
+                } else {
+                    outState = OutputSubsystem.OutputState.INTERMEDIARY;
+                }
             }
         }
         out.update(outState);
