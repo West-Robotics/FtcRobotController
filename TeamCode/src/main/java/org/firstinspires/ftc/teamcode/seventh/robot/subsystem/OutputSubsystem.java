@@ -85,14 +85,17 @@ public class OutputSubsystem extends Subsystem {
                 pivAngle = Globals.PIVOT_PLOP;
                 leftAng = Globals.FINGER_L_CLOSE;
                 rightAng = Globals.FINGER_R_CLOSE;
+                break;
             case PLOP_L:
                 pivAngle = Globals.PIVOT_PLOP;
                 leftAng = Globals.FINGER_L_OPEN;
                 rightAng = Globals.FINGER_R_CLOSE;
+                break;
             case PLOP_R:
                 pivAngle = Globals.PIVOT_PLOP;
                 leftAng = Globals.FINGER_L_CLOSE;
-                rightAng = Globals.FINGER_R_CLOSE;
+                rightAng = Globals.FINGER_R_OPEN;
+                break;
             case POOP:
                 pivAngle = Globals.PIVOT_POOP;
                 leftAng = Globals.FINGER_L_CLOSE;
