@@ -32,7 +32,7 @@ object Globals {
     @JvmField var LIFT_MIN = -0.2
     @JvmField var INTERMEDIARY_ZONE_1 = 0.01
     @JvmField var INTERMEDIARY_ZONE_2 = 10.6
-    @JvmField var INTERMEDIARY_ZONE_3 = 2
+    @JvmField var INTERMEDIARY_ZONE_3 = 2.0
     @JvmField var PIVOT_INTAKE = 0.76
     @JvmField var PIVOT_INTERMEDIARY = 0.72
     @JvmField var PIVOT_INTERMEDIARY_2 = 0.55
