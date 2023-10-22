@@ -23,6 +23,7 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
     var pressed = true
         private set
     private val liftPid = PIDController(Globals.LIFT_P, Globals.LIFT_I, Globals.LIFT_D)
+    var voltage = 13.0
 
     init {
         hardware.liftLeft.direction = DcMotorSimple.Direction.FORWARD
@@ -46,6 +47,7 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
     override fun read() {
         distance = hardware.liftLeftEnc.distance
         pressed = hardware.limit.isPressed
+        voltage = hardware.voltage
     }
 
     fun update(s: LiftState) {
@@ -60,7 +62,7 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
 
     override fun write() {
         // can this be cleaner?
-        if (hardware.limit.isPressed) {
+        if (pressed) {
             if (distance != 0.0) {
                 hardware.liftLeftEnc.reset()
             }
@@ -72,8 +74,8 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
         }
         if (lastPower != power) {
             lastPower = power
-            hardware.liftLeft.power = power
-            hardware.liftRight.power = power
+            hardware.liftLeft.power = power*13.0/hardware.voltage
+            hardware.liftRight.power = power*13.0/hardware.voltage
         }
     }
 }

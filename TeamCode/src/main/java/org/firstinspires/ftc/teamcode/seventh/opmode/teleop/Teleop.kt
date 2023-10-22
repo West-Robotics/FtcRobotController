@@ -21,8 +21,8 @@ import kotlin.math.sign
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-@TeleOp(name = "SussyOp")
-public class Teleop : LinearOpMode() {
+@TeleOp(name = "KotlinSussyOp")
+class Teleop : LinearOpMode() {
 
     // run blocking?
     override fun runOpMode() {
@@ -31,7 +31,11 @@ public class Teleop : LinearOpMode() {
         // lock robot to face exactly backdrop
         // mecanum feedforward
 
-        val hardware = Hardware(hardwareMap)
+        telemetry.addLine("before hardware")
+        telemetry.update()
+        val hardware = Hardware.getInstance(hardwareMap)
+        telemetry.addLine("before mec")
+        telemetry.update()
         val drive = SampleMecanumDrive(hardware, hardwareMap)
         val intake = IntakeSubsystem(hardware)
         val lift = LiftSubsystem(hardware)
@@ -46,6 +50,8 @@ public class Teleop : LinearOpMode() {
         val SLEW_RATE = 6.0*1e-3
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
+        telemetry.addLine("in the middle")
+        telemetry.update()
 
         // is this bad? maybe switch to a singleton
         val cycle = CycleCommand(intake, lift, out)
@@ -57,9 +63,12 @@ public class Teleop : LinearOpMode() {
         hardware.read(intake, lift, out)
         cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState)
         hardware.write(intake, lift, out)
+        telemetry.addLine("waiting for start")
+        telemetry.update()
         waitForStart()
 
         while (opModeIsActive() && !isStopRequested) {
+            telemetry.addLine("in the loop")
             val loop = timeSource.markNow()
             val dt = (loop - loopTime).toDouble(DurationUnit.MILLISECONDS)
             loopTime = loop
@@ -83,12 +92,13 @@ public class Teleop : LinearOpMode() {
             turn += (-primary.rightX - turn).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
 
             val multiplier = when {
+                primary.isDown(GamepadKeys.Button.A)                -> 0.5
+                primary.isDown(GamepadKeys.Button.B)                -> 0.2
                 cycleMachine.state == CycleState.READY              -> 0.5
                 intake.state == IntakeSubsystem.IntakeState.INTAKE  -> 0.5
-                primary.isDown(GamepadKeys.Button.LEFT_BUMPER)      -> 0.5
                 else                                                -> 1.0
             }
-            drive.setWeightedDrivePower(Pose2d(x.pow(3)*multiplier, y.pow(3)*multiplier, (turn/1.5).pow(3)*multiplier))
+            drive.setWeightedDrivePower(Pose2d(x.pow(3)*multiplier, y.pow(3)*multiplier, (turn/1.5).pow(3)))
 
             telemetry.addData("pivot pos", hardware.pivot.position);
             telemetry.addData("left pos", hardware.fingerLeft.position);
@@ -98,5 +108,7 @@ public class Teleop : LinearOpMode() {
             telemetry.addData("hz ", 1000 / dt)
             telemetry.update()
         }
+        telemetry.addLine("out the loop")
+        telemetry.update()
     }
 }

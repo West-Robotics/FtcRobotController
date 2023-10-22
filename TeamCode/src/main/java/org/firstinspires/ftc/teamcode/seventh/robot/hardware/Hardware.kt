@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.ServoImplEx
 import com.qualcomm.robotcore.hardware.TouchSensor
+import com.qualcomm.robotcore.hardware.VoltageSensor
 import com.qualcomm.robotcore.util.ElapsedTime
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
@@ -32,11 +33,17 @@ import org.openftc.easyopencv.OpenCvCameraRotation
 
 // directory structure and robot hardware thing heavily inspired by 16379 KookyBotz - they're pretty epic
 
-class Hardware(hardwareMap: HardwareMap) {
+class Hardware(val hardwareMap: HardwareMap) {
     // UH THIS DOESN'T WORK
     companion object {
         lateinit var instance: Hardware
             private set
+        fun getInstance(hardwareMap: HardwareMap): Hardware {
+            if (!this::instance.isInitialized) {
+                instance = Hardware(hardwareMap)
+            }
+            return instance
+        }
     }
 
     // TODO: uh what was my reasoning for not having dt first in the loop again
@@ -54,8 +61,8 @@ class Hardware(hardwareMap: HardwareMap) {
         private set
     private var imuOffset = 0.0
 
-    @JvmField val plPod: Encoder
-    @JvmField val ppPod: Encoder
+    // @JvmField val plPod: Encoder
+    // @JvmField val ppPod: Encoder
 
     val liftLeft: DcMotorEx
     val liftRight: DcMotorEx
@@ -85,15 +92,13 @@ class Hardware(hardwareMap: HardwareMap) {
     // public GetPropPositionPipeline propPosition
 
     // TODO: replace with Photon voltage reader
-    var voltage = 0.0
+    var voltage = 13.0
         private set
     private var voltageTimer: ElapsedTime
 
     init {
         imu = hardwareMap.get(IMU::class.java, "imu")
         imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
-
-        instance = Hardware(hardwareMap)
 
         // power:
         //  ___________________
@@ -118,8 +123,8 @@ class Hardware(hardwareMap: HardwareMap) {
         rightRear = hardwareMap.get(DcMotorEx::class.java, "rightRear")
         rightFront = hardwareMap.get(DcMotorEx::class.java, "rightFront")
 
-        plPod = Encoder(hardwareMap.get(DcMotorEx::class.java, "plEnc"))
-        ppPod = Encoder(hardwareMap.get(DcMotorEx::class.java, "ppEnc"))
+        // plPod = Encoder(hardwareMap.get(DcMotorEx::class.java, "plEnc"))
+        // ppPod = Encoder(hardwareMap.get(DcMotorEx::class.java, "ppEnc"))
 
         liftLeft = hardwareMap.get(DcMotorEx::class.java, "liftLeft")
         liftRight = hardwareMap.get(DcMotorEx::class.java, "liftRight")
@@ -180,6 +185,9 @@ class Hardware(hardwareMap: HardwareMap) {
     fun read(vararg subsystems: Subsystem) {
         for (s in subsystems) {
             s.read()
+        }
+        if (voltageTimer.seconds() > 5.0) {
+            voltage = hardwareMap.voltageSensor.iterator().next().voltage
         }
     }
 
