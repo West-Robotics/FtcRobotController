@@ -4,9 +4,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.sfdev.assembly.state.StateMachine
 import com.sfdev.assembly.state.StateMachineBuilder
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.HangSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 
 class TeleMachines(primary: GamepadEx, secondary: GamepadEx) {
+    // TODO: PLEASE VALIDATE THE STATE MACHINES
     val cycle = StateMachineBuilder()
                 .state(CycleCommand.CycleState.LOCK)
                 .transition({ secondary.wasJustPressed(GamepadKeys.Button.A) }, CycleCommand.CycleState.INTAKE)
@@ -17,6 +19,9 @@ class TeleMachines(primary: GamepadEx, secondary: GamepadEx) {
                 .transition({ secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) }, CycleCommand.CycleState.SPIT)
                 .state(CycleCommand.CycleState.READY)
                 .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, CycleCommand.CycleState.LOCK)
+                .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) }, CycleCommand.CycleState.HIGH)
+                .state(CycleCommand.CycleState.HIGH)
+                .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, CycleCommand.CycleState.READY)
                 .state(CycleCommand.CycleState.SPIT)
                 .transition({ secondary.wasJustPressed(GamepadKeys.Button.A) }, CycleCommand.CycleState.INTAKE)
                 .transition({ secondary.wasJustPressed(GamepadKeys.Button.B) }, CycleCommand.CycleState.LOCK)
@@ -68,5 +73,17 @@ class TeleMachines(primary: GamepadEx, secondary: GamepadEx) {
                 .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_LEFT) }, OutputSubsystem.OutputState.READY)
                 .state(OutputSubsystem.OutputState.POOP_R)
                 .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_LEFT) }, OutputSubsystem.OutputState.READY)
+                .build()
+
+    val hang = StateMachineBuilder()
+                .state(HangSubsystem.HangState.STOP)
+                .transition({ secondary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9}, HangSubsystem.HangState.RAISE)
+                .transition({ secondary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9}, HangSubsystem.HangState.LOWER)
+                .state(HangSubsystem.HangState.RAISE)
+                .transition({ secondary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.1 }, HangSubsystem.HangState.STOP)
+                .transition({ secondary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9}, HangSubsystem.HangState.LOWER)
+                .state(HangSubsystem.HangState.LOWER)
+                .transition({ secondary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) < 0.1}, HangSubsystem.HangState.STOP)
+                .transition({ secondary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9}, HangSubsystem.HangState.RAISE)
                 .build()
 }

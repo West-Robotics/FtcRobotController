@@ -1,38 +1,28 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.hardware
 
-import com.arcrobotics.ftclib.hardware.ServoEx
-import com.arcrobotics.ftclib.hardware.SimpleServo
+import android.util.Size
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.ServoImplEx
 import com.qualcomm.robotcore.hardware.TouchSensor
-import com.qualcomm.robotcore.hardware.VoltageSensor
 import com.qualcomm.robotcore.util.ElapsedTime
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem
-import org.firstinspires.ftc.teamcode.util.Encoder
 import org.firstinspires.ftc.vision.VisionPortal
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
-import org.openftc.easyopencv.OpenCvCamera
-import org.openftc.easyopencv.OpenCvCameraFactory
-import org.openftc.easyopencv.OpenCvCameraRotation
 
 // directory structure and robot hardware thing heavily inspired by 16379 KookyBotz - they're pretty epic
 
+// TODO: intake redesign, odo pods, passive hang, drone, end effector optimization
+// TODO: belts, break beams, what else?
+// TODO: auto: auto aim for pixels
 class Hardware(val hardwareMap: HardwareMap) {
     // UH THIS DOESN'T WORK
     companion object {
@@ -79,17 +69,15 @@ class Hardware(val hardwareMap: HardwareMap) {
 
     val hang: DcMotorEx
 
+    lateinit var visionPortal: VisionPortal
+    lateinit var propProcessor: PropPositionProcessor
     // // TODO: read EasyOpenCV guide on vision portal
     // // randomization task, maybe detect waffles, also does AprilTags
-    // public OpenCvCamera inCam
     // // auto-stop to not hit the board
-    // public OpenCvCamera outCam
     // // one of these cams will be used for the randomization task
-//  //   public PropDetection propDetection
     // public AprilTagProcessor aprilTag
     // // ALWAYS CLOSE AT THE END OF AUTO, maybe bake into command
     // public VisionPortal visionPortal
-    // public GetPropPositionPipeline propPosition
 
     // TODO: replace with Photon voltage reader
     var voltage = 13.0
@@ -143,6 +131,18 @@ class Hardware(val hardwareMap: HardwareMap) {
 
         voltageTimer = ElapsedTime()
 
+        if (Globals.AUTO) {
+            propProcessor = PropPositionProcessor()
+            visionPortal = VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName::class.java, "propCam"))
+                    .setCameraResolution(Size(320, 240))
+                    .enableLiveView(true)
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    .setAutoStopLiveView(false)
+                    .addProcessor(PropPositionProcessor())
+                    .build()
+            visionPortal.setProcessorEnabled(propProcessor, true)
+        }
         // if (Globals.AUTO) {
 //      //       propDetection = new PropDetection()
         //     aprilTag = new AprilTagProcessor.Builder()
@@ -211,6 +211,12 @@ class Hardware(val hardwareMap: HardwareMap) {
         imuOffset = imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS) - imuOffset
         liftLeftEnc.reset()
         liftRightEnc.reset()
+    }
+
+    fun stop() {
+        if (this::visionPortal.isInitialized) {
+            visionPortal.close()
+        }
     }
 
 }

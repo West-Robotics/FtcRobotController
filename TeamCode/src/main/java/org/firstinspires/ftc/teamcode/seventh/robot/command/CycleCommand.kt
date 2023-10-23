@@ -10,6 +10,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
         INTAKE,
         LOCK,
         READY,
+        HIGH,
         GROUND,
         SPIT,
     }
@@ -22,6 +23,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
             CycleState.INTAKE -> Pair(IntakeSubsystem.IntakeState.INTAKE, LiftSubsystem.LiftState.DOWN)
             CycleState.LOCK -> Pair(IntakeSubsystem.IntakeState.STOP, LiftSubsystem.LiftState.DOWN)
             CycleState.READY -> Pair(IntakeSubsystem.IntakeState.STOP, LiftSubsystem.LiftState.UP)
+            CycleState.HIGH -> Pair(IntakeSubsystem.IntakeState.STOP, LiftSubsystem.LiftState.UP)
             CycleState.SPIT -> Pair(IntakeSubsystem.IntakeState.SPIT, LiftSubsystem.LiftState.DOWN)
             else -> Pair(IntakeSubsystem.IntakeState.STOP, LiftSubsystem.LiftState.DOWN)
         }) {
