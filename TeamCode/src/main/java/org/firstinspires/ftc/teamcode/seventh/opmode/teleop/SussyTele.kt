@@ -70,15 +70,15 @@ class SussyTele : LinearOpMode() {
         var y = 0.0
         var turn = 0.0
         // change per millisecond
-        val SLEW_RATE = 6.0*1e-3
+        val SLEW_RATE = 3.0*1e-3
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
 
         // is this bad? maybe switch to a singleton
         val cycle = CycleCommand(intake, lift, out)
-        val cycleMachine = TeleMachines(primary, secondary).cycle
-        val outMachine = TeleMachines(primary, secondary).out
-        val hangMachine = TeleMachines(primary, secondary).hang
+        val cycleMachine = TeleMachines.getCycleMachine(primary, secondary)
+        val outMachine = TeleMachines.getOutMachine(primary, secondary)
+        val hangMachine = TeleMachines.getHangMachine(primary, secondary)
 
         cycleMachine.start()
         outMachine.start()
@@ -90,6 +90,7 @@ class SussyTele : LinearOpMode() {
         telemetry.update()
         waitForStart()
 
+        var multiplier = 1.0
         while (opModeIsActive() && !isStopRequested) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
@@ -99,33 +100,41 @@ class SussyTele : LinearOpMode() {
             loopTime = loop
             // remember to convert to seconds (multiply by 10^-3) for slew rate lmao
 
-            primary.readButtons();
-            secondary.readButtons();
+            primary.readButtons()
+            secondary.readButtons()
 
             // update state machines
-            cycleMachine.update();
-            outMachine.update();
-            hangMachine.update();
+            cycleMachine.update()
+            outMachine.update()
+            hangMachine.update()
 
             // update all subsystems
-            hardware.read(intake, lift, out, hang);
+            hardware.read(intake, lift, out, hang)
             cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState)
             hang.update(hangMachine.state as HangSubsystem.HangState)
-            hardware.write(intake, lift, out, hang);
+            hardware.write(intake, lift, out, hang)
 
             // only change dt powers by at max the slew rate
             x += (primary.leftY - x).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
             y += (-primary.leftX - y).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
-            turn += (-primary.rightX - turn).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
+            turn += (-primary.rightX - turn).let { if (abs(it) < SLEW_RATE*(4.0/3.0)*dt) it else sign(it)*SLEW_RATE*(4.0/3.0)*dt }
 
-            val multiplier = when {
-                primary.isDown(GamepadKeys.Button.A)                -> 0.5
+            multiplier = when {
                 primary.isDown(GamepadKeys.Button.B)                -> 0.1
-                cycleMachine.state == CycleState.READY              -> 0.5
-                intake.state == IntakeSubsystem.IntakeState.INTAKE  -> 0.5
-                else                                                -> 1.0
+                primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && multiplier == 1.0 -> 0.3
+                primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && multiplier == 0.3 || secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) -> 1.0
+                // cycleMachine.state == CycleState.READY              -> 0.5
+                // intake.state == IntakeSubsystem.IntakeState.INTAKE  -> 0.5
+                else                                                -> multiplier
             }
-            drive.setWeightedDrivePower(Pose2d(x.pow(3)*multiplier, y.pow(3)*multiplier, (turn/1.5).pow(3)))
+            telemetry.addData("multi", multiplier)
+            val turn_multi = when {
+                multiplier == 0.3 -> 0.6
+                else -> 1.0
+            }
+            drive.setWeightedDrivePower(Pose2d(x.pow(3)*multiplier*13.0/hardware.voltage,
+                                               y.pow(3)*multiplier*13.0/hardware.voltage,
+                                        (turn/1.4)*turn_multi.pow(3)*13.0/hardware.voltage))
 
             telemetry.addData("pivot pos", hardware.pivot.position);
             telemetry.addData("left pos", hardware.fingerLeft.position);

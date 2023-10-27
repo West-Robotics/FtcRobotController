@@ -28,15 +28,17 @@ object Globals {
     @JvmField var LIFT_F = 0.0
     // 16/24 ratio * 0.03937 * mm to inch * 111.715 mm spool circum / 103.8 ppr, in inches
     @JvmField var LIFT_DISTANCE_PER_PULSE = 0.6666*0.03937*111.715/103.8
-    @JvmField var LIFT_MAX = 11.5
+    @JvmField var LIFT_MAX = 32.0
     @JvmField var LIFT_MIN = -0.5
+    // each height is spaced 4 inches apart
+    @JvmField var LIFT_HEIGHTS = DoubleArray(5) { 4.0*it + 12.0 }
     @JvmField var INTERMEDIARY_ZONE_1 = 0.01
     @JvmField var INTERMEDIARY_ZONE_2 = 10.8
     @JvmField var INTERMEDIARY_ZONE_3 = 2.0
     @JvmField var PIVOT_INTAKE = 0.76
     @JvmField var PIVOT_INTERMEDIARY = 0.72
     @JvmField var PIVOT_INTERMEDIARY_2 = 0.55
-    @JvmField var PIVOT_OUTTAKE = 0.31
+    @JvmField var PIVOT_OUTTAKE = 0.33
     @JvmField var PIVOT_PLOP = 0.33
     @JvmField var PIVOT_PREPOOP = 0.29
     @JvmField var PIVOT_POOP = 0.22
@@ -53,4 +55,18 @@ object Globals {
     @JvmField var STACK_1 = 0.5
 
     @JvmField var AUTO = false
+
+    enum class Side {
+        RED,
+        BLUE,
+    } @JvmField var side = Side.RED
+    enum class Start {
+        CLOSE,
+        FAR,
+    } @JvmField var start = Start.CLOSE
+    enum class Lane {
+        LANE_1,
+        LANE_2,
+        LANE_3,
+    } @JvmField var lane = Lane.LANE_1
 }

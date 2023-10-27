@@ -8,38 +8,50 @@ import kotlin.math.sign
 import kotlin.math.sin
 
 data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
-    fun mag() = hypot(u, v)
-    fun toPolar() = atan2(v, u)
-    fun unit() = mag().let { Vector2d(u / it, v / it) }
-    fun normal() = Vector2d(-v, u)
+    val mag = hypot(u, v)
+    val unit = Vector2d(u/mag, v/mag)
+    val normal = Vector2d(-v, u)
+    // maybe some of these make lazy and don't calculate until you need it
+    val polarAngle = atan2(v, u)
+    companion object {
+        val comparator = Comparator<Vector2d> { a, b ->
+            when {
+                a.mag < b.mag -> -1
+                a.mag == b.mag -> 0
+                else -> 1
+            }
+        }
+    }
     operator fun times(s: Double) = Vector2d(u*s, v*s)
     operator fun div(s: Double) = Vector2d(u/s, v/s)
     operator fun plus(w: Vector2d) = Vector2d(u+w.u, v+w.v)
     operator fun minus(w: Vector2d) = Vector2d(u-w.u, v-w.v)
     operator fun unaryMinus() = Vector2d(-u, -v)
-    operator fun compareTo(w: Vector2d) = sign(mag() - w.mag()).toInt()
+    operator fun compareTo(w: Vector2d) = sign(mag - w.mag).toInt()
     // does equals already exist?
     // other is Vector2d && u == other.u && v == other.v
 }
 
 // TODO: mega pain
 data class Rotation2d(val u: Double = 0.0, val v: Double = 0.0) {
+    constructor(v: Vector2d) : this(v.u, v.v)
+    constructor(theta: Double) : this(toVector(theta).u, toVector(theta).v)
     companion object {
         fun toVector(theta: Double): Vector2d {
             return Vector2d(cos(theta), sin(theta))
         }
     }
-    fun mag() = hypot(u, v)
-    fun toPolar() = atan2(v, u)
-    fun normal() = Vector2d(-v, u)
-    fun toVector() = Vector2d(u, v)
+    val mag = hypot(u, v)
+    val polarAngle = atan2(v, u)
+    val normal = Vector2d(-v, u)
+    val vector = Vector2d(u, v)
     operator fun times(s: Double) = Vector2d(u*s, v*s)
     operator fun div(s: Double) = Vector2d(u/s, v/s)
     operator fun plus(w: Rotation2d) = Rotation2d(u+w.u, v+w.v)
     operator fun minus(w: Rotation2d) = Rotation2d(u-w.u, v-w.v)
     operator fun unaryMinus() = Vector2d(-u, -v)
     // what is this lol
-    operator fun compareTo(w: Vector2d) = sign(mag() - w.mag()).toInt()
+    operator fun compareTo(w: Vector2d) = sign(mag - w.mag).toInt()
 }
 
 // TODO: mega pain

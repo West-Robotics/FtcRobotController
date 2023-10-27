@@ -44,7 +44,7 @@ class Hardware(val hardwareMap: HardwareMap) {
     @JvmField val rightRear: DcMotorEx
     @JvmField val rightFront: DcMotorEx
 
-    val imu: IMU
+    val imu: IMU = hardwareMap.get(IMU::class.java, "imu")
     var imuAngle = 0.0
         private set
     var imuAngularVelo = 0.0
@@ -54,8 +54,8 @@ class Hardware(val hardwareMap: HardwareMap) {
     // @JvmField val plPod: Encoder
     // @JvmField val ppPod: Encoder
 
-    val liftLeft: DcMotorEx
-    val liftRight: DcMotorEx
+    @JvmField val liftLeft: DcMotorEx
+    @JvmField val liftRight: DcMotorEx
     val liftLeftEnc: Motor.Encoder
     val liftRightEnc: Motor.Encoder
     val limit: TouchSensor
@@ -85,8 +85,7 @@ class Hardware(val hardwareMap: HardwareMap) {
     private var voltageTimer: ElapsedTime
 
     init {
-        imu = hardwareMap.get(IMU::class.java, "imu")
-        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
+        // imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
 
         // power:
         //  ___________________
@@ -131,18 +130,18 @@ class Hardware(val hardwareMap: HardwareMap) {
 
         voltageTimer = ElapsedTime()
 
-        if (Globals.AUTO) {
-            propProcessor = PropPositionProcessor()
-            visionPortal = VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName::class.java, "propCam"))
-                    .setCameraResolution(Size(320, 240))
-                    .enableLiveView(true)
-                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                    .setAutoStopLiveView(false)
-                    .addProcessor(PropPositionProcessor())
-                    .build()
-            visionPortal.setProcessorEnabled(propProcessor, true)
-        }
+        // if (Globals.AUTO) {
+            // propProcessor = PropPositionProcessor()
+            // visionPortal = VisionPortal.Builder()
+                    // .setCamera(hardwareMap.get(WebcamName::class.java, "propCam"))
+                    // .setCameraResolution(Size(320, 240))
+                    // .enableLiveView(true)
+                    // .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    // .setAutoStopLiveView(false)
+                    // .addProcessor(PropPositionProcessor())
+                    // .build()
+            // visionPortal.setProcessorEnabled(propProcessor, true)
+        // }
         // if (Globals.AUTO) {
 //      //       propDetection = new PropDetection()
         //     aprilTag = new AprilTagProcessor.Builder()
@@ -207,10 +206,18 @@ class Hardware(val hardwareMap: HardwareMap) {
         imuAngularVelo = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate.toDouble()
     }
 
+    fun getAng(): Double {
+        return imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+    }
+
+    fun getAngV(): Double {
+        return imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate.toDouble()
+    }
+
     fun reset() {
         imuOffset = imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS) - imuOffset
-        liftLeftEnc.reset()
-        liftRightEnc.reset()
+        // liftLeftEnc.reset()
+        // liftRightEnc.reset()
     }
 
     fun stop() {

@@ -20,7 +20,7 @@ class HangSubsystem(val hardware: Hardware) : Subsystem {
     private var lastPower = 0.0
 
     init {
-        hardware.hang.direction = DcMotorSimple.Direction.FORWARD
+        hardware.hang.direction = DcMotorSimple.Direction.REVERSE
         // does this actually save any power lol, i don't think it does cause just back emf
         hardware.hang.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
         hardware.hang.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER

@@ -23,14 +23,15 @@ public class LiftTest extends LinearOpMode {
         LiftSubsystem lift;
         GamepadEx gamepad;
         gamepad = new GamepadEx(gamepad1);
-        lift = new LiftSubsystem(hardware);
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-//            lift.update(gamepad.getLeftY()/2.0);
-            telemetry.addData("power", gamepad.getLeftY()/2.0);
-//            telemetry.addData("dist", lift.getDistance());
+            double power = gamepad.getLeftY()/1.0;
+            hardware.liftLeft.setPower(power);
+            hardware.liftRight.setPower(power);
+            telemetry.addData("power", power);
+            telemetry.addData("dist", hardware.getLiftLeftEnc().getDistance());
             telemetry.update();
         }
     }

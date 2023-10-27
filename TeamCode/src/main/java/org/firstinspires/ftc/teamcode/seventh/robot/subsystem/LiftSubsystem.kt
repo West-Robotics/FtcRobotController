@@ -39,9 +39,10 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
         hardware.liftRightEnc.setDistancePerPulse(Globals.LIFT_DISTANCE_PER_PULSE)
         hardware.liftRightEnc.reset()
         liftPid.setOutputRange(0.0, 0.5)
+        liftPid.setTolerance(10.0)
         liftPid.reset()
         liftPid.enable()
-        update(state)
+        update(state, 0)
     }
 
     override fun read() {
@@ -50,10 +51,10 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
         voltage = hardware.voltage
     }
 
-    fun update(s: LiftState) {
+    fun update(s: LiftState, height: Int) {
         state = s
         liftPid.setpoint = when (s) {
-            LiftState.UP    -> Globals.LIFT_MAX
+            LiftState.UP    -> Globals.LIFT_HEIGHTS[height]
             LiftState.DOWN  -> Globals.LIFT_MIN
         }
         power = liftPid.performPID(distance)
@@ -72,10 +73,11 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
         } else if (power < 0.0) {
             power /= 1.5
         }
+        power = power*13.0/hardware.voltage
         if (lastPower != power) {
             lastPower = power
-            hardware.liftLeft.power = power*13.0/hardware.voltage
-            hardware.liftRight.power = power*13.0/hardware.voltage
+            hardware.liftLeft.power = power
+            hardware.liftRight.power = power
         }
     }
 }
