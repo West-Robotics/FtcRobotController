@@ -73,7 +73,8 @@ class PropPositionProcessor : VisionProcessor {
         middleMat.release()
         rightMat.release()
         // tf is this
-        return frame!!
+        // return frame!!
+        return Any()
     }
 
     override fun onDrawFrame(

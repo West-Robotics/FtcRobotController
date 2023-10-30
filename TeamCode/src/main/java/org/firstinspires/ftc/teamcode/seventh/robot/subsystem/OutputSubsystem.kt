@@ -10,18 +10,12 @@ class OutputSubsystem(val hardware: Hardware) : Subsystem {
     enum class OutputState {
         INTAKE,
         LOCK,
+        REST,
         INTERMEDIARY,
         READY,
         DROP,
         DROP_L,
         DROP_R,
-        PLOP_READY,
-        PLOP_L,
-        PLOP_R,
-        PREPOOP_L,
-        PREPOOP_R,
-        POOP_L,
-        POOP_R,
     } var state = OutputState.LOCK
         private set
 
@@ -49,18 +43,12 @@ class OutputSubsystem(val hardware: Hardware) : Subsystem {
         when (s) {
             OutputState.INTAKE          -> Triple(Globals.PIVOT_INTAKE,         Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
             OutputState.LOCK            -> Triple(Globals.PIVOT_INTAKE,         Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
+            OutputState.REST            -> Triple(Globals.PIVOT_REST,           Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
             OutputState.INTERMEDIARY    -> Triple(Globals.PIVOT_INTERMEDIARY,   Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
             OutputState.READY           -> Triple(Globals.PIVOT_OUTTAKE,        Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
             OutputState.DROP            -> Triple(Globals.PIVOT_OUTTAKE,        Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
             OutputState.DROP_L          -> Triple(Globals.PIVOT_OUTTAKE,        Globals.FINGER_L_OPEN,  Globals.FINGER_R_CLOSE)
             OutputState.DROP_R          -> Triple(Globals.PIVOT_OUTTAKE,        Globals.FINGER_L_CLOSE, Globals.FINGER_R_OPEN)
-            OutputState.PLOP_READY      -> Triple(Globals.PIVOT_PLOP,           Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
-            OutputState.PLOP_L          -> Triple(Globals.PIVOT_PLOP,           Globals.FINGER_L_OPEN,  Globals.FINGER_R_CLOSE)
-            OutputState.PLOP_R          -> Triple(Globals.PIVOT_PLOP,           Globals.FINGER_L_CLOSE, Globals.FINGER_R_OPEN)
-            OutputState.PREPOOP_L       -> Triple(Globals.PIVOT_PREPOOP,        Globals.FINGER_L_OPEN,  Globals.FINGER_R_CLOSE)
-            OutputState.PREPOOP_R       -> Triple(Globals.PIVOT_PREPOOP,        Globals.FINGER_L_CLOSE, Globals.FINGER_R_OPEN)
-            OutputState.POOP_L          -> Triple(Globals.PIVOT_POOP,           Globals.FINGER_L_OPEN,  Globals.FINGER_R_CLOSE)
-            OutputState.POOP_R          -> Triple(Globals.PIVOT_POOP,           Globals.FINGER_L_CLOSE, Globals.FINGER_R_OPEN)
         }.let {
             pivAng = it.first
             leftAng = it.second

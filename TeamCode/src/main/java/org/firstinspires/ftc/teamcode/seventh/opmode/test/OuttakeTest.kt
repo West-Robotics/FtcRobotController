@@ -41,6 +41,7 @@ class OuttakeTest : LinearOpMode() {
 //            hardware.pivot.setPosition(gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))
 //            hardware.fingerLeft.setPosition(gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)+0.4)
 //            hardware.fingerRight.setPosition(gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)+0.34)
+            hardware.read(out)
             if (gamepad.getButton(GamepadKeys.Button.A)) {
                 out.update(OutputSubsystem.OutputState.INTAKE)
             } else if (gamepad.getButton(GamepadKeys.Button.B)) {
@@ -59,6 +60,7 @@ class OuttakeTest : LinearOpMode() {
             } else if (gamepad.getButton(GamepadKeys.Button.DPAD_LEFT)) {
                 hardware.intake.setPower(0.2)
             }
+            hardware.write(out)
             telemetry.addData("pivot pos", hardware.pivot.getPosition())
             telemetry.addData("left pos", hardware.fingerLeft.getPosition())
             telemetry.addData("right pos", hardware.fingerRight.getPosition())

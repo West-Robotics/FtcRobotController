@@ -13,9 +13,16 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
         SPIT,
     }
 
+    var cycleState = CycleState.LOCK
+    var outState = OutputSubsystem.OutputState.LOCK
+    var h = -1
+
     // okay so to be clear all this does is update the states (and also other computations, hm maybe
     // i should change that) of each subsystem not actually cause any hardware change
     fun update(cs: CycleState, os: OutputSubsystem.OutputState, height: Int) {
+        cycleState = cs
+        outState = os
+        h = height
         // TODO: worry about only starting intake when lift reaches bottom
         with(when (cs) {
             CycleState.INTAKE -> Pair(IntakeSubsystem.IntakeState.INTAKE, LiftSubsystem.LiftState.DOWN)
@@ -28,6 +35,8 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
         }
 
         out.update(when {
+            lift.distance == 0.0 -> when (os) { OutputSubsystem.OutputState.INTAKE -> OutputSubsystem.OutputState.INTAKE
+                                                else -> OutputSubsystem.OutputState.REST }
             lift.distance < when (lift.state) { LiftSubsystem.LiftState.UP -> Globals.INTERMEDIARY_ZONE_1
                                                 LiftSubsystem.LiftState.DOWN -> Globals.INTERMEDIARY_ZONE_3 }
                 -> when (os) {
@@ -43,5 +52,9 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
                         else -> os }
             else -> OutputSubsystem.OutputState.LOCK
         })
+    }
+
+    fun update() {
+        update(cycleState, outState, h)
     }
 }

@@ -70,7 +70,8 @@ class SussyTele : LinearOpMode() {
         var y = 0.0
         var turn = 0.0
         // change per millisecond
-        val SLEW_RATE = 3.0*1e-3
+        val SLEW_RATE = 2.0*1e-3
+        var dir = -1
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
 
@@ -79,18 +80,21 @@ class SussyTele : LinearOpMode() {
         val cycleMachine = TeleMachines.getCycleMachine(primary, secondary)
         val outMachine = TeleMachines.getOutMachine(primary, secondary)
         val hangMachine = TeleMachines.getHangMachine(primary, secondary)
+        var height = -1
 
         cycleMachine.start()
         outMachine.start()
         hangMachine.start()
         hardware.read(intake, lift, out, hang)
-        cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState)
+        cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState, -1)
         hardware.write(intake, lift, out, hang)
         telemetry.addLine("waiting for start")
         telemetry.update()
         waitForStart()
 
         var multiplier = 1.0
+        var lastLiftState = LiftSubsystem.LiftState.DOWN
+        var lastOutState = OutputState.LOCK
         while (opModeIsActive() && !isStopRequested) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
@@ -107,20 +111,58 @@ class SussyTele : LinearOpMode() {
             cycleMachine.update()
             outMachine.update()
             hangMachine.update()
+            if (secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) && height < 4) {
+                height++
+            } else if (secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                // if (height > 0) {
+                //     height = 0
+                // } else if (height == 0) {
+                //     height = -1
+                // }
+                height = -1
+            }
+            if (lift.state == LiftSubsystem.LiftState.DOWN && lastLiftState == LiftSubsystem.LiftState.UP) {
+                dir *= -1
+            }
+            if (outMachine.state == OutputState.LOCK && lastOutState == OutputState.INTAKE) {
+                dir *= -1
+            }
+            if (primary.wasJustPressed(GamepadKeys.Button.A)) {
+                dir = 1
+            }
+            lastLiftState = lift.state
+            lastOutState = outMachine.state as OutputState
 
             // update all subsystems
             hardware.read(intake, lift, out, hang)
-            cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState)
+            cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState, height)
             hang.update(hangMachine.state as HangSubsystem.HangState)
             hardware.write(intake, lift, out, hang)
 
             // only change dt powers by at max the slew rate
             x += (primary.leftY - x).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
             y += (-primary.leftX - y).let { if (abs(it) < SLEW_RATE*dt) it else sign(it)*SLEW_RATE*dt }
-            turn += (-primary.rightX - turn).let { if (abs(it) < SLEW_RATE*(4.0/3.0)*dt) it else sign(it)*SLEW_RATE*(4.0/3.0)*dt }
+            // turn += (-primary.rightX - turn).let { if (abs(it) < SLEW_RATE*(4.0/3.0)*dt) it else sign(it)*SLEW_RATE*(4.0/3.0)*dt }
+            turn += (-primary.rightX - turn).let {
+                if (sign(turn) == 1.0) {
+                    if (sign(it) == 1.0) {
+                        if (abs(it) < SLEW_RATE * (4.0 / 3.0) * dt) it else sign(it) * SLEW_RATE * (4.0 / 3.0) * dt
+                    } else {
+                        it
+                    }
+                } else if (sign(turn) == 0.0) {
+                    if (abs(it) < SLEW_RATE * (4.0 / 3.0) * dt) it else sign(it) * SLEW_RATE * (4.0 / 3.0) * dt
+                } else {
+                    if (sign(it) == -1.0) {
+                        if (abs(it) < SLEW_RATE * (4.0 / 3.0) * dt) it else sign(it) * SLEW_RATE * (4.0 / 3.0) * dt
+                    } else {
+                        it
+                    }
+                }
+            }
 
             multiplier = when {
-                primary.isDown(GamepadKeys.Button.B)                -> 0.1
+                primary.isDown(GamepadKeys.Button.B)                -> 0.15
                 primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && multiplier == 1.0 -> 0.3
                 primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && multiplier == 0.3 || secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) -> 1.0
                 // cycleMachine.state == CycleState.READY              -> 0.5
@@ -132,9 +174,9 @@ class SussyTele : LinearOpMode() {
                 multiplier == 0.3 -> 0.6
                 else -> 1.0
             }
-            drive.setWeightedDrivePower(Pose2d(x.pow(3)*multiplier*13.0/hardware.voltage,
+            drive.setWeightedDrivePower(Pose2d(dir*x.pow(3)*multiplier*13.0/hardware.voltage,
                                                y.pow(3)*multiplier*13.0/hardware.voltage,
-                                        (turn/1.4)*turn_multi.pow(3)*13.0/hardware.voltage))
+                                        (turn/1.6)*turn_multi.pow(2)*13.0/hardware.voltage))
 
             telemetry.addData("pivot pos", hardware.pivot.position);
             telemetry.addData("left pos", hardware.fingerLeft.position);
@@ -146,6 +188,6 @@ class SussyTele : LinearOpMode() {
             telemetry.addData("hz ", 1000 / dt)
             telemetry.update()
         }
-        hardware.stop()
+        // hardware.stop()
     }
 }

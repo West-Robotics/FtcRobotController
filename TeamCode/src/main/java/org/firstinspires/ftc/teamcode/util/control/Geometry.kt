@@ -28,8 +28,6 @@ data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
     operator fun minus(w: Vector2d) = Vector2d(u-w.u, v-w.v)
     operator fun unaryMinus() = Vector2d(-u, -v)
     operator fun compareTo(w: Vector2d) = sign(mag - w.mag).toInt()
-    // does equals already exist?
-    // other is Vector2d && u == other.u && v == other.v
 }
 
 // TODO: mega pain

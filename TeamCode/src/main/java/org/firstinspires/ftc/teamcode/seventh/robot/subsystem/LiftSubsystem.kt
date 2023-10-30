@@ -38,11 +38,11 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
         hardware.liftRightEnc.setDirection(Motor.Direction.FORWARD)
         hardware.liftRightEnc.setDistancePerPulse(Globals.LIFT_DISTANCE_PER_PULSE)
         hardware.liftRightEnc.reset()
-        liftPid.setOutputRange(0.0, 0.5)
-        liftPid.setTolerance(10.0)
+        liftPid.setOutputRange(0.0, 0.7)
+        liftPid.setTolerance(5.0)
         liftPid.reset()
         liftPid.enable()
-        update(state, 0)
+        update(state, -1)
     }
 
     override fun read() {
@@ -70,8 +70,14 @@ class LiftSubsystem(val hardware: Hardware) : Subsystem {
             if (power < 0.0) {
                 power = 0.0
             }
+        } else if (liftPid.onTarget()) {
+            power = 0.0
         } else if (power < 0.0) {
-            power /= 1.5
+            power /= if (distance >= 1.0) {
+                4.0
+            } else {
+                2.0
+            }
         }
         power = power*13.0/hardware.voltage
         if (lastPower != power) {

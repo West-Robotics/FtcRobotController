@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem
@@ -86,6 +88,7 @@ class Hardware(val hardwareMap: HardwareMap) {
 
     init {
         // imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
+        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
 
         // power:
         //  ___________________
@@ -130,18 +133,19 @@ class Hardware(val hardwareMap: HardwareMap) {
 
         voltageTimer = ElapsedTime()
 
-        // if (Globals.AUTO) {
-            // propProcessor = PropPositionProcessor()
-            // visionPortal = VisionPortal.Builder()
-                    // .setCamera(hardwareMap.get(WebcamName::class.java, "propCam"))
-                    // .setCameraResolution(Size(320, 240))
-                    // .enableLiveView(true)
-                    // .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                    // .setAutoStopLiveView(false)
-                    // .addProcessor(PropPositionProcessor())
-                    // .build()
-            // visionPortal.setProcessorEnabled(propProcessor, true)
-        // }
+         if (Globals.AUTO) {
+             propProcessor = PropPositionProcessor()
+             // visionPortal = VisionPortal.Builder()
+             //         .setCamera(hardwareMap.get(WebcamName::class.java, "propCam"))
+             //         .setCameraResolution(Size(320, 240))
+             //         .enableLiveView(true)
+             //         .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+             //         .setAutoStopLiveView(false)
+             //         .addProcessor(propProcessor)
+             //         .build()
+             // visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName::class.java, "propCam"), propProcessor)
+             // visionPortal.setProcessorEnabled(propProcessor, true)
+         }
         // if (Globals.AUTO) {
 //      //       propDetection = new PropDetection()
         //     aprilTag = new AprilTagProcessor.Builder()
@@ -207,7 +211,9 @@ class Hardware(val hardwareMap: HardwareMap) {
     }
 
     fun getAng(): Double {
-        return imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+        // return imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+        // wtf is this
+        return imu.getRobotOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS).thirdAngle.toDouble()
     }
 
     fun getAngV(): Double {
