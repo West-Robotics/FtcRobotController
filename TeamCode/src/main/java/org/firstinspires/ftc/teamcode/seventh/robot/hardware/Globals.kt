@@ -4,20 +4,20 @@ import com.acmerobotics.dashboard.config.Config
 
 @Config
 object Globals {
-    @JvmField var LEFT_REGION_X = 0.0
-    @JvmField var LEFT_REGION_Y = 0.0
-    @JvmField var LEFT_REGION_WIDTH = 20.0
-    @JvmField var LEFT_REGION_HEIGHT = 20.0
+    @JvmField var LEFT_REGION_X = 20.0
+    @JvmField var LEFT_REGION_Y = 420.0
+    @JvmField var LEFT_REGION_WIDTH = 200.0
+    @JvmField var LEFT_REGION_HEIGHT = 100.0
 
-    @JvmField var MIDDLE_REGION_X = 40.0
-    @JvmField var MIDDLE_REGION_Y = 40.0
-    @JvmField var MIDDLE_REGION_WIDTH = 20.0
-    @JvmField var MIDDLE_REGION_HEIGHT = 20.0
+    @JvmField var MIDDLE_REGION_X = 600.0
+    @JvmField var MIDDLE_REGION_Y = 420.0
+    @JvmField var MIDDLE_REGION_WIDTH = 200.0
+    @JvmField var MIDDLE_REGION_HEIGHT = 100.0
 
-    @JvmField var RIGHT_REGION_X = 80.0
-    @JvmField var RIGHT_REGION_Y = 80.0
-    @JvmField var RIGHT_REGION_WIDTH = 20.0
-    @JvmField var RIGHT_REGION_HEIGHT = 20.0
+    @JvmField var RIGHT_REGION_X = 1080.0
+    @JvmField var RIGHT_REGION_Y = 420.0
+    @JvmField var RIGHT_REGION_WIDTH = 200.0
+    @JvmField var RIGHT_REGION_HEIGHT = 100.0
 
     @JvmField var HEADING_P = 0.01
     @JvmField var HEADING_D = 0.0

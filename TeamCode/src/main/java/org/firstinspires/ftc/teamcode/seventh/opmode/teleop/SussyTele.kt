@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand.CycleState
 import org.firstinspires.ftc.teamcode.seventh.robot.command.TeleMachines
+import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.HangSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
@@ -130,8 +131,17 @@ class SussyTele : LinearOpMode() {
             if (primary.wasJustPressed(GamepadKeys.Button.A)) {
                 dir = 1
             }
+            // if (primary.wasJustPressed(GamepadKeys.Button.X)) {
+            //     dir *= -1
+            // }
             lastLiftState = lift.state
             lastOutState = outMachine.state as OutputState
+
+            if (secondary.wasJustPressed(GamepadKeys.Button.START)) {
+                Globals.PIVOT_OUTTAKE -= 0.01
+            } else if (secondary.wasJustPressed(GamepadKeys.Button.BACK)) {
+                Globals.PIVOT_OUTTAKE += 0.01
+            }
 
             // update all subsystems
             hardware.read(intake, lift, out, hang)

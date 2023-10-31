@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.hardware
 
-import android.util.Size
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
@@ -16,9 +15,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem
 import org.firstinspires.ftc.vision.VisionPortal
+import org.openftc.easyopencv.OpenCvCamera
+import org.openftc.easyopencv.OpenCvCameraFactory
+import org.openftc.easyopencv.OpenCvCameraRotation
 
 // directory structure and robot hardware thing heavily inspired by 16379 KookyBotz - they're pretty epic
 
@@ -31,10 +33,11 @@ class Hardware(val hardwareMap: HardwareMap) {
         lateinit var instance: Hardware
             private set
         fun getInstance(hardwareMap: HardwareMap): Hardware {
-            if (!this::instance.isInitialized) {
-                instance = Hardware(hardwareMap)
-            }
-            return instance
+            // if (!this::instance.isInitialized) {
+            //     instance = Hardware(hardwareMap)
+            // }
+            // return instance
+            return Hardware(hardwareMap)
         }
     }
 
@@ -71,8 +74,10 @@ class Hardware(val hardwareMap: HardwareMap) {
 
     val hang: DcMotorEx
 
-    lateinit var visionPortal: VisionPortal
-    lateinit var propProcessor: PropPositionProcessor
+    // lateinit var visionPortal: VisionPortal
+    // lateinit var propProcessor: PropPositionProcessor
+    lateinit var propCam: OpenCvCamera
+    lateinit var propPosition: GetPropPositionPipeline
     // // TODO: read EasyOpenCV guide on vision portal
     // // randomization task, maybe detect waffles, also does AprilTags
     // // auto-stop to not hit the board
@@ -133,8 +138,20 @@ class Hardware(val hardwareMap: HardwareMap) {
 
         voltageTimer = ElapsedTime()
 
-         if (Globals.AUTO) {
-             propProcessor = PropPositionProcessor()
+        if (Globals.AUTO) {
+            val cameraMonitorViewId: Int = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName);
+            propCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "propCam"), cameraMonitorViewId);
+            propPosition = GetPropPositionPipeline()
+            propCam.openCameraDeviceAsync(object: OpenCvCamera.AsyncCameraOpenListener {
+                override fun onOpened() {
+                    propCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                }
+
+                override fun onError(errorCode: Int) { }
+            });
+            propCam.setPipeline(propPosition);
+        }
+             // propProcessor = PropPositionProcessor()
              // visionPortal = VisionPortal.Builder()
              //         .setCamera(hardwareMap.get(WebcamName::class.java, "propCam"))
              //         .setCameraResolution(Size(320, 240))
@@ -145,7 +162,6 @@ class Hardware(val hardwareMap: HardwareMap) {
              //         .build()
              // visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName::class.java, "propCam"), propProcessor)
              // visionPortal.setProcessorEnabled(propProcessor, true)
-         }
         // if (Globals.AUTO) {
 //      //       propDetection = new PropDetection()
         //     aprilTag = new AprilTagProcessor.Builder()
@@ -182,6 +198,7 @@ class Hardware(val hardwareMap: HardwareMap) {
         //         }
         //     })
         // }
+        Globals.PIVOT_OUTTAKE = 0.46
         voltage = hardwareMap.voltageSensor.iterator().next().voltage
     }
 
@@ -226,10 +243,10 @@ class Hardware(val hardwareMap: HardwareMap) {
         // liftRightEnc.reset()
     }
 
-    fun stop() {
-        if (this::visionPortal.isInitialized) {
-            visionPortal.close()
-        }
-    }
+    // fun stop() {
+    //     if (this::visionPortal.isInitialized) {
+    //         visionPortal.close()
+    //     }
+    // }
 
 }
