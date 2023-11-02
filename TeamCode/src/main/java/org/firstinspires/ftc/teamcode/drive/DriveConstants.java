@@ -46,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 0.93078552; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 12.08; // in
+    public static double TRACK_WIDTH = 15.0; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -84,12 +84,12 @@ public class DriveConstants {
      *
      * Maximum Angular Velocity is calculated as: maximum velocity / trackWidth * (180 / Math.PI) but capped at 360°/s.
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
-     
+
      */
     public static double MAX_VEL = 52.48291908330528;
     public static double MAX_ACCEL = 52.48291908330528;
-    public static double MAX_ANG_VEL = Math.toRadians(160);
-    public static double MAX_ANG_ACCEL = Math.toRadians(160);
+    public static double MAX_ANG_VEL = Math.toRadians(110);
+    public static double MAX_ANG_ACCEL = Math.toRadians(110);
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.

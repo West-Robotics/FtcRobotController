@@ -307,12 +307,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return hardware.getAngle();
+        return hardware.getAng();
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return hardware.getAngularVelocity();
+        return hardware.getAngV();
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

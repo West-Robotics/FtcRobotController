@@ -13,11 +13,11 @@ import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware;
 @Config
 @Autonomous(group = "drive")
 public class TurnTest extends LinearOpMode {
-    public static double ANGLE = 180; // deg
+    public static double ANGLE = 720; // deg
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(Hardware.getInstance(), hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(new Hardware(hardwareMap), hardwareMap);
 
         waitForStart();
 
