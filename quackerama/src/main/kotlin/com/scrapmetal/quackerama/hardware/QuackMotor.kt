@@ -11,6 +11,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 import kotlin.math.abs
 
+/**
+ * Motor wrapper with cached writes and less functions
+ *
+ * @param thresh minimum chance in commanded power to necessitate a hardware write
+ */
 class QuackMotor(val hardwareMap: HardwareMap, name: String, private var thresh: Double = 0.001) {
     private val motor = hardwareMap.get(DcMotorEx::class.java, name)
     private var lastPower = 0.0

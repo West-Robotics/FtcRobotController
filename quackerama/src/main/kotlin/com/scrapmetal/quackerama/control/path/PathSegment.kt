@@ -8,9 +8,37 @@ interface PathSegment {
     val label: String
     val startPose: Pose2d
     val endPose: Pose2d
+
+    /**
+     * Calculate parametric function of the path
+     *
+     * @param t the parametric input t
+     * @return returns a position/vector
+     */
     operator fun invoke(t: Double): Vector2d
+
+    /**
+     * Calculate tangent of the closest point on the path relative to the input
+     *
+     * @param p current position
+     * @return returns a rotation as the tangent is an angle
+     */
     fun tauOf(p: Vector2d): Rotation2d
+
+    /**
+     * Calculate the error relative to the path
+     *
+     * Custom error functions like e^2 or 1/e can be used for desirable behaviors
+     */
     fun eOf(p: Vector2d): Vector2d
+
+    /**
+     * Calculate the parametric input t that gives the closest point of the path
+     */
     fun closestT(p: Vector2d): Double
+
+    /**
+     * Calculate the closest point of the path
+     */
     fun closestPoint(p: Vector2d): Vector2d
 }

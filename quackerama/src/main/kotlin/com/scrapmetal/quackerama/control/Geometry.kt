@@ -6,6 +6,9 @@ import kotlin.math.hypot
 import kotlin.math.sign
 import kotlin.math.sin
 
+/**
+ * A vector in both the mathematical and physical interpretation of the word
+ */
 data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
     val mag = hypot(u, v)
     val unit = Vector2d(u/mag, v/mag)
@@ -30,6 +33,9 @@ data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
 }
 
 // TODO: mega pain
+/**
+ * A rotation on a vector, rotation, or a pose
+ */
 data class Rotation2d(val u: Double = 0.0, val v: Double = 0.0) {
     constructor(v: Vector2d) : this(v.u, v.v)
     constructor(theta: Double) : this(toVector(theta).u, toVector(theta).v)
@@ -52,6 +58,9 @@ data class Rotation2d(val u: Double = 0.0, val v: Double = 0.0) {
 }
 
 // TODO: mega pain
+/**
+ * A combination of position and heading
+ */
 data class Pose2d(val position: Vector2d = Vector2d(), val heading: Rotation2d = Rotation2d()) {
     operator fun plus(p: Pose2d) = Pose2d(position + p.position, heading + p.heading)
     operator fun minus(p: Pose2d) = Pose2d(position - p.position, heading - p.heading)

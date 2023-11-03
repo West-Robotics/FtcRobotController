@@ -5,6 +5,12 @@ import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
 import kotlin.math.pow
 
+/**
+ * A cubic Hermite spline for paths
+ *
+ * @param v0 initial Hermite velocity
+ * @param v1 end Hermite velocity
+ */
 class CubicHermite(override val label:      String,
                    override val startPose: Pose2d,
                             val v0: Vector2d,

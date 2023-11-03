@@ -4,6 +4,11 @@ import com.scrapmetal.quackerama.control.Pose2d
 import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
 
+/**
+ * A line segment for a path
+ *
+ * Path start and end headings inherently cannot be controlled
+ */
 class Line(override val label:      String,
            override val startPose:  Pose2d,
            override val endPose:    Pose2d

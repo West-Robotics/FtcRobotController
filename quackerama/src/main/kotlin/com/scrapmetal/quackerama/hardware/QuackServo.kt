@@ -6,6 +6,12 @@ import com.qualcomm.robotcore.hardware.Servo.Direction
 import com.qualcomm.robotcore.hardware.ServoImplEx
 import kotlin.math.abs
 
+/**
+ * Servo wrapper with cached writes, built in servo pwm ranges, and less functions
+ *
+ * @param pwm servo model, used to determine pwm range
+ * @param thresh minimum change in commanded position to necessitate a hardware write
+ */
 class QuackServo(hardwareMap: HardwareMap, name: String, pwm: ModelPWM, private var thresh: Double = 0.001) {
     enum class ModelPWM(val min: Double, val max: Double) {
         AXON_MAX(510.0, 2490.0), AXON_MINI(510.0, 2490.0), AXON_MICRO(510.0, 2490.0),
