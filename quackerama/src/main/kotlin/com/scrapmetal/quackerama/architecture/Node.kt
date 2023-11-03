@@ -9,6 +9,8 @@ interface Node {
     /**
      * Call once per scheduled loop
      *
+     * Publish and subscribe here
+     *
      * @param dt time step between loops in milliseconds
      */
     fun update(dt: Double)

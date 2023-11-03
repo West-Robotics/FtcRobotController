@@ -22,7 +22,7 @@ object NodeBroker {
     /**
      * Master topic map that all nodes read from
      */
-    private var topics: MutableMap<String, Any> = mutableMapOf()
+    var topics: MutableMap<String, Any> = mutableMapOf()
         private set
     private val timeSource = TimeSource.Monotonic
     private var currentMark: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()

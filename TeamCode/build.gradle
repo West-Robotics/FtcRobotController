@@ -50,6 +50,7 @@ repositories {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation project(path: ':quackerama')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     implementation 'org.openftc:easyopencv:1.7.0'

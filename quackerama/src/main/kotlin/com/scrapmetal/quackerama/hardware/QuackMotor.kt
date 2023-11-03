@@ -14,7 +14,7 @@ import kotlin.math.abs
 /**
  * Motor wrapper with cached writes and less functions
  *
- * @param thresh minimum chance in commanded power to necessitate a hardware write
+ * @param thresh minimum change in commanded power to necessitate a hardware write
  */
 class QuackMotor(val hardwareMap: HardwareMap, name: String, private var thresh: Double = 0.001) {
     private val motor = hardwareMap.get(DcMotorEx::class.java, name)
