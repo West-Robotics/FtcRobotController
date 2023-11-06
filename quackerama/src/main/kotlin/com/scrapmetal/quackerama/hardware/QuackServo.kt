@@ -16,6 +16,7 @@ class QuackServo(hardwareMap: HardwareMap, name: String, pwm: ModelPWM, private 
     enum class ModelPWM(val min: Double, val max: Double) {
         AXON_MAX(510.0, 2490.0), AXON_MINI(510.0, 2490.0), AXON_MICRO(510.0, 2490.0),
         GOBILDA_TORQUE(500.0, 2500.0), GOBILDA_SPEED(500.0, 2500.0), GOBILDA_SUPER(500.0, 2500.0),
+        GENERIC(500.0, 2500.0),
     }
 
     private val servo = hardwareMap.get(ServoImplEx::class.java, name)
