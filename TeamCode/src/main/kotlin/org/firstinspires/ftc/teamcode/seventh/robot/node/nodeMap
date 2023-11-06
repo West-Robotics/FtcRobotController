@@ -1,0 +1,39 @@
+first line: class name
+->: publishes to
+<-: subscribes to
+<scope>/(modifier)<topic>
+modifier !: used to command hardware
+no modifier: passive output data
+
+LiftSubsystem
+    ->
+        lift/height
+        lift/velocity
+        lift/current
+        lift/zeroed
+    <-
+        lift/!power
+
+EndEffectorSubsystem
+    ->
+        ee/commandedPitch
+        ee/leftCollected
+        ee/rightCollected
+    <-
+        ee/!pitch
+        ee/!lf
+        ee/!rf
+
+V4BSubsystem
+    ->
+        v4b/currentAng
+    <-
+        v4b/!ang
+
+OutputNode
+    ->
+        lift/!power
+        ee/!pitch
+        ee/!lf
+        ee/!rf
+        v4b/!ang
