@@ -16,7 +16,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.seventh.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem
+import org.firstinspires.ftc.vision.VisionPortal
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
@@ -40,9 +44,6 @@ class Hardware(val hardwareMap: HardwareMap) {
         }
     }
 
-    // TODO: uh what was my reasoning for not having dt first in the loop again
-    // maybe it was only doing dt every other loop?
-    // less important than slides? this season probably other way around
     @JvmField val leftFront: DcMotorEx
     @JvmField val leftRear: DcMotorEx
     @JvmField val rightRear: DcMotorEx
@@ -74,16 +75,16 @@ class Hardware(val hardwareMap: HardwareMap) {
     val hang: DcMotorEx
 
     // lateinit var visionPortal: VisionPortal
-    // lateinit var propProcessor: PropPositionProcessor
-    lateinit var propCam: OpenCvCamera
-    lateinit var propPosition: GetPropPositionPipeline
+    // lateinit var propCam: OpenCvCamera
+    // lateinit var propPosition: GetPropPositionPipeline
     // // TODO: read EasyOpenCV guide on vision portal
     // // randomization task, maybe detect waffles, also does AprilTags
     // // auto-stop to not hit the board
     // // one of these cams will be used for the randomization task
-    // public AprilTagProcessor aprilTag
+    lateinit var aprilTag: AprilTagProcessor
     // // ALWAYS CLOSE AT THE END OF AUTO, maybe bake into command
-    // public VisionPortal visionPortal
+    lateinit var propProcessor: PropPositionProcessor
+    lateinit var visionPortal: VisionPortal
 
     // TODO: replace with Photon voltage reader
     var voltage = 13.0
@@ -138,17 +139,21 @@ class Hardware(val hardwareMap: HardwareMap) {
         voltageTimer = ElapsedTime()
 
         if (Globals.AUTO) {
-            val cameraMonitorViewId: Int = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName);
-            propCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "propCam"), cameraMonitorViewId);
-            propPosition = GetPropPositionPipeline()
-            propCam.openCameraDeviceAsync(object: OpenCvCamera.AsyncCameraOpenListener {
-                override fun onOpened() {
-                    propCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-                }
+            propProcessor = PropPositionProcessor()
+            aprilTag = AprilTagProcessor.easyCreateWithDefaults()
+            visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName::class.java, "propCam"), propProcessor, aprilTag)
+            // val cameraMonitorViewId: Int = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName);
+            // propCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "propCam"), cameraMonitorViewId);
+            // propPosition = GetPropPositionPipeline()
+            // propCam.openCameraDeviceAsync(object: OpenCvCamera.AsyncCameraOpenListener {
+            //     override fun onOpened() {
+            //         propCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            //     }
 
-                override fun onError(errorCode: Int) { }
-            });
-            propCam.setPipeline(propPosition);
+            //     override fun onError(errorCode: Int) { }
+            // });
+            // propCam.setPipeline(propPosition);
+
         }
              // propProcessor = PropPositionProcessor()
              // visionPortal = VisionPortal.Builder()
