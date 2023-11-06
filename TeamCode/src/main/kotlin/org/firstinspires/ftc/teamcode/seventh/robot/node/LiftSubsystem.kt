@@ -47,11 +47,11 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         // maybe add feedforward here because it's independent of feedback controls?
         // then why not add voltage compensation
         // what is the true scope of a subsystem?
-        power = NodeBroker.topics["lift/power"] as Double
-        topics["lift/height"] = height
-        topics["lift/velocity"] = velocity
-        topics["lift/current"] = current
-        topics["lift/zeroed"] = zeroed
+        power = NodeBroker.topics["lift/!power"] as Double
+        publish("lift/height", height)
+        publish("lift/velocity", velocity)
+        publish("lift/current", current)
+        publish("lift/zeroed", zeroed)
     }
 
     override fun write() {
