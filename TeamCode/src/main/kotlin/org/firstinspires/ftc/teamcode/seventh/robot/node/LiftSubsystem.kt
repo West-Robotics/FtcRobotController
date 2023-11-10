@@ -4,8 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.TouchSensor
-import com.scrapmetal.quackerama.architecture.NodeBroker
-import com.scrapmetal.quackerama.architecture.Subsystem
+import com.scrapmetal.internode.NodeBroker
+import com.scrapmetal.internode.Subsystem
+import com.scrapmetal.internode.receive
 import com.scrapmetal.quackerama.hardware.QuackQuadrature
 import com.scrapmetal.quackerama.hardware.QuackMotor
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
@@ -47,7 +48,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         // maybe add feedforward here because it's independent of feedback controls?
         // then why not add voltage compensation
         // what is the true scope of a subsystem?
-        power = NodeBroker.topics["lift/!power"] as Double
+        power = receive("lift/!power")
         publish("lift/height", height)
         publish("lift/velocity", velocity)
         publish("lift/current", current)
@@ -57,7 +58,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun write() {
         // i wonder how much time resetting takes, and if not resetting before height publish
         // can result in issues?
-        if (zeroed) enc.reset()
+        if (zeroed && height != 0.0) enc.reset()
         leftMotor.setPower(power)
         rightMotor.setPower(power)
     }

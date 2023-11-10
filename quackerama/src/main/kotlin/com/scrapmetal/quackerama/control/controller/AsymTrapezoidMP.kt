@@ -47,7 +47,7 @@
 //     }
 //
 //     fun s(t: Double): Double {
-//         return start + when() when {
+//         return start + when {
 //             // i am not entirely sure why integrating velocity does not work
 //             t <= t_a -> 0.5*a(t)*t.pow(2)
 //             t < t_b -> s_a + v(t)*(t-t_a)

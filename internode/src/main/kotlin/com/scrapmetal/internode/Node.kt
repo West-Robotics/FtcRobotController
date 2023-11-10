@@ -1,4 +1,6 @@
-package com.scrapmetal.quackerama.architecture
+package com.scrapmetal.internode
+
+import kotlin.reflect.KClass
 
 interface Node {
     /**
@@ -16,7 +18,9 @@ interface Node {
      */
     fun update(dt: Double)
 
-    fun publish(string: String, data: Any) {
-        topics[string] = data
+    fun publish(topic: String, data: Any) {
+        topics[topic] = data
     }
 }
+
+inline fun <reified T> Node.receive(topic: String) = NodeBroker.topics[topic] as T

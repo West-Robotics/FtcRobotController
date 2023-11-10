@@ -1,4 +1,4 @@
-package com.scrapmetal.quackerama.architecture
+package com.scrapmetal.internode
 
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
@@ -17,7 +17,8 @@ object NodeBroker {
     /**
      * Registered subsystems
      */
-    private var subsystems: List<Subsystem> = emptyList()
+    var subsystems: List<Subsystem> = emptyList()
+        private set
 
     /**
      * Master topic map that all nodes read from
@@ -35,7 +36,7 @@ object NodeBroker {
      * Register in dependency order to reduce latency between updates of dependent nodes
      */
     fun registerNodes(vararg nodes: Node) {
-        this.nodes = nodes.toList()
+        NodeBroker.nodes = nodes.toList()
         nodes.forEach { topics += it.topics }
     }
 
@@ -43,15 +44,8 @@ object NodeBroker {
      * Register subsystems with the broker. Follow same ordering advice as [registerNodes]
      */
     fun registerSubsystems(vararg subsystems: Subsystem) {
-        this.subsystems = subsystems.toList()
+        NodeBroker.subsystems = subsystems.toList()
     }
-
-    /**
-     * Perform all hardware reads
-     *
-     * This should not take significant time due to bulkreads
-     */
-    fun readHardware() = subsystems.forEach { it.read() }
 
     /**
      * Let an individual node update and publish their topics
@@ -68,15 +62,8 @@ object NodeBroker {
         currentMark = timeSource.markNow()
         dt = (currentMark - lastMark).toDouble(DurationUnit.MILLISECONDS)
         lastMark = currentMark
-        readHardware()
+        HardwareScheduler.read()
         nodes.forEach { updateNode(it) }
-        writeHardware()
+        HardwareScheduler.write()
     }
-
-    /**
-     * Perform all scheduled hardware writes
-     *
-     * Hardware write count should be limited to 8 at most
-     */
-    fun writeHardware() = subsystems.forEach { it.write() }
 }

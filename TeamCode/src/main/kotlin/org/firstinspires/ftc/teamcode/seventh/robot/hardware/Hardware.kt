@@ -95,23 +95,6 @@ class Hardware(val hardwareMap: HardwareMap) {
         // imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
         imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
 
-        // power:
-        //  ___________________
-        // |   | chub   | ehub |
-        // | 0 | intake | lf   |
-        // | 1 | liftL  | lr   |
-        // | 2 | liftR  | rr   |
-        // | 3 | hang   | rf   |
-        // --------------------
-
-        // encoder:
-        //  ___________________
-        // |   | chub   | ehub |
-        // | 0 | pl     |      |
-        // | 1 | liftL  |      |
-        // | 2 | liftR  |      |
-        // | 3 | pp     |      |
-        // --------------------
 
         leftFront = hardwareMap.get(DcMotorEx::class.java, "leftFront")
         leftRear = hardwareMap.get(DcMotorEx::class.java, "leftRear")

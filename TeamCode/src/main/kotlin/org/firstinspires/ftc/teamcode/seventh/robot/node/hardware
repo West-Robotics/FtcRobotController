@@ -1,0 +1,99 @@
+chub and ehub connected via USB: chub USB-A 3.0 to ehub microUSB, using the retention mount
+i have heard that you can add redundancy by using RS485 simultaneously with USB but i've never
+verified that and idk how it works with Photon.
+webcam to chub USB-A 2.0
+if we use a second webcam we will have to add a usb hub
+
+some reference stuff:
+total distinct hardware devices:
+8 motors + 3 encoders + 9 servos + 3 i2c + 2 analog + 1 digital = *26*
+write hardware devices:
+8 motors + 9 servos = *17*
+read hardware devices:
+3 encoders + 3 i2c + 2 analog + 1 digital = *9*
+
+assuming 1 LynxCommand takes 2 ms over UART, with no optimizations, reading all read devices
+and writing all write devices (ignoring current sensing) every loop would mean:
+2 ms * 26 LynxCommands = 52 ms looptimes, or ~20 hz
+this is a mega L
+
+w/ bulkreads + Photon
+3 ms bulkread over USB + 3 ms parallel write over USB = 6 ms looptimes, or ~160 hz, an 8x speedup
+this is considering only parallel writing by Photon and ignoring other Photon optimizations
+such as skipping ACK awaits.
+be warned that Photon can handle max 8 parallel commands stabley, so dynamic priority switching is a
+must or we will fall back to 111 hz or worse.
+Albert from 19071 has suggested having the ehub in a separate thread so that the chub doesn't wait
+but this seems like a very dangerous thing to do.
+
+now to figure out how kooky got 330 hz ...
+
+
+
+current sensing will be used for most motors
+
+motor power:
+ ____________________________
+|   | chub      | ehub       |
+| 0 | intake    | leftFront  |
+| 1 | liftLeft  | leftRear   |
+| 2 | liftRight | rightRear  |
+| 3 | hang      | rightFront |
+ ----------------------------
+
+<object in code>(actual referenced motor)
+motor encoder:
+ ______________________________
+|   | chub              | ehub |
+| 0 | plPod(intake)     |      |
+| 1 | liftEnc(liftLeft) |      |
+| 2 |                   |      |
+| 3 | ppPod(hang)       |      |
+ ------------------------------
+
+using an SPM, with the corresponding ports
+servo:
+ ______________________________
+|   | chub        | ehub       |
+| 0 | v4bLeft     | outerLeft  |
+| 1 | v4bRight    | outerRight |
+| 2 | pitch       | drone      |
+| 3 | fingerLeft  |            |
+| 4 | fingerRight |            |
+| 5 | roller      |            |
+ ------------------------------
+
+i2c:
+ ________________________
+|   | chub        | ehub |
+| 0 | imu         |      |
+| 1 | filledLeft  |      |
+| 2 | filledRight |      |
+| 3 |             |      |
+ ------------------------
+
+the following ports can actually take 2 sensors per port
+there are 4 pins, 2 are power/ground and the other 2 are for data
+this is why some sensors may be sitting 1 off
+
+analog:
+ ____________________
+|   | chub    | ehub |
+| 0 | v4bEncL |      |
+| 1 |         |      |
+| 2 | v4bEncR |      |
+| 3 |         |      |
+ --------------------
+
+digital:
+ __________________
+|   | chub  | ehub |
+| 0 |       |      |
+| 1 | limit |      |
+| 2 |       |      |
+| 3 |       |      |
+| 4 |       |      |
+| 5 |       |      |
+| 6 |       |      |
+| 7 |       |      |
+ ------------------

@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.node
 
+import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
-import com.scrapmetal.quackerama.architecture.NodeBroker
-import com.scrapmetal.quackerama.architecture.Subsystem
+import com.scrapmetal.internode.NodeBroker
+import com.scrapmetal.internode.Subsystem
+import com.scrapmetal.internode.receive
 import com.scrapmetal.quackerama.hardware.QuackServo
 
 class EndEffectorSubsystem(hardwareMap: HardwareMap) : Subsystem {
@@ -13,11 +15,14 @@ class EndEffectorSubsystem(hardwareMap: HardwareMap) : Subsystem {
     private var commandedPitch = 0.0
     private var commandedLF = 0.0
     private var commandedRF = 0.0
-    override var updatePeriod = 1
+    private var leftFilled = false
+    private var rightFilled = false
+    override var updatePeriod = 4
     // 25 kg blue servo
     private val pitch = QuackServo(hardwareMap, "pitch", QuackServo.ModelPWM.GENERIC)
     private val leftFinger = QuackServo(hardwareMap, "leftFinger", QuackServo.ModelPWM.GOBILDA_SPEED)
     private val rightFinger = QuackServo(hardwareMap, "rightFinger", QuackServo.ModelPWM.GOBILDA_SPEED)
+    private val leftDetector = hardwareMap.get(ColorRangeSensor::class.java, "")
 
     init {
         pitch.setDirection(Servo.Direction.FORWARD)
@@ -30,9 +35,9 @@ class EndEffectorSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
 
     override fun update(dt: Double) {
-        commandedPitch = NodeBroker.topics["ee/!pitch"] as Double
-        commandedLF = NodeBroker.topics["ee/!lf"] as Double
-        commandedRF = NodeBroker.topics["ee/!rf"] as Double
+        commandedPitch = receive("ee/!pitch")
+        commandedLF = receive("ee/!lf")
+        commandedRF = receive("ee/!rf")
         publish("ee/commandedPitch", commandedPitch)
     }
 
