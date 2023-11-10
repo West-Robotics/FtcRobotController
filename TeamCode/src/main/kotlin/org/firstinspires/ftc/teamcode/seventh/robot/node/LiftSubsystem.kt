@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.TouchSensor
 import com.scrapmetal.quackerama.architecture.NodeBroker
 import com.scrapmetal.quackerama.architecture.Subsystem
-import com.scrapmetal.quackerama.hardware.QuackEnc
+import com.scrapmetal.quackerama.hardware.QuackQuadrature
 import com.scrapmetal.quackerama.hardware.QuackMotor
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 
@@ -25,7 +25,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override var updatePeriod = 1
     private val leftMotor: QuackMotor = QuackMotor(hardwareMap, "liftLeft")
     private val rightMotor: QuackMotor = QuackMotor(hardwareMap, "liftRight")
-    private val enc: QuackEnc = QuackEnc(hardwareMap, "liftEnc", 1.0, 1.0)
+    private val enc: QuackQuadrature = QuackQuadrature(hardwareMap, "liftEnc", 1.0, 1.0)
     private val limit: TouchSensor = hardwareMap.get(TouchSensor::class.java, "liftLimit")
 
     init {

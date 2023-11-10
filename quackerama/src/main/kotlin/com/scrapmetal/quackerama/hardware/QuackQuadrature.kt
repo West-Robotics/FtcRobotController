@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 /**
  * Motor encoder wrapper with various QOL functions and built-in velocity overflow correction
  */
-class QuackEnc(hardwareMap: HardwareMap, name: String, private var ticksPerRev: Double, private var ticksPerDist: Double) {
+class QuackQuadrature(hardwareMap: HardwareMap, name: String, private var ticksPerRev: Double, private var ticksPerDist: Double) {
     private val motor = hardwareMap.get(DcMotorEx::class.java, name)
     private var dir: Direction = Direction.FORWARD
     private var offset = 0

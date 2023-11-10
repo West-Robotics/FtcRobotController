@@ -3,6 +3,7 @@ first line: class name
 <-: subscribes to
 <scope>/(modifier)<topic>
 modifier !: used to command hardware
+modifier ~: stateful node. nodes should be stateless otherwise
 no modifier: passive output data
 
 LiftSubsystem

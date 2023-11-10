@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.util.ElapsedTime
 
 import org.firstinspires.ftc.teamcode.seventh.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
@@ -100,6 +101,7 @@ class SussyTele : LinearOpMode() {
         var multiplier = 1.0
         var lastLiftState = LiftSubsystem.LiftState.DOWN
         var lastOutState = OutputState.LOCK
+        val elapsedTime = ElapsedTime()
         while (opModeIsActive() && !isStopRequested) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
@@ -192,6 +194,14 @@ class SussyTele : LinearOpMode() {
                                                y.pow(3)*multiplier*13.0/hardware.voltage,
                                         (turn/1.6)*turn_multi.pow(2)*13.0/hardware.voltage))
 
+            if (90.0 < elapsedTime.seconds() && elapsedTime.seconds() < 91.0) {
+                primary.gamepad.rumble(1000)
+                secondary.gamepad.rumble(1000)
+            }
+            if (105.0 < elapsedTime.seconds() && elapsedTime.seconds() < 106.0) {
+                primary.gamepad.rumbleBlips(6)
+                secondary.gamepad.rumbleBlips(6)
+            }
             telemetry.addData("pivot pos", hardware.pivot.position);
             telemetry.addData("left pos", hardware.fingerLeft.position);
             telemetry.addData("right pos", hardware.fingerRight.position)
