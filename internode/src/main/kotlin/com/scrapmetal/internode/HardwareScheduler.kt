@@ -2,6 +2,9 @@ package com.scrapmetal.internode
 
 /**
  * Schedule hardware reads and writes
+ *
+ * TODO: specify scheduling inside here instead of delegating the job to subsystems
+ *   they don't have to care about priority, this does
  */
 object HardwareScheduler {
     /**
