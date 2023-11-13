@@ -193,8 +193,7 @@ class SussyTele : LinearOpMode() {
             telemetry.addData("right pos", hardware.fingerRight.position)
             telemetry.addData("lift dist", lift.distance)
             telemetry.addData("list state", lift.state)
-            telemetry.addData("cycle state", cycleMachine.state as CycleState)
-            telemetry.addData("out state", outMachine.state as OutputState)
+            telemetry.addData("lift power", lift.power)
             telemetry.addData("hz ", 1000 / dt)
             telemetry.update()
         }
