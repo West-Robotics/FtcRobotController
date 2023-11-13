@@ -43,7 +43,7 @@ object Globals {
     @JvmField var PIVOT_INTERMEDIARY_2 = 0.55
     @JvmField var PIVOT_OUTTAKE = 0.46
     @JvmField var FINGER_L_OPEN = 0.45
-    @JvmField var FINGER_L_CLOSE = 0.40
+    @JvmField var FINGER_L_CLOSE = 0.39
     @JvmField var FINGER_R_OPEN = 0.60
     @JvmField var FINGER_R_CLOSE = 0.66
 

@@ -44,10 +44,10 @@ class Hardware(val hardwareMap: HardwareMap) {
         }
     }
 
-    @JvmField val leftFront: DcMotorEx
-    @JvmField val leftRear: DcMotorEx
-    @JvmField val rightRear: DcMotorEx
-    @JvmField val rightFront: DcMotorEx
+    @JvmField var leftFront: DcMotorEx
+    @JvmField var leftRear: DcMotorEx
+    @JvmField var rightRear: DcMotorEx
+    @JvmField var rightFront: DcMotorEx
 
     val imu: IMU = hardwareMap.get(IMU::class.java, "imu")
     var imuAngle = 0.0
@@ -81,10 +81,10 @@ class Hardware(val hardwareMap: HardwareMap) {
     // // randomization task, maybe detect waffles, also does AprilTags
     // // auto-stop to not hit the board
     // // one of these cams will be used for the randomization task
-    lateinit var aprilTag: AprilTagProcessor
+    // !lateinit var aprilTag: AprilTagProcessor
     // // ALWAYS CLOSE AT THE END OF AUTO, maybe bake into command
-    lateinit var propProcessor: PropPositionProcessor
-    lateinit var visionPortal: VisionPortal
+    // !lateinit var propProcessor: PropPositionProcessor
+    // !lateinit var visionPortal: VisionPortal
 
     // TODO: replace with Photon voltage reader
     var voltage = 13.0
@@ -93,7 +93,7 @@ class Hardware(val hardwareMap: HardwareMap) {
 
     init {
         // imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
-        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
+        // imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
 
 
         leftFront = hardwareMap.get(DcMotorEx::class.java, "leftFront")
@@ -114,17 +114,17 @@ class Hardware(val hardwareMap: HardwareMap) {
         fingerRight = hardwareMap.get(ServoImplEx::class.java, "fingerRight")
 
         intake = hardwareMap.get(DcMotorEx::class.java, "intake")
-//        outerPivotLeft = hardwareMap.get(ServoImplEx::class.java, "outerPivotLeft")
-//        outerPivotRight = hardwareMap.get(ServoImplEx::class.java, "outerPivotRight")
+//      //   outerPivotLeft = hardwareMap.get(ServoImplEx::class.java, "outerPivotLeft")
+//      //   outerPivotRight = hardwareMap.get(ServoImplEx::class.java, "outerPivotRight")
 
         hang = hardwareMap.get(DcMotorEx::class.java, "hang")
 
         voltageTimer = ElapsedTime()
 
         if (Globals.AUTO) {
-            propProcessor = PropPositionProcessor()
-            aprilTag = AprilTagProcessor.easyCreateWithDefaults()
-            visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName::class.java, "propCam"), propProcessor, aprilTag)
+            // propProcessor = PropPositionProcessor()
+            // aprilTag = AprilTagProcessor.easyCreateWithDefaults()
+            // visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName::class.java, "propCam"), propProcessor, aprilTag)
             // val cameraMonitorViewId: Int = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName);
             // propCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "propCam"), cameraMonitorViewId);
             // propPosition = GetPropPositionPipeline()

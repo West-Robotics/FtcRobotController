@@ -17,11 +17,11 @@ class CameraTest : LinearOpMode() {
         var atagCount = 0
 
         while (opModeInInit()) {
-            for (det in hardware.aprilTag.detections) {
-                atagCount++
-            }
-            telemetry.addData("prop position", hardware.propProcessor.getPosition())
-            telemetry.update()
+            // for (det in hardware.aprilTag.detections) {
+            //     atagCount++
+            // }
+            // telemetry.addData("prop position", hardware.propProcessor.getPosition())
+            // telemetry.update()
         }
     }
 }

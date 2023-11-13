@@ -63,7 +63,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
-    private IMU imu;
+    // private IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
     private List<Integer> lastEncPositions = new ArrayList<>();
@@ -74,7 +74,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         this.hardware = hardware;
-        hardware.init(hardwareMap);
+        // WHY THE HECK DID THIS BUILD WHEN THE FUNCTION DOESN'T EXIST
+        // hardware.init(hardwareMap);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -94,10 +95,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 //                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
 //         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        // leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        // leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        // rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        // rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardware.leftFront;
+        leftRear = hardware.leftRear;
+        rightRear = hardware.rightRear;
+        rightFront = hardware.rightFront;
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -293,12 +298,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return hardware.getAng();
+        // return hardware.getAng();
+        return 0.0;
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return hardware.getAngV();
+        // return hardware.getAngV();
+        return 0.0;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

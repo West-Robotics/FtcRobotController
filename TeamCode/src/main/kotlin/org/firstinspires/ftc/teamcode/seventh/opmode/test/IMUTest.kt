@@ -19,7 +19,7 @@ class IMUTest : LinearOpMode() {
     override fun runOpMode() {
         // dbval hardware = Hardware.getInstance(hardwareMap)
         // val drive = SampleMecanumDrive(hardware, hardwareMap)
-        val dashboard = FtcDashboard.getInstance()
+        // val dashboard = FtcDashboard.getInstance()
         val imu: IMU = hardwareMap.get(IMU::class.java, "imu")
         imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
         var ang = 0.0
@@ -39,7 +39,7 @@ class IMUTest : LinearOpMode() {
             packet.put("int first angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).firstAngle)
             packet.put("int second angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).secondAngle)
             packet.put("int three angle", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle)
-            dashboard.sendTelemetryPacket(packet)
+            // dashboard.sendTelemetryPacket(packet)
             // drive.setWeightedDrivePower(Pose2d(0.0, 0.0, (-gamepad1.right_stick_x).toDouble()))
             // telemetry.addData("imu angle", toDegrees(hardware.imuAngle))
             // telemetry.addData("imu velocity", toDegrees(hardware.imuAngularVelo))

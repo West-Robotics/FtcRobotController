@@ -51,24 +51,20 @@ class SussyTele : LinearOpMode() {
     // run blocking?
     override fun runOpMode() {
         // IDEAS:
-        // automatically flip driving direction
         // lock robot to face exactly backdrop
         // mecanum feedforward
         // delete clutter opmodes
+        // Globals.AUTO = false
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
         }
         val hardware = Hardware.getInstance(hardwareMap)
-        val drive =
-            SampleMecanumDrive(
-                hardware,
-                hardwareMap
-            )
-        val intake = IntakeSubsystem(hardware)
-        val lift = LiftSubsystem(hardware)
-        val out = OutputSubsystem(hardware)
-        val hang = HangSubsystem(hardware)
+        val drive = SampleMecanumDrive(hardware, hardwareMap)
+        // val intake = IntakeSubsystem(hardware)
+        // val lift = LiftSubsystem(hardware)
+        // val out = OutputSubsystem(hardware)
+        // val hang = HangSubsystem(hardware)
 
         val primary = GamepadEx(gamepad1)
         val secondary = GamepadEx(gamepad2)
@@ -77,31 +73,31 @@ class SussyTele : LinearOpMode() {
         var turn = 0.0
         // change per millisecond
         val SLEW_RATE = 2.0*1e-3
-        var dir = -1
+        var dir = 1
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
 
         // is this bad? maybe switch to a singleton
-        val cycle = CycleCommand(intake, lift, out)
-        val cycleMachine = TeleMachines.getCycleMachine(primary, secondary)
-        val outMachine = TeleMachines.getOutMachine(primary, secondary)
-        val hangMachine = TeleMachines.getHangMachine(primary, secondary)
-        var height = -1
+        // val cycle = CycleCommand(intake, lift, out)
+        // val cycleMachine = TeleMachines.getCycleMachine(primary, secondary)
+        // val outMachine = TeleMachines.getOutMachine(primary, secondary)
+        // val hangMachine = TeleMachines.getHangMachine(primary, secondary)
+        // var height = -1
 
-        cycleMachine.start()
-        outMachine.start()
-        hangMachine.start()
-        hardware.read(intake, lift, out, hang)
-        cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState, -1)
-        hardware.write(intake, lift, out, hang)
-        telemetry.addLine("waiting for start")
-        telemetry.update()
+        // cycleMachine.start()
+        // outMachine.start()
+        // hangMachine.start()
+        // hardware.read(intake, lift, out, hang)
+        // cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState, -1)
+        // hardware.write(intake, lift, out, hang)
+        // telemetry.addLine("waiting for start")
+        // telemetry.update()
         waitForStart()
 
-        var multiplier = 1.0
-        var lastLiftState = LiftSubsystem.LiftState.DOWN
-        var lastOutState = OutputState.LOCK
-        val elapsedTime = ElapsedTime()
+        // var multiplier = 1.0
+        // var lastLiftState = LiftSubsystem.LiftState.DOWN
+        // var lastOutState = OutputState.LOCK
+        // val elapsedTime = ElapsedTime()
         while (opModeIsActive() && !isStopRequested) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
@@ -128,12 +124,12 @@ class SussyTele : LinearOpMode() {
                 // }
                 height = -1
             }
-            if (lift.state == LiftSubsystem.LiftState.DOWN && lastLiftState == LiftSubsystem.LiftState.UP) {
-                dir *= -1
-            }
-            if (outMachine.state == OutputState.LOCK && lastOutState == OutputState.INTAKE) {
-                dir *= -1
-            }
+            // if (lift.state == LiftSubsystem.LiftState.DOWN && lastLiftState == LiftSubsystem.LiftState.UP) {
+            //     dir *= -1
+            // }
+            // if (outMachine.state == OutputState.LOCK && lastOutState == OutputState.INTAKE) {
+            //     dir *= -1
+            // }
             if (primary.wasJustPressed(GamepadKeys.Button.A)) {
                 dir = 1
             }
@@ -180,7 +176,7 @@ class SussyTele : LinearOpMode() {
             multiplier = when {
                 primary.isDown(GamepadKeys.Button.B)                -> 0.15
                 primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && multiplier == 1.0 -> 0.3
-                primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && multiplier == 0.3 || secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) -> 1.0
+                (primary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && multiplier == 0.3) || secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) -> 1.0
                 // cycleMachine.state == CycleState.READY              -> 0.5
                 // intake.state == IntakeSubsystem.IntakeState.INTAKE  -> 0.5
                 else                                                -> multiplier
