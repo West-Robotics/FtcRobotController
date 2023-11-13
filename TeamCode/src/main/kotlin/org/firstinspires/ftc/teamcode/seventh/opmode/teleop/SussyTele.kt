@@ -54,17 +54,17 @@ class SussyTele : LinearOpMode() {
         // lock robot to face exactly backdrop
         // mecanum feedforward
         // delete clutter opmodes
-        // Globals.AUTO = false
+        Globals.AUTO = false
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
         }
         val hardware = Hardware.getInstance(hardwareMap)
         val drive = SampleMecanumDrive(hardware, hardwareMap)
-        // val intake = IntakeSubsystem(hardware)
-        // val lift = LiftSubsystem(hardware)
-        // val out = OutputSubsystem(hardware)
-        // val hang = HangSubsystem(hardware)
+        val intake = IntakeSubsystem(hardware)
+        val lift = LiftSubsystem(hardware)
+        val out = OutputSubsystem(hardware)
+        val hang = HangSubsystem(hardware)
 
         val primary = GamepadEx(gamepad1)
         val secondary = GamepadEx(gamepad2)
@@ -78,26 +78,26 @@ class SussyTele : LinearOpMode() {
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
 
         // is this bad? maybe switch to a singleton
-        // val cycle = CycleCommand(intake, lift, out)
-        // val cycleMachine = TeleMachines.getCycleMachine(primary, secondary)
-        // val outMachine = TeleMachines.getOutMachine(primary, secondary)
-        // val hangMachine = TeleMachines.getHangMachine(primary, secondary)
-        // var height = -1
+        val cycle = CycleCommand(intake, lift, out)
+        val cycleMachine = TeleMachines.getCycleMachine(primary, secondary)
+        val outMachine = TeleMachines.getOutMachine(primary, secondary)
+        val hangMachine = TeleMachines.getHangMachine(primary, secondary)
+        var height = -1
 
-        // cycleMachine.start()
-        // outMachine.start()
-        // hangMachine.start()
-        // hardware.read(intake, lift, out, hang)
-        // cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState, -1)
-        // hardware.write(intake, lift, out, hang)
-        // telemetry.addLine("waiting for start")
-        // telemetry.update()
+        cycleMachine.start()
+        outMachine.start()
+        hangMachine.start()
+        hardware.read(intake, lift, out, hang)
+        cycle.update(cycleMachine.state as CycleState, outMachine.state as OutputState, -1)
+        hardware.write(intake, lift, out, hang)
+        telemetry.addLine("waiting for start")
+        telemetry.update()
         waitForStart()
 
-        // var multiplier = 1.0
-        // var lastLiftState = LiftSubsystem.LiftState.DOWN
-        // var lastOutState = OutputState.LOCK
-        // val elapsedTime = ElapsedTime()
+        var multiplier = 1.0
+        var lastLiftState = LiftSubsystem.LiftState.DOWN
+        var lastOutState = OutputState.LOCK
+        val elapsedTime = ElapsedTime()
         while (opModeIsActive() && !isStopRequested) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
