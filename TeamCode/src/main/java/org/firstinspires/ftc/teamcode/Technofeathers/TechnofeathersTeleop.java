@@ -33,8 +33,6 @@ public class TechnofeathersTeleop extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         pivot1.setPosition(0.4); //change later
         pivot2.setPosition(0.4); //change later
-        private Controller currentGamepad1.A = gamepad1;
-        private Controller previousGamepad1.A =  currentGamepad1.A;
     }
 
     @Override
@@ -42,7 +40,7 @@ public class TechnofeathersTeleop extends OpMode {
         controller.update();
         drive.drive(controller.left_stick_x, -controller.left_stick_y/1.25, -controller.right_stick_x/1.25);
         controller.update();
-
+        /*
         if (currentGamepad1.A && !previousGamepad1.A) {
             intake.setPower(1);
             previousGamepad1.A = currentGamepad1.A;
@@ -51,6 +49,8 @@ public class TechnofeathersTeleop extends OpMode {
         if (currentGamepad1.A && !previousGamepad1.A) {
             intake.setPower(0);
         }
+        
+         */
 
         if (controller.B()) {
             pivot1.setPosition(180); //change later
@@ -76,6 +76,21 @@ public class TechnofeathersTeleop extends OpMode {
         } else {
             lift1.setPower(0);
             lift2.setPower(0);
+        }
+
+        if (controller.X()) {
+            intake.setPower(1);
+
+        } else if (controller.Y()) {
+            intake.setPower(0);
+        }
+
+        if (controller.left_trigger>0.9){
+            pivot1.setPosition(pivot1.getPosition()+0.05);
+            pivot2.setPosition(pivot2.getPosition()+0.05);
+        } else if (controller.right_trigger>0.9){
+            pivot1.setPosition(pivot1.getPosition()-0.05);
+            pivot2.setPosition(pivot2.getPosition()-0.05);
         }
     }
 }
