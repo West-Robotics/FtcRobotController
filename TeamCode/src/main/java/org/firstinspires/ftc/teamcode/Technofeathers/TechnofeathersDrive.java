@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.technomancers;
+package org.firstinspires.ftc.teamcode.Technofeathers;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,17 +6,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.drive.HolonomicDrive;
 
-public class TechnomancersDrive extends HolonomicDrive {
+public class TechnofeathersDrive extends HolonomicDrive {
 
 
     //Autonomous code yes
-    public TechnomancersDrive(LinearOpMode opMode, HardwareMap hwMap) {
+    public TechnofeathersDrive(LinearOpMode opMode, HardwareMap hwMap) {
         super(opMode, hwMap);
         setup();
     }
 
     //Teleop code
-    public TechnomancersDrive(OpMode opMode, HardwareMap hwMap) {
+    public TechnofeathersDrive(OpMode opMode, HardwareMap hwMap) {
         super(opMode, hwMap);
         setup();
     }
