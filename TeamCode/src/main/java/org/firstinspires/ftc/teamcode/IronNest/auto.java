@@ -11,13 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class auto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        DcMotor armangle;
-        DcMotor armextend;
         DcMotor backleft;
         DcMotor backright;
-        Servo claw1;
-        Servo claw2;
-        Servo clawup;
         DcMotor frontleft;
         DcMotor frontright;
         ElapsedTime timer;
