@@ -74,7 +74,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         this.hardware = hardware;
-        hardware.init(hardwareMap);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -94,12 +93,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 //                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
 //         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        // leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        // leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        // rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        // rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        motors = Arrays.asList(hardware.leftFront, hardware.leftRear, hardware.rightRear, hardware.rightFront);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -118,10 +117,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-//         hardware.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-//         hardware.leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        // leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        // leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        hardware.leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        hardware.leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
@@ -285,10 +284,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        hardware.leftFront.setPower(v);
+        hardware.leftRear.setPower(v1);
+        hardware.rightRear.setPower(v2);
+        hardware.rightFront.setPower(v3);
     }
 
     @Override
