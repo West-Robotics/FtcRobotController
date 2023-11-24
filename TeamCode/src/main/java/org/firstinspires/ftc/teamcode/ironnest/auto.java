@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ironnest;
+package org.firstinspires.ftc.teamcode.IronNest;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Controller;
-import org.firstinspires.ftc.teamcode.ironnest.IronNestDrive;
+import org.firstinspires.ftc.teamcode.Controller;;
 
 import java.util.concurrent.TimeUnit;
 

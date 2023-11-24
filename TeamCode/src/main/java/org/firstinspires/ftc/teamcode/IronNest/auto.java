@@ -6,54 +6,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="IronAutoHumanPlayerBlue")
+import org.firstinspires.ftc.teamcode.Controller;;
 
+import java.util.concurrent.TimeUnit;
+
+@Autonomous(name="Iron Nest Auto", group="IronNest")
 public class auto extends LinearOpMode {
-    @Override
-    public void runOpMode() throws InterruptedException {
-        DcMotor backleft;
-        DcMotor backright;
-        DcMotor frontleft;
-        DcMotor frontright;
-        ElapsedTime timer;
 
-        frontleft = hardwareMap.get(DcMotor.class, "frontleft");
-        frontright = hardwareMap.get(DcMotor.class, "frontright");
-        backleft = hardwareMap.get(DcMotor.class, "backleft");
-        backright = hardwareMap.get(DcMotor.class, "backright");
+    //So whoever looks at this code, I have no idea if it will work I just copied the code from Technomancers
 
-        waitForStart();
-        if (isStopRequested()) return;
-
-        frontleft.setPower(-1);
-        frontright.setPower(-1);
-        backright.setPower(1);
-        backleft.setPower(1);
-
-        timer = new ElapsedTime();
-        while (timer.seconds() < 2.2) {
-            continue;
-        }
-
-        frontleft.setPower(0);
-        frontright.setPower(0);
-        backright.setPower(0);
-        backleft.setPower(0);
-
-        frontleft.setPower(-1);
-        frontright.setPower(1);
-        backleft.setPower(-1);
-        backright.setPower(1);
-
-        timer = new ElapsedTime();
-        while (timer.seconds() < 3.1) {
-            continue;
-        }
-
-        frontleft.setPower(0);
-        frontright.setPower(0);
-        backright.setPower(0);
-        backleft.setPower(0);
+    @Override public void runOpMode() throws InterruptedException {
+        
     }
-
 }
