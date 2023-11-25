@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 
-import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareMap
+import com.scrapmetal.quackerama.hardware.QuackMotor
 
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware
 
-class HangSubsystem(val hardware: Hardware) : Subsystem {
+class HangSubsystem(hardwareMap: HardwareMap) : Subsystem {
     enum class HangState {
         STOP,
         RAISE,
@@ -19,11 +18,12 @@ class HangSubsystem(val hardware: Hardware) : Subsystem {
         private set
     private var lastPower = 0.0
 
+    val hang = QuackMotor(hardwareMap, "hang")
+
     init {
-        hardware.hang.direction = DcMotorSimple.Direction.REVERSE
-        // does this actually save any power lol, i don't think it does cause just back emf
-        hardware.hang.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
-        hardware.hang.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        hang.setDirection(DcMotorSimple.Direction.FORWARD)
+        // i don't think this saves power
+        hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT)
         update(state)
     }
 
@@ -39,10 +39,6 @@ class HangSubsystem(val hardware: Hardware) : Subsystem {
     }
 
     override fun write() {
-        // is there a cleaner way to write this?
-        if (lastPower != power) {
-            lastPower = power;
-            hardware.hang.power = power;
-        }
+        hang.setPower(power)
     }
 }

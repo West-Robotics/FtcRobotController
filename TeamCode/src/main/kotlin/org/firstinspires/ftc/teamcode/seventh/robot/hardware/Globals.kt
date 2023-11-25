@@ -26,8 +26,8 @@ object Globals {
     @JvmField var LIFT_I = 0.0
     @JvmField var LIFT_D = 0.0
     @JvmField var LIFT_F = 0.0
-    // 16/24 ratio * 0.03937 * mm to inch * 111.715 mm spool circum / 103.8 ppr, in inches
-    @JvmField var LIFT_DISTANCE_PER_PULSE = 0.6666*0.03937*111.715/103.8
+    // 4.398 in spool circum * 20/30 ratio / 103.8 ppr, in inches
+    @JvmField var LIFT_DISTANCE_PER_PULSE = 4.398 * 0.6666 / 103.8
     @JvmField var LIFT_MAX = 30.0
     @JvmField var LIFT_MIN = -2.0
     // each height is spaced 4 inches apart
@@ -37,22 +37,13 @@ object Globals {
     @JvmField var INTERMEDIARY_ZONE_3 = 2.0
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39
-    @JvmField var PIVOT_REST = 0.92
-    @JvmField var PIVOT_INTAKE = 0.90
-    @JvmField var PIVOT_INTERMEDIARY = 0.86
-    @JvmField var PIVOT_INTERMEDIARY_2 = 0.55
-    @JvmField var PIVOT_OUTTAKE = 0.46
     @JvmField var FINGER_L_OPEN = 0.45
     @JvmField var FINGER_L_CLOSE = 0.40
     @JvmField var FINGER_R_OPEN = 0.60
     @JvmField var FINGER_R_CLOSE = 0.66
 
     // outer roller auto stack angle for servo in degrees
-    @JvmField var STACK_5 = 1
-    @JvmField var STACK_4 = 0.9
-    @JvmField var STACK_3 = 0.7
-    @JvmField var STACK_2 = 0.6
-    @JvmField var STACK_1 = 0.5
+    @JvmField var STACK_HEIGHT = doubleArrayOf(0.5, 0.6, 0.7, 0.9, 1.0)
 
     @JvmField var AUTO = false
 
