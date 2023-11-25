@@ -202,7 +202,8 @@ class Hardware(val hardwareMap: HardwareMap) {
         //         }
         //     })
         // }
-        Globals.PIVOT_OUTTAKE = 0.46
+        // TODO: this is important
+        // Globals.PIVOT_OUTTAKE = 0.46
         voltage = hardwareMap.voltageSensor.iterator().next().voltage
     }
 

@@ -43,7 +43,7 @@ object Globals {
     @JvmField var FINGER_R_CLOSE = 0.66
 
     // outer roller auto stack angle for servo in degrees
-    @JvmField var STACK_HEIGHT = doubleArrayOf(0.5, 0.6, 0.7, 0.9, 1.0)
+    @JvmField var STACK_HEIGHT = doubleArrayOf(0.0, 0.1, 0.2, 0.3, 0.4)
 
     @JvmField var AUTO = false
 

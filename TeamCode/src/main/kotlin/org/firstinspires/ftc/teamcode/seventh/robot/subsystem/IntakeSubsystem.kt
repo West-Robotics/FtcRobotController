@@ -18,17 +18,9 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     val outerRight = QuackServo(hardwareMap, "outerRight", QuackServo.ModelPWM.GOBILDA_TORQUE)
     val roller = QuackCRServo(hardwareMap, "roller", QuackCRServo.ModelPWM.CR_GOBILDA_SUPER)
     var rollerHeight: Int = 1
-    fun raise() {
-        when {
-            rollerHeight != 5 -> rollerHeight++
-        }
-    }
+    fun raise() = when { rollerHeight != 5 -> rollerHeight++ else -> Any() }
 
-    fun lower() {
-        when {
-            rollerHeight != 1 -> rollerHeight--
-        }
-    }
+    fun lower() = when { rollerHeight != 1 -> rollerHeight-- else -> Any() }
 
     init {
         intake.setDirection(DcMotorSimple.Direction.FORWARD)
@@ -53,7 +45,7 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun write() {
         intake.setPower(power)
         roller.setPower(power)
-        outerLeft.setPosition(Globals.STACK_HEIGHT[rollerHeight])
-        outerRight.setPosition(Globals.STACK_HEIGHT[rollerHeight])
+        outerLeft.setPosition(Globals.STACK_HEIGHT[rollerHeight-1])
+        outerRight.setPosition(Globals.STACK_HEIGHT[rollerHeight-1])
     }
 }

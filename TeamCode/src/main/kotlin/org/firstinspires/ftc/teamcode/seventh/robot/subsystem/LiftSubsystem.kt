@@ -9,6 +9,7 @@ import com.scrapmetal.quackerama.hardware.QuackQuadrature
 
 import org.firstinspires.ftc.teamcode.PIDController
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
+import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 
 class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     enum class LiftState {
@@ -50,8 +51,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun read() {
         distance = enc.getDist()
         velocity = enc.getLinearVelocity()
-        // help
-        // voltage = hardware.voltage
+        voltage = Robot.voltage
     }
 
     fun update(s: LiftState, height: Int) {
