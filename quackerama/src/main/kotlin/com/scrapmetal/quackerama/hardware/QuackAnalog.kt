@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
  * WARNING: not ready for usage yet
  */
 class QuackAnalog(hardwareMap: HardwareMap, name: String) {
-    private val analog = hardwareMap.get(AnalogInput::class.java, name)
+    private val analog = hardwareMap.analogInput.get(name)
     private var dir: Direction = Direction.FORWARD
     private var offset = 0.0
 

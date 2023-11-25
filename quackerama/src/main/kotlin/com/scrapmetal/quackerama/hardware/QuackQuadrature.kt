@@ -32,6 +32,7 @@ class QuackQuadrature(hardwareMap: HardwareMap, name: String, private var ticksP
                      .let { it*(motor.currentPosition - offset) }
 
     fun getLinearVelocity() = getTickVelocity()/ticksPerDist
+    // WARNING: does this actually return rad/s?
     fun getAngularVelocity() = getTickVelocity()/ticksPerRev
     // TODO: add velocity overflow correction
     fun getTickVelocity() = motor.velocity
