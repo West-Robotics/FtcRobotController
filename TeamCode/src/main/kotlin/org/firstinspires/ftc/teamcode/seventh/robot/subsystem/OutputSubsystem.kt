@@ -2,14 +2,11 @@ package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.HardwareMap
-import com.qualcomm.robotcore.hardware.PwmControl
 import com.qualcomm.robotcore.hardware.Servo
 import com.scrapmetal.quackerama.hardware.QuackServo
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware
-import java.util.concurrent.locks.ReentrantReadWriteLock
 
 class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     var armAng      = 0.0
@@ -21,7 +18,7 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
 
     val armLeft = QuackServo(hardwareMap, "armLeft", QuackServo.ModelPWM.AXON_MAX)
     val armRight = QuackServo(hardwareMap, "armRight", QuackServo.ModelPWM.AXON_MAX)
-    val pivot = QuackServo(hardwareMap, "pivot", QuackServo.ModelPWM.GENERIC)
+    val pitch = QuackServo(hardwareMap, "pitch", QuackServo.ModelPWM.GENERIC)
     val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.GOBILDA_SPEED)
     val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.GOBILDA_SPEED)
     val colorLeft = hardwareMap.get(ColorRangeSensor::class.java, "colorLeft")
@@ -32,7 +29,7 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     init {
         armLeft.setDirection(Servo.Direction.FORWARD)
         armRight.setDirection(Servo.Direction.REVERSE)
-        pivot.setDirection(Servo.Direction.FORWARD)
+        pitch.setDirection(Servo.Direction.REVERSE)
         fingerLeft.setDirection(Servo.Direction.FORWARD)
         fingerRight.setDirection(Servo.Direction.REVERSE)
     }
@@ -47,9 +44,9 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     fun update(s: RobotState, armAng: Double) {
         state = s
         when (s) {
-            RobotState.LOCK     -> Triple(-60.0,         Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
-            RobotState.INTAKE   -> Triple(-60.0,         Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
-            RobotState.SPIT     -> Triple(-60.0,         Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
+            RobotState.LOCK     -> Triple(-45.0,         Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
+            RobotState.INTAKE   -> Triple(-45.0,         Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
+            RobotState.SPIT     -> Triple(-45.0,         Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
             RobotState.BACKDROP -> Triple(-30.0,         Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
             RobotState.EXTEND   -> Triple(-armAng-120.0, Globals.FINGER_L_CLOSE, Globals.FINGER_R_CLOSE)
             RobotState.SCORE    -> Triple(-armAng-120.0, Globals.FINGER_L_OPEN,  Globals.FINGER_R_OPEN)
@@ -67,7 +64,7 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun write() {
         armLeft.setPosition(armAng)  { theta: Double -> theta/355.0 + 1.0 }
         armRight.setPosition(armAng) { theta: Double -> theta/355.0 + 1.0 }
-        pivot.setPosition(pitchAng)  { theta: Double -> theta/270.0 + 0.5 }
+        pitch.setPosition(pitchAng)  { theta: Double -> theta/270.0 + 0.5 }
         fingerLeft.setPosition(leftAng)
         fingerRight.setPosition(rightAng)
     }

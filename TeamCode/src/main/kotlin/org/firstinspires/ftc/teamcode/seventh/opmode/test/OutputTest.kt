@@ -28,7 +28,7 @@ class OutputTest : LinearOpMode() {
             if (gamepad.getButton(GamepadKeys.Button.A)) {
                 output.update(RobotState.INTAKE, -120.0)
             } else if (gamepad.getButton(GamepadKeys.Button.B)) {
-                output.update(RobotState.LOCK, -120.0)
+                output.update(RobotState.LOCK, -0.0)
             } else if (gamepad.getButton(GamepadKeys.Button.X)) {
                 output.update(RobotState.GROUND, -60.0)
             } else if (gamepad.getButton(GamepadKeys.Button.Y)) {
@@ -42,7 +42,10 @@ class OutputTest : LinearOpMode() {
                 // output.update(RobotState.EXTEND)
             }
             Robot.write(output)
-            telemetry.addData("touchpad x", gamepad.gamepad.touchpad_finger_1_x)
+            telemetry.addData("x", gamepad.gamepad.x)
+            telemetry.addData("y", gamepad.gamepad.y)
+            telemetry.addData("left filled", output.leftFilled)
+            telemetry.addData("right filled", output.rightFilled)
             telemetry.update()
         }
     }

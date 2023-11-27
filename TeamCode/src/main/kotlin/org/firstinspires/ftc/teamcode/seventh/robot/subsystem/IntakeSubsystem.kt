@@ -23,11 +23,11 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     fun lower() = when { rollerHeight != 1 -> rollerHeight-- else -> Any() }
 
     init {
-        intake.setDirection(DcMotorSimple.Direction.FORWARD)
+        intake.setDirection(DcMotorSimple.Direction.REVERSE)
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT)
         outerLeft.setDirection(Servo.Direction.FORWARD)
         outerRight.setDirection(Servo.Direction.REVERSE)
-        roller.setDirection(DcMotorSimple.Direction.FORWARD)
+        roller.setDirection(DcMotorSimple.Direction.REVERSE)
     }
 
     // maybe add jam detection?

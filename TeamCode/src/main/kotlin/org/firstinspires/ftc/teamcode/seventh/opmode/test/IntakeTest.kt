@@ -15,10 +15,13 @@ class IntakeTest : LinearOpMode() {
         Robot.hardwareMap = hardwareMap
         val intake = IntakeSubsystem(Robot.hardwareMap)
         val gamepad = GamepadEx(gamepad1)
+        intake.update(RobotState.LOCK)
+        Robot.write(intake)
 
         waitForStart()
 
         while (opModeIsActive() && !isStopRequested) {
+            gamepad.readButtons()
             Robot.read(intake)
             if (gamepad.getButton(GamepadKeys.Button.A)) {
                 intake.update(RobotState.INTAKE)
@@ -26,9 +29,9 @@ class IntakeTest : LinearOpMode() {
                 intake.update(RobotState.LOCK)
             } else if (gamepad.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
                 intake.update(RobotState.SPIT)
-            } else if (gamepad.getButton(GamepadKeys.Button.DPAD_UP)) {
+            } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 intake.raise()
-            } else if (gamepad.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+            } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 intake.lower()
             }
             Robot.write(intake)
