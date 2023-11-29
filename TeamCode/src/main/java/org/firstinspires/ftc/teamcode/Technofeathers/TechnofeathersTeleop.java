@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
 @TeleOp(name = "Technofeathers TeleOp")
 public class TechnofeathersTeleop extends OpMode {
-
-    private TechnofeathersPDTest test = new TechnofeathersPDTest(1);
+    // TODO: Implement P in TeleOp
+    private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
     private TechnofeathersDrive drive;
@@ -51,6 +51,8 @@ public class TechnofeathersTeleop extends OpMode {
             // TODO: change positions later
             pivot1.setPosition(180);
             pivot2.setPosition(180);
+            test.setDesiredPoint(0.4);
+            test.update(pivot1.getPosition());
         }
 
         if (controller.X()) {
