@@ -19,12 +19,16 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     val roller = QuackCRServo(hardwareMap, "roller", QuackCRServo.ModelPWM.CR_GOBILDA_SUPER)
     var rollerHeight: Int = 1
     fun raise() = when { rollerHeight != 5 -> rollerHeight++ else -> Any() }
-
     fun lower() = when { rollerHeight != 1 -> rollerHeight-- else -> Any() }
+    fun setHeight(h: Int) {
+        if (h in 1..5) {
+            rollerHeight = h
+        }
+    }
 
     init {
         intake.setDirection(DcMotorSimple.Direction.REVERSE)
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT)
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         outerLeft.setDirection(Servo.Direction.FORWARD)
         outerRight.setDirection(Servo.Direction.REVERSE)
         roller.setDirection(DcMotorSimple.Direction.REVERSE)
@@ -34,11 +38,14 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun read() {}
 
     fun update(s: RobotState) {
-        power = when (s) {
-            RobotState.INTAKE -> 1.0
-            RobotState.LOCK -> 0.0
-            RobotState.SPIT -> -0.4
-            else -> power
+        when (s) {
+            RobotState.INTAKE -> Pair(1.0, rollerHeight)
+            RobotState.LOCK -> Pair(0.0, rollerHeight)
+            RobotState.SPIT -> Pair(-0.4, 1)
+            else -> Pair(power, rollerHeight)
+        }.let {
+            power = it.first
+            setHeight(it.second)
         }
     }
 

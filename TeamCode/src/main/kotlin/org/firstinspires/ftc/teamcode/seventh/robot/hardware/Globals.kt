@@ -22,7 +22,7 @@ object Globals {
     @JvmField var HEADING_P = 0.01
     @JvmField var HEADING_D = 0.0
     // TODO: WHY DID THIS WORK FINE AT 0.03 BEFORE
-    @JvmField var LIFT_P = 0.6
+    @JvmField var LIFT_P = 0.7
     @JvmField var LIFT_I = 0.0
     @JvmField var LIFT_D = 0.0
     @JvmField var LIFT_F = 0.0
@@ -30,20 +30,18 @@ object Globals {
     @JvmField var LIFT_DISTANCE_PER_PULSE = 4.398 * 0.6666 / 103.8
     @JvmField var LIFT_MAX = 30.0
     @JvmField var LIFT_MIN = -2.0
-    // each height is spaced 4 inches apart
-    @JvmField var LIFT_HEIGHTS = DoubleArray(5) { 3.0*it + 13.5 }
-    @JvmField var INTERMEDIARY_ZONE_1 = 0.01
-    @JvmField var INTERMEDIARY_ZONE_2 = 10.8
-    @JvmField var INTERMEDIARY_ZONE_3 = 2.0
+    @JvmField var SAFE_EXTEND_MINIMUM = 8.0
+    // each height is spaced 3.8 inches apart
+    @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.5) +
+                                 DoubleArray(4) { 3.8*it + 13.5 } +
+                                 doubleArrayOf(SAFE_EXTEND_MINIMUM)
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39
-    @JvmField var FINGER_L_OPEN = 0.05
-    @JvmField var FINGER_L_CLOSE = 0.0
-    @JvmField var FINGER_R_OPEN = 0.05
-    @JvmField var FINGER_R_CLOSE = 0.0
+    @JvmField var FINGER_OPEN = 0.05
+    @JvmField var FINGER_CLOSE = 0.0
 
     // outer roller auto stack angle for servo in degrees
-    @JvmField var STACK_HEIGHT = doubleArrayOf(0.23, 0.25, 0.3, 0.35, 0.4)
+    @JvmField var STACK_HEIGHT = doubleArrayOf(0.19, 0.22, 0.25, 0.27, 0.3)
 
     @JvmField var AUTO = false
 

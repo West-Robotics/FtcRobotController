@@ -26,13 +26,13 @@ class OutputTest : LinearOpMode() {
             Robot.read(output)
             gamepad.readButtons()
             if (gamepad.getButton(GamepadKeys.Button.A)) {
-                output.update(RobotState.INTAKE, -120.0)
+                output.update(RobotState.INTAKE, -130.0)
             } else if (gamepad.getButton(GamepadKeys.Button.B)) {
-                output.update(RobotState.LOCK, -0.0)
+                output.update(RobotState.LOCK, -125.0)
             } else if (gamepad.getButton(GamepadKeys.Button.X)) {
-                output.update(RobotState.GROUND, -60.0)
+                output.update(RobotState.BACKDROP, -30.0)
             } else if (gamepad.getButton(GamepadKeys.Button.Y)) {
-                output.update(RobotState.BACKDROP, -90.0)
+                output.update(RobotState.SCORE, -30.0)
             // } else if (gamepad.gamepad.guide, gamepad.gamepad.) {
                 // gamepad.gamepad.ps
                 // gamepad.gamepad.share
@@ -42,6 +42,7 @@ class OutputTest : LinearOpMode() {
                 // output.update(RobotState.EXTEND)
             }
             Robot.write(output)
+            telemetry.addData("max pos", output.armLeft.getCommandedPosition())
             telemetry.addData("x", gamepad.gamepad.x)
             telemetry.addData("y", gamepad.gamepad.y)
             telemetry.addData("left filled", output.leftFilled)

@@ -2,25 +2,27 @@
 //
 // import com.sfdev.assembly.state.StateMachine
 // import com.sfdev.assembly.state.StateMachineBuilder
-// import org.firstinspires.ftc.teamcode.seventh.drive.SampleMecanumDrive
+// import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 // import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 //
 // object AutoMachines {
 //     enum class AutoStates {
-//         INIT,
 //         DROP_OFF,
 //         TO_BACKDROP,
+//         RAISE,
+//         EXTEND,
 //         SCORE,
-//         DROP,
+//         RETRACT,
 //         LOWER,
 //         PARK,
 //     }
 //     fun getAutoMachine(drive: SampleMecanumDrive, cycle: CycleCommand, traj: RRTrajectories): StateMachine {
 //         return StateMachineBuilder()
-//             .state(AutoStates.INIT)
+//             .state(AutoStates.DROP_OFF)
 //                 .onEnter { drive.followTrajectorySequenceAsync(traj.dropOff) }
 //                 .transition { !drive.isBusy }
-//             .state(AutoStates.DROP_OFF)
+//                 .onExit {  }
+//             .state()
 //                 // .onEnter { cycle.update(CycleCommand.CycleState.SPIT, OutputSubsystem.OutputState.LOCK, -1) }
 //                 .transitionTimed(1.0)
 //             .state(AutoStates.TO_BACKDROP)
