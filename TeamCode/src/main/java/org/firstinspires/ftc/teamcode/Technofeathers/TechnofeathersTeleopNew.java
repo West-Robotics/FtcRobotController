@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
 
-@TeleOp(name = "Technofeathers TeleOp")
-public class TechnofeathersTeleop extends OpMode {
+@TeleOp(name = "TechnofeathersTeleOpNew")
+public class TechnofeathersTeleopNew extends OpMode {
     // TODO: Implement P in TeleOp
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
@@ -88,8 +88,8 @@ public class TechnofeathersTeleop extends OpMode {
             placeholderA = 2;
         }
         if (controller2.AOnce() && placeholderA == 2){
-                intake.setPower(0);
-                placeholderA = 1;
+            intake.setPower(0);
+            placeholderA = 1;
         }
 
         if (controller2.BOnce() && placeholderB == 1) {
