@@ -13,14 +13,14 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 @TeleOp(name = "Technofeathers TeleOp")
 public class TechnofeathersTeleop extends OpMode {
     // TODO: Implement P in TeleOp
-    private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
+    //private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
     private TechnofeathersDrive drive;
     private Controller controller;
 
     private Servo pivot1;
-    private Servo pivot2;
+    //private Servo pivot2;
     private Servo grabber;
     private DcMotor lift1;
     private DcMotor lift2;
@@ -30,7 +30,7 @@ public class TechnofeathersTeleop extends OpMode {
         drive = new TechnofeathersDrive(this, hardwareMap);
         controller = new Controller(gamepad1);
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
-        pivot2 = hardwareMap.get(Servo.class,  "pivot2");
+        //pivot2 = hardwareMap.get(Servo.class,  "pivot2");
         grabber = hardwareMap.get(Servo.class, "grabber");
         lift1 = hardwareMap.get(DcMotor.class,  "lift1");
         lift2 = hardwareMap.get(DcMotor.class, "lift2");
@@ -39,20 +39,20 @@ public class TechnofeathersTeleop extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         // TODO: change positions later
         pivot1.setPosition(0.4);
-        pivot2.setPosition(0.4);
+        //pivot2.setPosition(0.4);
     }
 
     @Override
     public void loop() {
         controller.update();
-        drive.drive(controller.left_stick_x, -controller.left_stick_y/1.25, -controller.right_stick_x/1.25);
+        drive.drive(-controller.left_stick_x, -controller.left_stick_y/1.25, controller.right_stick_x/1.25);
 
         if (controller.B()) {
             // TODO: change positions later
             pivot1.setPosition(180);
-            pivot2.setPosition(180);
-            test.setDesiredPoint(0.4);
-            test.update(pivot1.getPosition());
+            //pivot2.setPosition(180);
+            //test.setDesiredPoint(0.4);
+            //test.update(pivot1.getPosition());
         }
 
         if (controller.X()) {
@@ -85,10 +85,10 @@ public class TechnofeathersTeleop extends OpMode {
 
         if (controller.left_trigger > 0.9){
             pivot1.setPosition(pivot1.getPosition()+0.05);
-            pivot2.setPosition(pivot2.getPosition()+0.05);
+            //pivot2.setPosition(pivot2.getPosition()+0.05);
         } else if (controller.right_trigger > 0.9){
             pivot1.setPosition(pivot1.getPosition()-0.05);
-            pivot2.setPosition(pivot2.getPosition()-0.05);
+            //pivot2.setPosition(pivot2.getPosition()-0.05);
         }
     }
 }

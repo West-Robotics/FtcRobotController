@@ -28,18 +28,26 @@ public class TechnofeathersAuto extends LinearOpMode {
         ElapsedTime e = new ElapsedTime();
         e.reset();
         e.startTime();
-        while(e.time(TimeUnit.SECONDS) < 1.5) {
+        while(e.time(TimeUnit.SECONDS) < 3.6) {
             drive.drive(0,0.3,0);
         }
-        while(e.time(TimeUnit.SECONDS)<0.5) {
+        /*while(e.time(TimeUnit.SECONDS)<3.6) {
             drive.drive(0,0.3,0);
         }
-        while(e.time(TimeUnit.SECONDS)<0.2) {
-            drive.drive(0,0,0.25);
+
+         */
+        while(e.time(TimeUnit.SECONDS) < 3.6) {
+            drive.drive(0,0,-1);
         }
+
+
+
+        /*
         while(e.time(TimeUnit.SECONDS)<1) {
             drive.drive(0,0.3,0);
         }
+
+         */
 
         e.reset();
         //drive.move(0.4, 60, 0);
