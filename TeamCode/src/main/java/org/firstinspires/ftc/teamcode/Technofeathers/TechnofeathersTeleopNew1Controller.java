@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Controller;
 
-import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
-@TeleOp(name = "Technofeathers TeleOp")
-public class TechnofeathersTeleop extends OpMode {
+@TeleOp(name = "TechnofeathersTeleOpNew")
+public class TechnofeathersTeleopNew1Controller extends OpMode {
     // TODO: Implement P in TeleOp
     //private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
@@ -25,6 +24,9 @@ public class TechnofeathersTeleop extends OpMode {
     private DcMotor lift1;
     private DcMotor lift2;
     private DcMotor intake;
+
+    public int placeholderA = 1;
+    public int placeholderB = 1;
     @Override
     public void init() {
         drive = new TechnofeathersDrive(this, hardwareMap);
@@ -38,22 +40,22 @@ public class TechnofeathersTeleop extends OpMode {
         lift2.setDirection(DcMotorSimple.Direction.REVERSE);
         intake = hardwareMap.get(DcMotor.class, "intake");
         // TODO: change positions later
-        pivot1.setPosition(0.4);
-        //pivot2.setPosition(0.4);
     }
 
     @Override
     public void loop() {
         controller.update();
         drive.drive(-controller.left_stick_x, -controller.left_stick_y/1.25, controller.right_stick_x/1.25);
-
-        if (controller.B()) {
+        /*
+        if (controller2.B()) {
             // TODO: change positions later
             pivot1.setPosition(180);
             //pivot2.setPosition(180);
             //test.setDesiredPoint(0.4);
             //test.update(pivot1.getPosition());
         }
+
+         */
 
         if (controller.X()) {
             // grabbing pixels
@@ -64,7 +66,7 @@ public class TechnofeathersTeleop extends OpMode {
             // releasing pixels
             grabber.setPosition(0.7);
         }
-
+        //lift
         if (controller.leftBumper()) {
             lift1.setPower(0.5);
             lift2.setPower(0.5);
@@ -76,18 +78,30 @@ public class TechnofeathersTeleop extends OpMode {
             lift2.setPower(0);
         }
 
-        if (controller.X()) {
+        if (controller.AOnce() && placeholderA == 1) {
             intake.setPower(1);
-
-        } else if (controller.Y()) {
+            placeholderA = 2;
+        }
+        if (controller.AOnce() && placeholderA == 2){
             intake.setPower(0);
+            placeholderA = 1;
         }
 
-        if (controller.left_trigger > 0.9){
-            pivot1.setPosition(pivot1.getPosition()+0.05);
+        if (controller.BOnce() && placeholderB == 1) {
+            intake.setPower(-1);
+            placeholderB = 2;
+        }
+
+        if (controller.BOnce() && placeholderB == 2){
+            intake.setPower(0);
+            placeholderB = 1;
+        }
+
+        if (controller.dpadRight()){
+            pivot1.setPosition(.7);
             //pivot2.setPosition(pivot2.getPosition()+0.05);
-        } else if (controller.right_trigger > 0.9){
-            pivot1.setPosition(pivot1.getPosition()-0.05);
+        } else if (controller.dpadLeft()){
+            pivot1.setPosition(.5);
             //pivot2.setPosition(pivot2.getPosition()-0.05);
         }
     }

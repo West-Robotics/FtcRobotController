@@ -8,11 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Controller;
 
-import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
-
 
 @TeleOp(name = "TechnofeathersTeleOpNew")
-public class TechnofeathersTeleopNew extends OpMode {
+public class TechnofeathersTeleopNew2Controller extends OpMode {
     // TODO: Implement P in TeleOp
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
