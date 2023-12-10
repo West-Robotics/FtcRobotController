@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Controller;
 
-@TeleOp(name = "Technofeathers TeleOp")
+@TeleOp(name = "TechnofeathersTeleopOld1Controller")
 public class TechnofeathersTeleopOld1Controller extends OpMode {
     // TODO: Implement P in TeleOp
     //private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
