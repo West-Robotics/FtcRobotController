@@ -24,17 +24,17 @@ object Globals {
     // TODO: WHY DID THIS WORK FINE AT 0.03 BEFORE
     @JvmField var LIFT_P = 0.7
     @JvmField var LIFT_I = 0.0
-    @JvmField var LIFT_D = 0.0
+    @JvmField var LIFT_D = 0.2
     @JvmField var LIFT_F = 0.0
     // 4.398 in spool circum * 20/30 ratio / 103.8 ppr, in inches
     @JvmField var LIFT_DISTANCE_PER_PULSE = 4.398 * 0.6666 / 103.8
     @JvmField var LIFT_MAX = 30.0
     @JvmField var LIFT_MIN = -2.0
-    @JvmField var SAFE_EXTEND_MINIMUM = 8.0
-    // each height is spaced 3.8 inches apart
+    @JvmField var GROUND = 8.0
+    // each height is spaced 4.0 inches apart
     @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.5) +
-                                 DoubleArray(4) { 3.8*it + 13.5 } +
-                                 doubleArrayOf(SAFE_EXTEND_MINIMUM)
+                                 DoubleArray(5) { 4.0*it + 10 } +
+                                 doubleArrayOf(GROUND)
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39
     @JvmField var FINGER_OPEN = 0.05

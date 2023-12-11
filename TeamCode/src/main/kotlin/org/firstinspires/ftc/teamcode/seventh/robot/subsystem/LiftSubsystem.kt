@@ -23,6 +23,8 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         private set
     var current = 0.0
         private set
+    var lastCurrent = current
+        private set
     var grounded = true
     private val liftPid = PIDController(Globals.LIFT_P, Globals.LIFT_I, Globals.LIFT_D)
     var voltage = 13.0
@@ -51,6 +53,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun read() {
         distance = enc.getDist()
         velocity = enc.getLinearVelocity()
+        lastCurrent = current
         current = liftLeft.getCurrent(CurrentUnit.AMPS) + liftRight.getCurrent(CurrentUnit.AMPS)
         voltage = Robot.voltage
     }
@@ -69,7 +72,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
 
     override fun write() {
         // can this be cleaner?
-        if (current > 2.5 && distance < 0.75 && desiredHeight == 0) {
+        if (current > 1.5 && current > lastCurrent && distance < 0.75 && desiredHeight == 0) {
             if (distance != 0.0) {
                 enc.reset()
                 power = 0.0
