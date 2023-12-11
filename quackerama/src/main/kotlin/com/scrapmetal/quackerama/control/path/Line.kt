@@ -19,6 +19,10 @@ class Line(override val label:      String,
         return startPose.position*(1-t) + endPose.position*t
     }
 
+    override fun dpdt(t: Double): Vector2d {
+        TODO("Not yet implemented")
+    }
+
     override fun tauOf(p: Vector2d) = tau
 
     override fun eOf(p: Vector2d): Vector2d {

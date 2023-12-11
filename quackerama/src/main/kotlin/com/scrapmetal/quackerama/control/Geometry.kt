@@ -3,8 +3,10 @@ package com.scrapmetal.quackerama.control
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
+import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * A vector in both the mathematical and physical interpretation of the word
@@ -30,6 +32,7 @@ data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
     operator fun minus(w: Vector2d) = Vector2d(u-w.u, v-w.v)
     operator fun unaryMinus() = Vector2d(-u, -v)
     operator fun compareTo(w: Vector2d) = sign(mag - w.mag).toInt()
+    fun distanceTo(w: Vector2d) = (w-this).let { sqrt(it.u.pow(2) + it.v.pow(2)) }
 }
 
 // TODO: mega pain

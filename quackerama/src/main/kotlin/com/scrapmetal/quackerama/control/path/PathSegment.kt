@@ -10,12 +10,20 @@ interface PathSegment {
     val endPose: Pose2d
 
     /**
-     * Calculate parametric function of the path
+     * Calculate parametric output of the path
      *
      * @param t the parametric input t
      * @return returns a position/vector
      */
     operator fun invoke(t: Double): Vector2d
+
+    /**
+     * Calculate derivative of path
+     *
+     * @param t the parametric input t
+     * @return returns a vector
+     */
+    fun dpdt(t: Double): Vector2d
 
     /**
      * Calculate tangent of the closest point on the path relative to the input
