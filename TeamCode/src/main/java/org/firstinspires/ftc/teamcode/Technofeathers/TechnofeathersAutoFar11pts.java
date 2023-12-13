@@ -36,8 +36,6 @@ public class TechnofeathersAutoFar11pts extends LinearOpMode {
             drive.drive(0,1,-0.25);
         }
 
-
-
         /*
         while(e.time(TimeUnit.SECONDS)<1) {
             drive.drive(0,0.3,0);

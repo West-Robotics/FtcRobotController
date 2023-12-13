@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controller;
 
-@TeleOp(name = "Eggnog Teleop")
-public class EggnogTeleop extends OpMode {
+@TeleOp(name = "TechnofeathersTestTeleop")
+public class TechnofeathersTestTeleop extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
@@ -61,7 +61,8 @@ public class EggnogTeleop extends OpMode {
     @Override
     public void loop() {
         controller1.update();
-        drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
+        drive.drive(controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
+
         if (controller1.AOnce() && placeholderA == 1 && i == 0) {
             intake.setPower(1);
             placeholderA = 2;
@@ -101,7 +102,7 @@ public class EggnogTeleop extends OpMode {
             pivot1.setPosition(0);
             placeholderD = 2;
         } else if (controller1.YOnce() && placeholderD ==2) {
-            pivot1.setPosition(0.80);
+            pivot1.setPosition(1);
             placeholderD = 1;
         }
 
