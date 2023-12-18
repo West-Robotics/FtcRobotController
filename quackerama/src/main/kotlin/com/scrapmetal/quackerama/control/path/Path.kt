@@ -137,25 +137,28 @@ class PathBuilder {
 class Path(val paths: MutableList<PathSegment>) {
     // TODO: guarantee C0, optionally C1 continuity?
     //   compile time error for C0 discontinuities
-    fun tauOf(p: Vector2d) = paths.minBy { it.eOf(p).mag }.tauOf(p)
-    fun eOf(p: Vector2d) = paths.minOfWith(Vector2d.comparator) { it.eOf(p) }
+    // fun tauOf(p: Vector2d) = paths.minBy { it.eOf(p).mag }.tauOf(p)
+    // fun eOf(p: Vector2d) = paths.minOfWith(Vector2d.comparator) { it.eOf(p) }
+    fun update(p: Vector2d): Pair<Vector2d, Vector2d> {
+        return paths[0].update(p)
+    }
 }
 class Foo {
     val p: Path = path {
         hermite {
             label("test path part 1")
             start { pos(  0.0,  0.0);   ang(  0.0); v(10.0) }
-            end {   pos( 20.0, 20.0);   ang( 90.0); v(20.0) }
+            end   { pos( 20.0, 20.0);   ang( 90.0); v(20.0) }
         }
         hermite {
             label("test path part 2")
             tangentToPrevious()
-            end {   pos(-72.0,  0.0);   ang(270.0); v( 0.0) }
+            end   { pos(-72.0,  0.0);   ang(270.0); v( 0.0) }
         }
         line {
             label("le epic line")
             start { pos(-72.0,  0.0);   ang(270.0) }
-            end {   pos(  0.0,  0.0);   ang(  0.0) }
+            end   { pos(  0.0,  0.0);   ang(  0.0) }
         }
     }
 }

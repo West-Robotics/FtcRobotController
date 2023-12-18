@@ -13,27 +13,22 @@ class Line(override val label:      String,
            override val startPose:  Pose2d,
            override val endPose:    Pose2d
 ) : PathSegment {
-    val tau = Rotation2d((endPose.position - startPose.position).unit)
+    // val tau = Vector2d((endPose.position - startPose.position).unit)
     override fun invoke(t: Double): Vector2d {
         // LERP
         return startPose.position*(1-t) + endPose.position*t
     }
 
     override fun dpdt(t: Double): Vector2d {
-        TODO("Not yet implemented")
-    }
-
-    override fun tauOf(p: Vector2d) = tau
-
-    override fun eOf(p: Vector2d): Vector2d {
-        TODO("Not yet implemented")
+        return endPose.position - startPose.position
     }
 
     override fun closestT(p: Vector2d): Double {
         TODO("Not yet implemented")
     }
 
-    override fun closestPoint(p: Vector2d): Vector2d {
-        return Vector2d()
+    override fun update(p: Vector2d): Pair<Vector2d, Vector2d> {
+        TODO("rah")
+        // return Pair(tau, invoke(closestT(p)))
     }
 }
