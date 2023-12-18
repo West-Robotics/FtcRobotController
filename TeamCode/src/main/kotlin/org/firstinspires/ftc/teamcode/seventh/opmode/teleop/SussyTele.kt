@@ -147,6 +147,12 @@ class SussyTele : LinearOpMode() {
                 hang.update(HangSubsystem.HangState.STOP)
             }
 
+            if (secondary.wasJustPressed(GamepadKeys.Button.Y)) {
+                intake.raise()
+            } else if (secondary.wasJustPressed(GamepadKeys.Button.X)) {
+                intake.lower()
+            }
+
             // if (secondary.wasJustPressed(GamepadKeys.Button.START)) {
             //     Globals.PIVOT_OUTTAKE -= 0.01
             // } else if (secondary.wasJustPressed(GamepadKeys.Button.BACK)) {
