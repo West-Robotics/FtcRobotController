@@ -20,6 +20,7 @@ class CubicHermite(override val label:      String,
     val p_a: Vector2d
     val p_b: Vector2d
     val coef: Array<Vector2d>
+    val positions: Array<Vector2d>
 
     init {
         p_a = startPose.position + v0/3.0
@@ -33,6 +34,7 @@ class CubicHermite(override val label:      String,
                 else -> Vector2d()
             }
         }
+        positions = Array(101) { t: Int -> invoke(t/100.0) }
     }
 
     override fun invoke(t: Double): Vector2d {
@@ -45,7 +47,8 @@ class CubicHermite(override val label:      String,
 
     override fun closestT(p: Vector2d): Double {
         println("closestTing")
-        var t = newton(deriv { t: Double -> invoke(t).distanceTo(p) }, 0.5 )
+        return positions.indexOf(positions.minBy { q: Vector2d -> q.distanceTo(p) })/100.0
+        // var t = newton(deriv { t: Double -> invoke(t).distanceTo(p) }, 0.5 )
         // var t = DoubleArray(4) { x: Int
         //     -> newton(deriv { t: Double -> invoke(t).distanceTo(p) }, (x + 1.0) / 5.0) }
         //     // .filter { 0.0 < it && it < 1.0 }
@@ -55,7 +58,7 @@ class CubicHermite(override val label:      String,
         // } else if (t > 1.0) {
         //     t = 1.0
         // }
-        return t
+        // return t
     }
 
     override fun update(p: Vector2d): Pair<Vector2d, Vector2d> {
