@@ -3,15 +3,9 @@ package com.scrapmetal.quackerama.control.path
 import com.scrapmetal.quackerama.control.Pose2d
 import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
+import com.scrapmetal.quackerama.control.gvf.GVFState
 import kotlin.math.cos
 import kotlin.math.sin
-
-// fun path(init: Path.() -> Unit): Path {
-//     val path = Path()
-//     path.init()
-//     return path
-// }
-
 
 fun path(init: PathBuilder.() -> Unit): Path {
     val p = PathBuilder()
@@ -44,6 +38,7 @@ class PathBuilder {
         var v0 = 0.0
         var endPose = Pose2d()
         var v1 = 0.0
+        var constraints = MovementConstraints()
 
         fun label(label: String) { this.label = label }
         // TODO: this is just to enforce C1 continuity, you should
@@ -62,7 +57,11 @@ class PathBuilder {
             val e = End()
             e.init()
         }
-        fun build() = CubicHermite(label, startPose, startPose.heading.vector*v0, endPose, endPose.heading.vector*v1)
+        fun constraints(init: Constraints.() -> Unit) {
+            val c = Constraints()
+            c.init()
+        }
+        fun build() = CubicHermite(label, startPose, startPose.heading.vector*v0, endPose, endPose.heading.vector*v1, constraints)
         inner class Start {
             fun pos(x: Double, y: Double) {
                 startPose = Pose2d(Vector2d(x, y), startPose.heading)
@@ -86,11 +85,20 @@ class PathBuilder {
                 v1 = v
             }
         }
+        inner class Constraints {
+            fun decelDist(d: Double) {
+                constraints = MovementConstraints(d, constraints.heading)
+            }
+            fun heading(h: Double) {
+                constraints = MovementConstraints(constraints.decelDistance, h)
+            }
+        }
     }
     inner class LineBuilder {
         var label = ""
         var startPose = Pose2d()
         var endPose = Pose2d()
+        var constraints = MovementConstraints()
 
         fun label(label: String) { this.label = label }
         // TODO: this is just to enforce C1 continuity, you should
@@ -109,7 +117,11 @@ class PathBuilder {
             val e = End()
             e.init()
         }
-        fun build() = Line(label, startPose,  endPose)
+        fun constraints(init: Constraints.() -> Unit) {
+            val c = Constraints()
+            c.init()
+        }
+        fun build() = Line(label, startPose, endPose, constraints)
         inner class Start {
             fun pos(x: Double, y: Double) {
                 startPose = Pose2d(Vector2d(x, y), startPose.heading)
@@ -129,18 +141,38 @@ class PathBuilder {
                 )
             }
         }
+        inner class Constraints {
+            fun decelDist(d: Double) {
+                constraints = MovementConstraints(d, constraints.heading)
+            }
+            fun heading(h: Double) {
+                constraints = MovementConstraints(constraints.decelDistance, h)
+            }
+        }
     }
 }
 
 // to be clear, this only specifies the path that the robot will take.
 // nothing about heading or velocity etc.
 class Path(val paths: MutableList<PathSegment>) {
+    var currentIndex = 0
     // TODO: guarantee C0, optionally C1 continuity?
     //   compile time error for C0 discontinuities
     // fun tauOf(p: Vector2d) = paths.minBy { it.eOf(p).mag }.tauOf(p)
     // fun eOf(p: Vector2d) = paths.minOfWith(Vector2d.comparator) { it.eOf(p) }
-    fun update(p: Vector2d): Pair<Vector2d, Vector2d> {
-        return paths[0].update(p)
+    fun update(p: Vector2d): GVFState {
+        val state = paths[currentIndex].update(p)
+        if (state.closestT == 1.0 && currentIndex < paths.size - 1) {
+            currentIndex++
+        }
+        return state
+    }
+
+    fun current(): PathSegment {
+        return paths[currentIndex]
+    }
+    fun last(): Boolean {
+        return currentIndex == paths.size-1
     }
 }
 class Foo {
@@ -162,17 +194,3 @@ class Foo {
         }
     }
 }
-
-//
-//     public int getClosestIndex(Point p) {
-//         double closestDist = Double.MAX_VALUE;
-//         int index = 0;
-//         for (int i = 0; i < path.size()-1; i++) {
-//             if (path.get(i).getClosestPoint(p).displacement(p) < closestDist) {
-//                 // maybe clean up double call here
-//                 closestDist = path.get(i).getClosestPoint(p).displacement(p);
-//                 index = i;
-//             }
-//         }
-//         return index;
-//     }

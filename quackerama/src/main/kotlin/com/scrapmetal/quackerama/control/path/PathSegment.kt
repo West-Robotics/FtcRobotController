@@ -3,19 +3,26 @@ package com.scrapmetal.quackerama.control.path
 import com.scrapmetal.quackerama.control.Pose2d
 import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
+import com.scrapmetal.quackerama.control.gvf.GVFState
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation
 
+/**
+ * Constraints on robot movement throughout the path
+ *
+ * @param decelDistance distance before the endpoint to begin decelerating
+ * @param heading heading to maintain in radians
+ */
+data class MovementConstraints(val decelDistance: Double = 0.0, val heading: Double = 0.0)
 interface PathSegment {
     val label: String
     val startPose: Pose2d
     val endPose: Pose2d
+    val constraints: MovementConstraints
 
     /**
      * Get all the info needed for GVF
-     *
-     * @return first vector is tau, second vector is raw error
      */
-    fun update(p: Vector2d): Pair<Vector2d, Vector2d>
+    fun update(p: Vector2d): GVFState
 
     /**
      * Calculate parametric output of the path

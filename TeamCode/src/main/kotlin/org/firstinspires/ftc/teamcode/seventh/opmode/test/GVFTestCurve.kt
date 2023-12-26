@@ -79,7 +79,7 @@ class GVFTestCurve : LinearOpMode() {
             // drive.setWeightedDrivePower(RRPose2d(primary.leftY, -primary.leftX, -primary.rightX))
 
             val gvfState = GG.update(Vector2d(drive.poseEstimate.x, drive.poseEstimate.y))
-            val rrPose = RRPose2d(gvfState.m_d.u, gvfState.m_d.v, 0.0)
+            val rrPose = RRPose2d(gvfState.position.u, gvfState.position.v, gvfState.heading.polarAngle)
             // val rrPose = RRPose2d(primary.leftY, -primary.leftX, -primary.rightX)
             val heading = drive.poseEstimate.heading
             val distToEnd = path.paths[0].endPose.position.distanceTo(Vector2d(drive.poseEstimate.x, drive.poseEstimate.y))/12
@@ -89,13 +89,13 @@ class GVFTestCurve : LinearOpMode() {
                     0.0)
             drive.setWeightedDrivePower(correctedRRPose)
 
-            netError += gvfState.error.mag
-            netSquaredError += gvfState.error.mag.pow(2)
-            datalog.fields[1].set(gvfState.error.mag)
-            datalog.fields[2].set(netError)
-            datalog.fields[3].set(netSquaredError)
-            datalog.fields[4].set(1000 / dt)
-            datalog.writeLine()
+            // netError += gvfState.error.mag
+            // netSquaredError += gvfState.error.mag.pow(2)
+            // datalog.fields[1].set(gvfState.error.mag)
+            // datalog.fields[2].set(netError)
+            // datalog.fields[3].set(netSquaredError)
+            // datalog.fields[4].set(1000 / dt)
+            // datalog.writeLine()
 
             telemetry.addData("hz", 1000 / dt)
             // telemetry.addData("m_d angle", Math.toDegrees(m_d.polarAngle))
