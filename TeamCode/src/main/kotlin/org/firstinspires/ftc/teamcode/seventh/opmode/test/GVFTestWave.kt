@@ -33,7 +33,7 @@ class GVFTestWave : LinearOpMode() {
                 end { pos(40.0, 80.0); ang(toRadians(10.0)); v(200.0) }
             }
         }
-        val GG = GG(path, 0.1)
+        val GG = GG(0.1, path)
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {
