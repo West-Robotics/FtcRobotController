@@ -109,38 +109,23 @@ class PathBuilder {
                 // TODO: set v0
             }
         }
-        fun start(init: Start.() -> Unit) {
-            val s = Start()
-            s.init()
+        fun start(x: Double, y: Double) {
+            startPose = Pose2d(Vector2d(x, y), startPose.heading)
         }
-        fun end(init: End.() -> Unit) {
-            val e = End()
-            e.init()
+        fun start(v: Vector2d) {
+            startPose = Pose2d(v, startPose.heading)
+        }
+        fun end(x: Double, y: Double) {
+            endPose = Pose2d(Vector2d(x, y), startPose.heading)
+        }
+        fun end(v: Vector2d) {
+            endPose = Pose2d(v, endPose.heading)
         }
         fun constraints(init: Constraints.() -> Unit) {
             val c = Constraints()
             c.init()
         }
         fun build() = Line(label, startPose, endPose, constraints)
-        inner class Start {
-            fun pos(x: Double, y: Double) {
-                startPose = Pose2d(Vector2d(x, y), startPose.heading)
-            }
-            fun ang(theta: Double) {
-                startPose = Pose2d(startPose.position, Rotation2d(cos(theta), sin(theta)))
-            }
-        }
-        inner class End {
-            fun pos(x: Double, y: Double) {
-                endPose = Pose2d(Vector2d(x, y), endPose.heading)
-            }
-            fun ang(theta: Double) {
-                endPose = Pose2d(
-                    endPose.position,
-                    Rotation2d(cos(theta), sin(theta))
-                )
-            }
-        }
         inner class Constraints {
             fun decelDist(d: Double) {
                 constraints = MovementConstraints(d, constraints.heading)
@@ -189,8 +174,6 @@ class Foo {
         }
         line {
             label("le epic line")
-            start { pos(-72.0,  0.0);   ang(270.0) }
-            end   { pos(  0.0,  0.0);   ang(  0.0) }
         }
     }
 }

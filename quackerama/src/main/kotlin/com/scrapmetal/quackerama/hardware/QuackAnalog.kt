@@ -18,18 +18,7 @@ class QuackAnalog(hardwareMap: HardwareMap, name: String) {
         dir = direction
     }
 
-    fun getTicks() = when (dir) { Direction.FORWARD -> 1; Direction.REVERSE -> -1}
-                     .let { it*(getValue() - offset) }
-
     fun getAng() = getValue()*2*kotlin.math.PI
     fun getValue() = analog.voltage/3.3
     fun getRawVoltage() = analog.voltage
-
-
-    /**
-     * "Reset" encoder without using STOP_AND_RESET_ENCODER
-     */
-    fun reset() {
-        offset = getValue()
-    }
 }

@@ -10,7 +10,7 @@ package com.scrapmetal.quackerama.control.controller
  *
  * Parameters are variables because there are some use cases where changing the gains is valid
  */
-class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxOutput: Double) {
+class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxMagnitude: Double) {
     var error = 0.0
     var dxdt = 0.0
     // L statefulness
@@ -23,10 +23,10 @@ class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxOut
      * @param setpoint setpoint
      * @param dt timestep in milliseconds
      */
-    operator fun invoke(x: Double, setpoint: Double, dt: Double): Double {
+    fun update(x: Double, setpoint: Double, dt: Double): Double {
         error = setpoint - x
         dxdt = (x - lastX)/dt
         lastX = x
-        return minOf((p*error) + (-d*dxdt) + (f(x)), maxOutput)
+        return (p*error) + (-d*dxdt) + (f(x)).coerceIn(-maxMagnitude, maxMagnitude)
     }
 }

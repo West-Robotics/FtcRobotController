@@ -8,23 +8,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.Rotation
 
 // TODO: include info like curvature so other controller can handle centripetal, GVF just handles m_d
 data class GVFState(val tau: Vector2d, val error: Vector2d, val closestT: Double)
-class GG(val path: Path, val kN: Double) {
+class GG(val kN: Double, vararg val paths: Path) {
+    var currentIndex = 0
     /**
      * Run every loop to receive dt velocity info
      *
      * @return returns desired global x, y velocity, as well as heading
      */
     fun update(p: Vector2d): Pose2d {
-        val state = path.update(p)
-        val distanceToEnd = p.distanceTo(path.current().endPose.position)
-        return if (path.last() && distanceToEnd < path.current().constraints.decelDistance) {
+        val state = paths[currentIndex].update(p)
+        val distanceToEnd = p.distanceTo(paths[currentIndex].current().endPose.position)
+        return if (paths[currentIndex].last() && distanceToEnd < paths[currentIndex].current().constraints.decelDistance) {
             Pose2d(state.error.unit * distanceToEnd
-                    / path.current().constraints.decelDistance,
-                    Rotation2d(path.current().constraints.heading))
+                    / paths[currentIndex].current().constraints.decelDistance,
+                    Rotation2d(paths[currentIndex].current().constraints.heading))
         } else {
-            // WARNING: very dirty edge case here if you just want to keep continuous velocity
             Pose2d((state.tau + state.error * kN).unit,
-                    Rotation2d(path.current().constraints.heading))
+                    Rotation2d(paths[currentIndex].current().constraints.heading))
         }
     }
 }
