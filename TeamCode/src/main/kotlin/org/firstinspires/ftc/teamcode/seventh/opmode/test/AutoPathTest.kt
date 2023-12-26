@@ -40,8 +40,7 @@ class AutoPathTest : LinearOpMode() {
                 label("spike marks to lane 3")
                 start { pos(12.0, -36.0); ang(toRadians(50.0));  v(30.0) }
                 end   { pos(12.0, -12.0); ang(toRadians(160.0)); v(22.0) }
-                constraints { heading(toRadians(0.0)) }
-            }
+                constraints { heading(toRadians(0.0)) }}
             hermite {
                 label("lane 3 to pixels")
                 start { pos(12.0, -12.0); ang(toRadians(160.0));  v(22.0) }
@@ -54,8 +53,7 @@ class AutoPathTest : LinearOpMode() {
                 label("pixels to the back")
                 start { pos(-60.0, -12.0); ang(toRadians(0.0));  v(12.0) }
                 end   { pos(23.0, -14.0); ang(toRadians(-18.0)); v(53.0) }
-                constraints { heading(toRadians(0.0)) }
-            }
+                constraints { heading(toRadians(0.0)) }}
             hermite {
                 label("the back to backdrop")
                 start { pos(23.0, -14.0); ang(toRadians(-18.0));  v(53.0) }
