@@ -22,24 +22,17 @@ import kotlin.math.sin
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-@TeleOp(name = "GVFTest")
-class GVFTest : LinearOpMode() {
+@TeleOp(name = "GVFTestLine")
+class GVFTestLine : LinearOpMode() {
     override fun runOpMode() {
         val path: Path = path {
             hermite {
                 label("test")
-                start { pos(0.0, 0.0); ang(0.0); v(40.0) }
-                end { pos(20.0, 20.0); ang(0.0); v(40.0) }
+                start { pos(0.0, 0.0); ang(0.0); v(1.0) }
+                end { pos(80.0, 00.0); ang(0.0); v(1.0) }
             }
         }
-        // val path: Path = path {
-        //     hermite {
-        //         label("test")
-        //         start { pos(0.0, 0.0); ang(0.0); v(450.0) }
-        //         end { pos(50.0, 80.0); ang(0.0); v(450.0) }
-        //     }
-        // }
-        val GG = GG(path, 0.1)
+        val GG = GG(path, 1.8)
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {
@@ -55,9 +48,9 @@ class GVFTest : LinearOpMode() {
         var netError = 0.0
         var netSquaredError = 0.0
         val fields = listOf(Datalogger.LoggableField("error"),
-                            Datalogger.LoggableField("net error"),
-                            Datalogger.LoggableField("net sq error"),
-                            Datalogger.LoggableField("hz"))
+                Datalogger.LoggableField("net error"),
+                Datalogger.LoggableField("net sq error"),
+                Datalogger.LoggableField("hz"))
         val datalog = Datalogger.Builder()
                 .setFilename(SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Date()))
                 .setAutoTimestamp(Datalogger.AutoTimestamp.DECIMAL_SECONDS)
@@ -88,7 +81,7 @@ class GVFTest : LinearOpMode() {
             val rrPose = RRPose2d(gvfState.m_d.u, gvfState.m_d.v, 0.0)
             // val rrPose = RRPose2d(primary.leftY, -primary.leftX, -primary.rightX)
             val heading = drive.poseEstimate.heading
-            val distToEnd = path.paths[0].endPose.position.distanceTo(Vector2d(drive.poseEstimate.x, drive.poseEstimate.y))/24
+            val distToEnd = path.paths[0].endPose.position.distanceTo(Vector2d(drive.poseEstimate.x, drive.poseEstimate.y))/12
             val multiplier = if (distToEnd > 1.0) 1.0 else distToEnd
             val correctedRRPose = RRPose2d((rrPose.y*sin(heading) + rrPose.x*cos(heading))*multiplier*0.8,
                     (rrPose.y*cos(heading) - rrPose.x*sin(heading))*multiplier*1.0,
