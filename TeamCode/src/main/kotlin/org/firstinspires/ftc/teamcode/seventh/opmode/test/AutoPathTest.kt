@@ -22,10 +22,11 @@ class AutoPathTest : LinearOpMode() {
         val yellow = path {
             line {
                 label("start to backdrop")
-                start(12.0, -60.0)
+                // 17.5 length
+                start(12.0, -63.25)
                 end(50.0, -36.0)
                 constraints {
-                    decelDist(8.0)
+                    decelDist(12.0)
                     heading(toRadians(0.0)) }}}
         val purple = path {
             line {
@@ -33,35 +34,35 @@ class AutoPathTest : LinearOpMode() {
                 start(yellow.paths[0].endPose.position)
                 end(12.0, -36.0)
                 constraints {
-                    decelDist(8.0)
+                    decelDist(12.0)
                     heading(toRadians(0.0)) }}}
         val collect = path {
             hermite {
                 label("spike marks to lane 3")
                 start { pos(12.0, -36.0); ang(toRadians(50.0));  v(30.0) }
-                end   { pos(12.0, -12.0); ang(toRadians(160.0)); v(22.0) }
+                end   { pos(12.0, -16.0); ang(toRadians(160.0)); v(22.0) }
                 constraints { heading(toRadians(0.0)) }}
             hermite {
                 label("lane 3 to pixels")
-                start { pos(12.0, -12.0); ang(toRadians(160.0));  v(22.0) }
-                end   { pos(-60.0, -12.0); ang(toRadians(180.0)); v(12.0) }
+                start { pos(12.0, -16.0); ang(toRadians(160.0));  v(22.0) }
+                end   { pos(-24.0, -16.0); ang(toRadians(180.0)); v(12.0) }
                 constraints {
-                    decelDist(8.0)
+                    decelDist(12.0)
                     heading(toRadians(0.0)) }}}
         val score = path {
             hermite {
                 label("pixels to the back")
-                start { pos(-60.0, -12.0); ang(toRadians(0.0));  v(12.0) }
-                end   { pos(23.0, -14.0); ang(toRadians(-18.0)); v(53.0) }
+                start { pos(-24.0, -16.0); ang(toRadians(0.0));  v(12.0) }
+                end   { pos(23.0, -16.0); ang(toRadians(-18.0)); v(53.0) }
                 constraints { heading(toRadians(0.0)) }}
             hermite {
                 label("the back to backdrop")
                 start { pos(23.0, -14.0); ang(toRadians(-18.0));  v(53.0) }
-                end   { pos(54.0, -36.0); ang(toRadians(-45.0)); v(27.0) }
+                end   { pos(50.0, -36.0); ang(toRadians(-45.0)); v(27.0) }
                 constraints {
-                    decelDist(8.0)
+                    decelDist(12.0)
                     heading(toRadians(0.0)) }}}
-        val gg = GG(0.9, yellow, purple, collect, score)
+        val gg = GG(0.4, yellow, purple, collect, score)
         drive.setPoseEstimate(Pose2d(yellow.paths[0].startPose.position, Rotation2d(toRadians(90.0))))
         val gamepad = GamepadEx(gamepad1)
 

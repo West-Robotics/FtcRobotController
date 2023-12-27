@@ -5,6 +5,7 @@ import com.scrapmetal.quackerama.control.Pose2d
 import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
 import com.scrapmetal.quackerama.control.controller.PDF
+import com.scrapmetal.quackerama.control.controller.PDFState
 import com.scrapmetal.quackerama.hardware.QuackAnalog
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
@@ -21,7 +22,8 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     val drive = SampleMecanumDrive(hardwareMap)
     val distLeft = QuackAnalog(hardwareMap, "distLeft")
     val distRight = QuackAnalog(hardwareMap, "distRight")
-    val headingPDF = PDF(0.1, 0.0, { x: Double -> 0.0 }, 1.0)
+    val headingPDF = PDF(0.9, 1.0, { x: Double -> 0.0 }, 1.0, continuous = true)
+    var headingState = headingPDF.updateWithState(0.0, 0.0, 0.0)
 
     override fun read() {
         drive.updatePoseEstimate()
@@ -40,6 +42,8 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
                     (input.position.v * cos(drive.poseEstimate.heading) - input.position.u * sin(drive.poseEstimate.heading))),
                     Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
         } else {
+            // this.input = Pose2d(input.position, Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
+            headingState = headingPDF.updateWithState(drive.poseEstimate.heading, input.heading.polarAngle, dt)
             this.input = Pose2d(input.position, Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
         }
     }

@@ -1,5 +1,9 @@
 package com.scrapmetal.quackerama.control.controller
 
+import kotlin.math.PI
+import kotlin.math.absoluteValue
+
+data class PDFState(val output: Double, val p: Double, val d: Double, val error: Double, val dxdt: Double)
 /**
  * A PDF controller with feedforward given as a function
  *
@@ -10,7 +14,7 @@ package com.scrapmetal.quackerama.control.controller
  *
  * Parameters are variables because there are some use cases where changing the gains is valid
  */
-class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxMagnitude: Double) {
+class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxMagnitude: Double, val continuous: Boolean = false) {
     var error = 0.0
     var dxdt = 0.0
     // L statefulness
@@ -27,6 +31,22 @@ class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxMag
         error = setpoint - x
         dxdt = (x - lastX)/dt
         lastX = x
-        return (p*error) + (-d*dxdt) + (f(x)).coerceIn(-maxMagnitude, maxMagnitude)
+        if (continuous) {
+            if (error.absoluteValue > PI) {
+                error += if (error > 0) -2*PI else 2*PI
+            }
+        }
+        return ((p*error) + (-d*dxdt) + (f(x))).coerceIn(-maxMagnitude, maxMagnitude)
+    }
+    fun updateWithState(x: Double, setpoint: Double, dt: Double): PDFState {
+        error = setpoint - x
+        dxdt = (x - lastX)/dt
+        lastX = x
+        if (continuous) {
+            if (error.absoluteValue > PI) {
+                error += if (error > 0) -2*PI else 2*PI
+            }
+        }
+        return PDFState(((p*error) + (-d*dxdt) + (f(x))).coerceIn(-maxMagnitude, maxMagnitude), p, d, error, dxdt)
     }
 }

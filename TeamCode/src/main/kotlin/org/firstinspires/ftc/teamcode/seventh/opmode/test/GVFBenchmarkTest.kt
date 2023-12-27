@@ -42,10 +42,12 @@ class GVFBenchmarkTest : LinearOpMode() {
 
         waitForStart()
         while (opModeIsActive() && !isStopRequested) {
-            for (hub in allHubs) {
-                hub.clearBulkCache()
-            }
+            // for (hub in allHubs) {
+            //     hub.clearBulkCache()
+            // }
             gamepad.readButtons()
+
+            Robot.read()
 
             val input = gg.update(drive.getPoseEstimate().position)
             if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
