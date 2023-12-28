@@ -12,6 +12,7 @@ import kotlin.math.sqrt
  * A vector in both the mathematical and physical interpretation of the word
  */
 data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
+    constructor(magnitude: Double, theta: Rotation2d) : this(magnitude*cos(theta.polarAngle), magnitude*sin(theta.polarAngle))
     val mag by lazy { hypot(u, v) }
     val polarAngle by lazy { atan2(v, u) }
     val unit by lazy { Vector2d(u/mag, v/mag) }
@@ -48,8 +49,8 @@ data class Rotation2d(val u: Double = 1.0, val v: Double = 0.0) {
     val vector by lazy { Vector2d(u, v) }
     operator fun times(s: Double) = Vector2d(u*s, v*s)
     operator fun div(s: Double) = Vector2d(u/s, v/s)
-    operator fun plus(w: Rotation2d) = Rotation2d(u+w.u, v+w.v)
-    operator fun minus(w: Rotation2d) = Rotation2d(u-w.u, v-w.v)
+    operator fun plus(w: Rotation2d) = Rotation2d(polarAngle + w.polarAngle)
+    operator fun minus(w: Rotation2d) = Rotation2d(polarAngle - w.polarAngle)
     operator fun unaryMinus() = Vector2d(-u, -v)
     // what is this lol
     operator fun compareTo(w: Vector2d) = sign(mag - w.mag).toInt()
