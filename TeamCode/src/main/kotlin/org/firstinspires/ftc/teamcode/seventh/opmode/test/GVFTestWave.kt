@@ -8,6 +8,7 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.scrapmetal.quackerama.control.Pose2d
+import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
 import com.scrapmetal.quackerama.control.gvf.GG
 import com.scrapmetal.quackerama.control.path.Path
@@ -38,15 +39,23 @@ class GVFTestWave : LinearOpMode() {
             //         heading(0.0)
             //     }
             // }
+            // line {
+            //     label("test")
+            //     start(0.0, 0.0)
+            //     end(40.0, -20.0)
+            //     constraints {
+            //         decelDist(12.0)
+            //         heading(0.0)
+            //     }
+            // }
             line {
-                label("test")
-                start(0.0, 0.0)
-                end(40.0, -20.0)
+                label("start to backdrop")
+                // 17.5 length
+                start(12.0, -63.25)
+                end(50.0, -36.0)
                 constraints {
-                    decelDist(12.0)
-                    heading(0.0)
-                }
-            }
+                    decelDist(24.0)
+                    heading(toRadians(0.0)) }}
         }
         val GG = GG(0.4, path)
         Robot.hardwareMap = hardwareMap
@@ -55,6 +64,7 @@ class GVFTestWave : LinearOpMode() {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
         }
         val drive = DriveSubsystem(hardwareMap)
+        drive.setPoseEstimate(Pose2d(path.paths[0].startPose.position, Rotation2d(toRadians(90.0))))
 
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()

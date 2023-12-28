@@ -23,10 +23,10 @@ class AutoPathTest : LinearOpMode() {
             line {
                 label("start to backdrop")
                 // 17.5 length
-                start(12.0, -63.25)
+                start(12.0, -59.25)
                 end(50.0, -36.0)
                 constraints {
-                    decelDist(12.0)
+                    decelDist(24.0)
                     heading(toRadians(0.0)) }}}
         val purple = path {
             line {
@@ -34,7 +34,7 @@ class AutoPathTest : LinearOpMode() {
                 start(yellow.paths[0].endPose.position)
                 end(12.0, -36.0)
                 constraints {
-                    decelDist(12.0)
+                    decelDist(32.0)
                     heading(toRadians(0.0)) }}}
         val collect = path {
             hermite {
@@ -47,7 +47,7 @@ class AutoPathTest : LinearOpMode() {
                 start { pos(12.0, -16.0); ang(toRadians(160.0));  v(22.0) }
                 end   { pos(-24.0, -16.0); ang(toRadians(180.0)); v(12.0) }
                 constraints {
-                    decelDist(12.0)
+                    decelDist(18.0)
                     heading(toRadians(0.0)) }}}
         val score = path {
             hermite {
@@ -60,7 +60,7 @@ class AutoPathTest : LinearOpMode() {
                 start { pos(23.0, -14.0); ang(toRadians(-18.0));  v(53.0) }
                 end   { pos(50.0, -36.0); ang(toRadians(-45.0)); v(27.0) }
                 constraints {
-                    decelDist(12.0)
+                    decelDist(18.0)
                     heading(toRadians(0.0)) }}}
         val gg = GG(0.4, yellow, purple, collect, score)
         drive.setPoseEstimate(Pose2d(yellow.paths[0].startPose.position, Rotation2d(toRadians(90.0))))
@@ -91,6 +91,8 @@ class AutoPathTest : LinearOpMode() {
 
             Robot.write(drive)
             telemetry.addData("dt", Robot.dt)
+            telemetry.addData("x", drive.getPoseEstimate().position.u)
+            telemetry.addData("y", drive.getPoseEstimate().position.v)
             telemetry.addData("current index", gg.currentIndex)
             telemetry.update()
         }

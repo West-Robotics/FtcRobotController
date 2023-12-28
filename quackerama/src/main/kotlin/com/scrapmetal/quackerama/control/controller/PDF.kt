@@ -2,8 +2,8 @@ package com.scrapmetal.quackerama.control.controller
 
 import kotlin.math.PI
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
-data class PDFState(val output: Double, val p: Double, val d: Double, val error: Double, val dxdt: Double)
 /**
  * A PDF controller with feedforward given as a function
  *
@@ -13,10 +13,22 @@ data class PDFState(val output: Double, val p: Double, val d: Double, val error:
  * And I don't see a good use in FTC to use integral when a proper feedforward performs better
  *
  * Parameters are variables because there are some use cases where changing the gains is valid
+ *
+ * @param p proportional gain
+ * @param d derivative gain
+ * @param f feedforward function
+ * @param minPowerToMove minimum output necessary to just barely adjust the state
+ * @param deadzone zone beneath which [minPowerToMove] is not applied
+ * @param maxMagnitude maximum output for both + and -
+ * @param continuous whether or not the input is wrapped around (e.g. rotational actuators)
  */
-class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxMagnitude: Double, val continuous: Boolean = false) {
-    var error = 0.0
-    var dxdt = 0.0
+class PDF(var p:                Double,
+          var d:                Double,
+          var f:                (x: Double) -> Double = { _: Double -> 0.0 },
+          var minPowerToMove:   (x: Double) -> Double = { _: Double -> 0.0 },
+          var deadzone:         Double  = 0.0,
+          var maxMagnitude:     Double  = 1.0,
+          val continuous:       Boolean = false) {
     // L statefulness
     var lastX = 0.0
 
@@ -28,25 +40,16 @@ class PDF(var p: Double, var d: Double, var f: (x: Double) -> Double, var maxMag
      * @param dt timestep in milliseconds
      */
     fun update(x: Double, setpoint: Double, dt: Double): Double {
-        error = setpoint - x
-        dxdt = (x - lastX)/dt
-        lastX = x
-        if (continuous) {
-            if (error.absoluteValue > PI) {
-                error += if (error > 0) -2*PI else 2*PI
+        val error = (setpoint - x).let {
+            // TODO: generalize beyond assuming radians + full circle
+            if (continuous && it.absoluteValue > PI) {
+                it + if (it > 0) -2*PI else 2*PI
+            } else {
+                it
             }
         }
-        return ((p*error) + (-d*dxdt) + (f(x))).coerceIn(-maxMagnitude, maxMagnitude)
-    }
-    fun updateWithState(x: Double, setpoint: Double, dt: Double): PDFState {
-        error = setpoint - x
-        dxdt = (x - lastX)/dt
+        val dxdt = (x - lastX)/dt
         lastX = x
-        if (continuous) {
-            if (error.absoluteValue > PI) {
-                error += if (error > 0) -2*PI else 2*PI
-            }
-        }
-        return PDFState(((p*error) + (-d*dxdt) + (f(x))).coerceIn(-maxMagnitude, maxMagnitude), p, d, error, dxdt)
+        return Utils.correctWithMinPower(p*error + -d*dxdt + f(x), minPowerToMove, deadzone, maxMagnitude)
     }
 }
