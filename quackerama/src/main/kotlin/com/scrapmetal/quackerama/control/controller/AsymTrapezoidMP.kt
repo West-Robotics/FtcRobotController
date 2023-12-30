@@ -7,18 +7,21 @@ import kotlin.math.sqrt
 data class MPState(val s: Double, val v: Double, val a: Double)
 
 /**
- * Asymmetrical trapezoidal motion profile
+ * Generates an asymmetrical trapezoidal motion profile given constraints
  *
- * Note: create new motion profiles instead of mutating an existing one
+ * Note that [decel] is negative
+ *
+ * Create new motion profiles instead of mutating an existing one
  * and always generate from current position
- * @param start start position
- * @param end end position
- * @param accel maximum acceleration during ramp up phase
- * @param decel maximum deceleration during ramp down phase (negative number)
- * @param v_max maximum velocity
  */
 // TODO: handle when you can't accel to max velo
-class AsymTrapezoidMP(val start: Double, val end: Double, val accel: Double, val decel: Double, var v_max: Double) {
+class AsymTrapezoidMP(
+        val start: Double,
+        val end: Double,
+        val accel: Double,
+        val decel: Double,
+        var v_max: Double
+) {
     var t_accel: Double
     var t_decel: Double
     val t_cruise: Double

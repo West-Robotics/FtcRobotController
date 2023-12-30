@@ -4,17 +4,20 @@ import kotlin.math.absoluteValue
 import kotlin.math.sign
 
 object Utils {
-    fun correctWithMinPower(u: Double,
-                            minPowerToMove: (x: Double) -> Double,
-                            deadzone: Double,
-                            maxMagnitude: Double): Double {
-        return minPowerToMove(u).let { p0 ->
-            when {
-                u.absoluteValue > deadzone
-                -> (maxMagnitude-p0)/(maxMagnitude-deadzone) * (u - u.sign*deadzone) + u.sign*p0
-                else
-                -> (p0/deadzone) * u
-            }
-        }.coerceIn(-maxMagnitude, maxMagnitude)
+    /**
+     * Once outside the [deadzone], correct initial controller effort [u0] with minimum required
+     * effort to move the actuator [uMin] without exerting more than the [max] effort
+     */
+    fun correctWithMinPower(
+        u0: Double,
+        uMin: Double,
+        deadzone: Double,
+        max: Double
+    ): Double {
+        return when {
+            u0.absoluteValue > deadzone
+                -> (max-uMin)/(max-deadzone) * (u0 - u0.sign*deadzone) + u0.sign*uMin
+            else -> (uMin/deadzone) * u0
+        }.coerceIn(-max, max)
     }
 }

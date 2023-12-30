@@ -32,7 +32,7 @@ class GVFBenchmarkTest : LinearOpMode() {
                 start { pos(0.0, 0.0); ang(toRadians(0.0));  v(12.0) }
                 end   { pos(12.0, 12.0); ang(toRadians(45.0)); v(50.0) }
                 constraints { heading(toRadians(0.0)) }}}
-        val gg = GG(0.9, line, hermite)
+        val gg = GG(0.9, 0.0, line, hermite)
         val gamepad = GamepadEx(gamepad1)
 
         val allHubs = hardwareMap.getAll(LynxModule::class.java)

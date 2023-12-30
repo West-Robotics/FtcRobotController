@@ -8,17 +8,16 @@ import kotlin.math.absoluteValue
 import kotlin.math.pow
 
 /**
- * A cubic Hermite spline for paths
- *
- * @param v0 initial Hermite velocity
- * @param v1 end Hermite velocity
+ * A cubic Hermite spline for paths generated with standard [PathSegment] constraints and initial
+ * and end Hermite velocites [v0] and [v1] respectively
  */
-class CubicHermite(override val label:       String,
-                   override val startPose:   Pose2d,
-                            val v0:          Vector2d,
-                   override val endPose:     Pose2d,
-                            val v1:          Vector2d,
-                   override val constraints: MovementConstraints,
+class CubicHermite(
+    override val label: String,
+    override val startPose: Pose2d,
+    val v0: Vector2d,
+    override val endPose: Pose2d,
+    val v1: Vector2d,
+    override val constraints: MovementConstraints,
 ) : PathSegment {
     val p_a: Vector2d
     val p_b: Vector2d

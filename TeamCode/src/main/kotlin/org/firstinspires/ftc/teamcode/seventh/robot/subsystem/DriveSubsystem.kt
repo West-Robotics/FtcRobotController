@@ -24,9 +24,9 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     val distLeft = QuackAnalog(hardwareMap, "distLeft")
     val distRight = QuackAnalog(hardwareMap, "distRight")
     val headingPDF = PDF(p = 0.9,
-                         d = 1.0,
+                         d = 0.0,
                          f = { _: Double -> 0.0 },
-                         minPowerToMove = { _: Double -> 0.2 },
+                         minPowerToMove = 0.2,
                          deadzone = 0.1,
                          maxMagnitude = 1.0,
                          continuous = true)
@@ -35,8 +35,8 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         drive.updatePoseEstimate()
         // this is okay to do every loop since we're bulkreading both hubs anyway
         // TODO: convert to inches
-        wallLeft = distLeft.getRawVoltage()
-        wallRight = distRight.getRawVoltage()
+        // wallLeft = distLeft.getRawVoltage()
+        // wallRight = distRight.getRawVoltage()
     }
 
     fun update(input: Pose2d, correcting: Boolean, fieldOriented: Boolean, dt: Double) {
@@ -49,18 +49,23 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
                     input.heading)
         }
         this.input = Pose2d(input.position.unit*Utils.correctWithMinPower(
-                    input.position.mag,
-                    // mega magic, regression for measured minimum powers
-                    { x: Double -> 0.1*sin(toRadians(2*PI*x/180 - 1.57)) + 0.2 },
+                    u0 = input.position.mag,
+                    // magic regression for measured minimum powers
+                    uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
                     deadzone = 0.05,
-                    maxMagnitude = 1.0),
-            Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
+                    max = 1.0),
+                Rotation2d(input.heading.polarAngle))
+        // this.input = Pose2d(input.position,
+        //         Rotation2d(input.heading.polarAngle))
+        //      Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
+        // println(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt))
     }
 
     override fun write() {
         drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
-                com.acmerobotics.roadrunner.geometry.Vector2d(input.position.u, input.position.v),
+                input.position.u, input.position.v,
                 input.heading.polarAngle))
+        println("wahhh" + input.heading.polarAngle)
     }
 
     fun setPoseEstimate(pose: Pose2d) {

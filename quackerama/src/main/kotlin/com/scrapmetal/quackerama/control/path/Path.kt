@@ -63,35 +63,21 @@ class PathBuilder {
         }
         fun build() = CubicHermite(label, startPose, startPose.heading.vector*v0, endPose, endPose.heading.vector*v1, constraints)
         inner class Start {
-            fun pos(x: Double, y: Double) {
-                startPose = Pose2d(Vector2d(x, y), startPose.heading)
-            }
+            fun pos(x: Double, y: Double) { startPose = Pose2d(Vector2d(x, y), startPose.heading) }
             fun ang(theta: Double) {
                 startPose = Pose2d(startPose.position, Rotation2d(cos(theta), sin(theta)))
             }
             // v is for hermite
-            fun v(v: Double) {
-                v0 = v
-            }
+            fun v(v: Double) { v0 = v }
         }
         inner class End {
-            fun pos(x: Double, y: Double) {
-                endPose = Pose2d(Vector2d(x, y), endPose.heading)
-            }
-            fun ang(theta: Double) {
-                endPose = Pose2d(endPose.position, Rotation2d(cos(theta), sin(theta)))
-            }
-            fun v(v: Double) {
-                v1 = v
-            }
+            fun pos(x: Double, y: Double) { endPose = Pose2d(Vector2d(x, y), endPose.heading) }
+            fun ang(theta: Double) { endPose = Pose2d(endPose.position, Rotation2d(cos(theta), sin(theta))) }
+            fun v(v: Double) { v1 = v }
         }
         inner class Constraints {
-            fun decelDist(d: Double) {
-                constraints = MovementConstraints(d, constraints.heading)
-            }
-            fun heading(h: Double) {
-                constraints = MovementConstraints(constraints.decelDistance, h)
-            }
+            fun decelDist(d: Double) { constraints = MovementConstraints(d, constraints.heading) }
+            fun heading(h: Double) { constraints = MovementConstraints(constraints.decelDistance, h) }
         }
     }
     inner class LineBuilder {
@@ -109,30 +95,18 @@ class PathBuilder {
                 // TODO: set v0
             }
         }
-        fun start(x: Double, y: Double) {
-            startPose = Pose2d(Vector2d(x, y), startPose.heading)
-        }
-        fun start(v: Vector2d) {
-            startPose = Pose2d(v, startPose.heading)
-        }
-        fun end(x: Double, y: Double) {
-            endPose = Pose2d(Vector2d(x, y), startPose.heading)
-        }
-        fun end(v: Vector2d) {
-            endPose = Pose2d(v, endPose.heading)
-        }
+        fun start(x: Double, y: Double) { startPose = Pose2d(Vector2d(x, y), startPose.heading) }
+        fun start(v: Vector2d) { startPose = Pose2d(v, startPose.heading) }
+        fun end(x: Double, y: Double) { endPose = Pose2d(Vector2d(x, y), startPose.heading) }
+        fun end(v: Vector2d) { endPose = Pose2d(v, endPose.heading) }
         fun constraints(init: Constraints.() -> Unit) {
             val c = Constraints()
             c.init()
         }
         fun build() = Line(label, startPose, endPose, constraints)
         inner class Constraints {
-            fun decelDist(d: Double) {
-                constraints = MovementConstraints(d, constraints.heading)
-            }
-            fun heading(h: Double) {
-                constraints = MovementConstraints(constraints.decelDistance, h)
-            }
+            fun decelDist(d: Double) { constraints = MovementConstraints(d, constraints.heading) }
+            fun heading(h: Double) { constraints = MovementConstraints(constraints.decelDistance, h) }
         }
     }
 }
@@ -153,12 +127,8 @@ class Path(val paths: MutableList<PathSegment>) {
         return state
     }
 
-    fun current(): PathSegment {
-        return paths[currentIndex]
-    }
-    fun last(): Boolean {
-        return currentIndex == paths.size-1
-    }
+    fun current(): PathSegment = paths[currentIndex]
+    fun last(): Boolean = currentIndex == paths.size-1
 }
 class Foo {
     val p: Path = path {

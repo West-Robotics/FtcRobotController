@@ -15,7 +15,13 @@ import kotlin.math.abs
  */
 // TODO: add direction and initial position as part of the constructor to ensure that they are
 //   explicitly stated
-class QuackServo(hardwareMap: HardwareMap, name: String, pwm: ModelPWM, private var thresh: Double = 0.001, usFrame: Double = 5000.0) {
+class QuackServo(
+    hardwareMap: HardwareMap,
+    name: String,
+    pwm: ModelPWM,
+    private var thresh: Double = 0.001,
+    usFrame: Double = 5000.0
+) {
     /**
      * PWM ranges for various servo models
      *

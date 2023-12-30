@@ -7,12 +7,11 @@ interface Node {
     val topics: MutableMap<String, Any>
 
     /**
-     * Call once per scheduled loop
+     * Updates the node with given timestemp [dt] in ms
      *
+     * Call once per scheduled loop
      * Publish and subscribe here
      * Read from subscriptions, perform tasks, publish
-     *
-     * @param dt time step between loops in milliseconds
      */
     fun update(dt: Double)
 

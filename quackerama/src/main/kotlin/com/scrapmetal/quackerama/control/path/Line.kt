@@ -14,10 +14,11 @@ import kotlin.math.sin
  * Path start and end headings inherently cannot be independently controlled from position, so they
  * are effectively useless here
  */
-class Line(override val label:       String,
-           override val startPose:   Pose2d,
-           override val endPose:     Pose2d,
-           override val constraints: MovementConstraints,
+class Line(
+    override val label: String,
+    override val startPose: Pose2d,
+    override val endPose: Pose2d,
+    override val constraints: MovementConstraints,
 ) : PathSegment {
     val tau = (endPose.position - startPose.position).unit
     val length = (endPose.position - startPose.position).mag

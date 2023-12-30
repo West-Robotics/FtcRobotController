@@ -7,7 +7,8 @@ import com.scrapmetal.quackerama.control.gvf.GVFState
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation
 
 /**
- * Constraints on robot movement throughout the path
+ * Constraints on robot movement throughout the path, where if the robot is uhhhhhhhhh
+ * DECEL DISTANCE SHOULD BE MOVED TO PATH CAUSE IT'S ONLY THE LAST ONE THAT AFFECTS IT
  *
  * @param decelDistance distance before the endpoint to begin decelerating
  * @param heading heading to maintain in radians

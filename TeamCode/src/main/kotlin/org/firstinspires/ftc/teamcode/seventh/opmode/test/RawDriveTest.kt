@@ -17,15 +17,13 @@ class RawDriveTest : LinearOpMode() {
         waitForStart()
         while (opModeIsActive() && !isStopRequested) {
             gamepad.readButtons()
-            turn += when {
-                gamepad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) -> 0.01
-                gamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) -> -0.01
-                else -> 0.0
-            }
-            drive.setWeightedDrivePower(Pose2d(gamepad.leftY, -gamepad.leftX, turn))
+            // turn += when {
+            //     gamepad.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) -> 0.01
+            //     gamepad.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) -> -0.01
+            //     else -> 0.0
+            // }
+            drive.setWeightedDrivePower(Pose2d(gamepad.leftY, -gamepad.leftX, -gamepad.rightX))
             drive.update()
-            println("Hello World!")
-            println("Goodbye World!")
             telemetry.addData("left x", gamepad.leftX)
             telemetry.addData("left y", gamepad.leftY)
             telemetry.addData("turn", turn)

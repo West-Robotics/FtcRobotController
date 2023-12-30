@@ -22,13 +22,15 @@ import kotlin.math.sign
  * @param maxMagnitude maximum output for both + and -
  * @param continuous whether or not the input is wrapped around (e.g. rotational actuators)
  */
-class PDF(var p:                Double,
-          var d:                Double,
-          var f:                (x: Double) -> Double = { _: Double -> 0.0 },
-          var minPowerToMove:   (x: Double) -> Double = { _: Double -> 0.0 },
-          var deadzone:         Double  = 0.0,
-          var maxMagnitude:     Double  = 1.0,
-          val continuous:       Boolean = false) {
+class PDF(
+    var p: Double,
+    var d: Double,
+    var f: (x: Double) -> Double = { _: Double -> 0.0 },
+    var minPowerToMove: Double,
+    var deadzone: Double  = 0.0,
+    var maxMagnitude: Double  = 1.0,
+    val continuous: Boolean = false
+) {
     // L statefulness
     var lastX = 0.0
 

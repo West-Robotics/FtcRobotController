@@ -12,9 +12,7 @@ data class GVFState(val tau: Vector2d, val error: Vector2d, val closestT: Double
 class GG(val kN: Double, val kA: Double = 0.0, vararg val paths: Path) {
     var currentIndex = 0
     /**
-     * Run every loop to receive dt velocity info
-     *
-     * @return returns desired global x, y velocity, as well as heading
+     * Run every loop to receive desired positional velocities and heading direction
      */
     // TODO: should velocity control and other stuff such as curvature belong in here as an
     // integrated solution? or should it be separate and modularized

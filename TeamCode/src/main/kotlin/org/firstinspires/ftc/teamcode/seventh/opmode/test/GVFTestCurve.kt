@@ -38,7 +38,7 @@ class GVFTestCurve : LinearOpMode() {
                 }
             }
         }
-        val GG = GG(0.5, path)
+        val gg = GG(0.5, 0.0, path)
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {
@@ -58,7 +58,7 @@ class GVFTestCurve : LinearOpMode() {
             }
             Robot.read(drive)
 
-            val gvfState = GG.update(drive.getPoseEstimate().position)
+            val gvfState = gg.update(drive.getPoseEstimate().position)
             drive.update(input = gvfState,
                          correcting = false,
                          fieldOriented = true,

@@ -30,7 +30,8 @@ class DriveTest : LinearOpMode() {
             }
             Robot.read(drive)
 
-            drive.update(input = Pose2d(Vector2d(gamepad.leftY, -gamepad.leftX), Rotation2d(gamepad.rightX, -gamepad.rightY)),
+            drive.update(input = Pose2d(Vector2d(gamepad.leftY, -gamepad.leftX),
+                                        Rotation2d(gamepad.rightX, -gamepad.rightY)),
                          correcting = false,
                          fieldOriented = false,
                          dt = Robot.dt)
@@ -39,7 +40,7 @@ class DriveTest : LinearOpMode() {
             telemetry.addData("loop time", Robot.dt)
             telemetry.addData("commanded angle", Rotation2d(gamepad.rightX, -gamepad.rightY).polarAngle)
             telemetry.addData("current angle", drive.getPoseEstimate().heading.polarAngle)
-            // telemetry.addData("error", drive.headingState.error)
+            telemetry.addData("error", Rotation2d(gamepad.rightX, -gamepad.rightY).polarAngle - drive.getPoseEstimate().heading.polarAngle)
             // telemetry.addData("d factor", drive.headingState.d * drive.headingState.dxdt)
             // telemetry.addData("output", drive.headingState.output)
             telemetry.addData("wall left voltage", drive.wallLeft)

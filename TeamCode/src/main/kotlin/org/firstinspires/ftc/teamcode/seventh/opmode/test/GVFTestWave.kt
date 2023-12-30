@@ -57,7 +57,7 @@ class GVFTestWave : LinearOpMode() {
                     decelDist(24.0)
                     heading(toRadians(0.0)) }}
         }
-        val GG = GG(0.4, path)
+        val gg = GG(0.4, 0.0, path)
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {
@@ -94,7 +94,7 @@ class GVFTestWave : LinearOpMode() {
             }
             Robot.read(drive)
 
-            val gvfState = GG.update(drive.getPoseEstimate().position)
+            val gvfState = gg.update(drive.getPoseEstimate().position)
             drive.update(input = gvfState,
                          correcting = false,
                          fieldOriented = true,
