@@ -15,7 +15,7 @@ data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
     constructor(magnitude: Double, theta: Rotation2d) : this(magnitude*cos(theta.polarAngle), magnitude*sin(theta.polarAngle))
     val mag by lazy { hypot(u, v) }
     val polarAngle by lazy { atan2(v, u) }
-    val unit by lazy { Vector2d(u/mag, v/mag) }
+    val unit by lazy { if (mag != 0.0) Vector2d(u/mag, v/mag) else Vector2d(0.0, 0.0) }
     val normal by lazy { Vector2d(-v, u) }
     // maybe some of these make lazy and don't calculate until you need it
     // companion object {

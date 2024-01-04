@@ -13,11 +13,11 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     var power = 0.0
         private set
 
-    val intake = QuackMotor(hardwareMap, "intake")
-    val outerLeft = QuackServo(hardwareMap, "outerLeft", QuackServo.ModelPWM.GOBILDA_TORQUE)
-    val outerRight = QuackServo(hardwareMap, "outerRight", QuackServo.ModelPWM.GOBILDA_TORQUE)
-    val roller = QuackCRServo(hardwareMap, "roller", QuackCRServo.ModelPWM.CR_GOBILDA_SUPER)
-    var rollerHeight: Int = 1
+    private val intake = QuackMotor(hardwareMap, "intake")
+    private val outerLeft = QuackServo(hardwareMap, "outerLeft", QuackServo.ModelPWM.GOBILDA_TORQUE)
+    private val outerRight = QuackServo(hardwareMap, "outerRight", QuackServo.ModelPWM.GOBILDA_TORQUE)
+    private val roller = QuackCRServo(hardwareMap, "roller", QuackCRServo.ModelPWM.CR_GOBILDA_SUPER)
+    private var rollerHeight: Int = 1
     fun raise() = when { rollerHeight != 5 -> rollerHeight++ else -> Any() }
     fun lower() = when { rollerHeight != 1 -> rollerHeight-- else -> Any() }
     fun setHeight(h: Int) {

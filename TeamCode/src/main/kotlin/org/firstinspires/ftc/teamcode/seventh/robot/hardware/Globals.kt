@@ -26,15 +26,15 @@ object Globals {
     @JvmField var LIFT_I = 0.0
     @JvmField var LIFT_D = 0.2
     @JvmField var LIFT_F = 0.0
-    // 4.398 in spool circum * 20/30 ratio / 103.8 ppr, in inches
-    @JvmField var LIFT_DISTANCE_PER_PULSE = 4.398 * 0.6666 / 103.8
+    // 4.398 in spool circum / 8192 ppr
+    @JvmField var LIFT_DISTANCE_PER_PULSE = 4.398 / 8192
     @JvmField var LIFT_MAX = 30.0
     @JvmField var LIFT_MIN = -2.0
-    @JvmField var GROUND = 8.0
+    @JvmField var LOW = 8.0
     // each height is spaced 4.0 inches apart
     @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.5) +
                                  DoubleArray(5) { 4.0*it + 10 } +
-                                 doubleArrayOf(GROUND)
+                                 doubleArrayOf(LOW)
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39
     @JvmField var FINGER_OPEN = 0.05

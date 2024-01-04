@@ -19,11 +19,11 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     var wallRight = 0.0
         private set
     var correcting = false
-    var input = Pose2d()
-    val drive = SampleMecanumDrive(hardwareMap)
-    val distLeft = QuackAnalog(hardwareMap, "distLeft")
-    val distRight = QuackAnalog(hardwareMap, "distRight")
-    val headingPDF = PDF(p = 0.9,
+    private var input = Pose2d()
+    private val drive = SampleMecanumDrive(hardwareMap)
+    private val distLeft = QuackAnalog(hardwareMap, "distLeft")
+    private val distRight = QuackAnalog(hardwareMap, "distRight")
+    private val headingPDF = PDF(p = 0.53,
                          d = 0.0,
                          f = { _: Double -> 0.0 },
                          minPowerToMove = 0.2,
@@ -54,10 +54,7 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
                     uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
                     deadzone = 0.05,
                     max = 1.0),
-                Rotation2d(input.heading.polarAngle))
-        // this.input = Pose2d(input.position,
-        //         Rotation2d(input.heading.polarAngle))
-        //      Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
+                Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
         // println(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt))
     }
 
@@ -65,7 +62,6 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
                 input.position.u, input.position.v,
                 input.heading.polarAngle))
-        println("wahhh" + input.heading.polarAngle)
     }
 
     fun setPoseEstimate(pose: Pose2d) {

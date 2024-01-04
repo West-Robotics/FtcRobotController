@@ -12,6 +12,8 @@ import com.scrapmetal.quackerama.control.path.path
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
 import java.lang.Math.toRadians
+import kotlin.time.DurationUnit
+import kotlin.time.TimeSource
 
 @Autonomous(name = "Auto Path Test")
 class AutoPathTest : LinearOpMode() {
@@ -26,15 +28,15 @@ class AutoPathTest : LinearOpMode() {
                 start(12.0, -59.25)
                 end(50.0, -36.0)
                 constraints {
-                    decelDist(24.0)
+                    decelDist(20.0)
                     heading(toRadians(0.0)) }}}
         val purple = path {
             line {
                 label("backdrop to spike marks")
                 start(yellow.paths[0].endPose.position)
-                end(12.0, -36.0)
+                end(18.0, -36.0)
                 constraints {
-                    decelDist(32.0)
+                    decelDist(18.0)
                     heading(toRadians(0.0)) }}}
         val collect = path {
             hermite {
@@ -62,7 +64,7 @@ class AutoPathTest : LinearOpMode() {
                 constraints {
                     decelDist(18.0)
                     heading(toRadians(0.0)) }}}
-        val gg = GG(0.4, 0.0, yellow, purple, collect, score)
+        val gg = GG(0.6, 0.000008, yellow, purple, collect, score)
         drive.setPoseEstimate(Pose2d(yellow.paths[0].startPose.position, Rotation2d(toRadians(90.0))))
         val gamepad = GamepadEx(gamepad1)
 
@@ -71,30 +73,45 @@ class AutoPathTest : LinearOpMode() {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
         }
 
+        val timeSource = TimeSource.Monotonic
         waitForStart()
         while (opModeIsActive() && !isStopRequested) {
-            for (hub in allHubs) {
-                hub.clearBulkCache()
+            run {
+                val firstTime = timeSource.markNow()
+                for (hub in allHubs) {
+                    hub.clearBulkCache()
+                }
+                Robot.read(drive)
+                gamepad.readButtons()
+                val secondTime = timeSource.markNow()
+                println("section 1 dt: " + (secondTime - firstTime).toDouble(DurationUnit.MILLISECONDS))
             }
-            Robot.read(drive)
-            gamepad.readButtons()
+            run {
+                val firstTime = timeSource.markNow()
+                drive.update(input = gg.update(drive.getPoseEstimate().position, drive.getVelocity().position),
+                        correcting = false,
+                        fieldOriented = true,
+                        dt = Robot.dt)
+                if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                    gg.currentIndex++
+                } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                    gg.currentIndex--
+                }
+                val secondTime = timeSource.markNow()
 
-            drive.update(input = gg.update(drive.getPoseEstimate().position),
-                         correcting = false,
-                         fieldOriented = true,
-                         dt = Robot.dt)
-            if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                gg.currentIndex++
-            } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                gg.currentIndex--
+                println("section 2 dt: " + (secondTime - firstTime).toDouble(DurationUnit.MILLISECONDS))
             }
-
-            Robot.write(drive)
-            telemetry.addData("dt", Robot.dt)
-            telemetry.addData("x", drive.getPoseEstimate().position.u)
-            telemetry.addData("y", drive.getPoseEstimate().position.v)
-            telemetry.addData("current index", gg.currentIndex)
-            telemetry.update()
+            run {
+                val firstTime = timeSource.markNow()
+                Robot.write(drive)
+                telemetry.addData("dt", Robot.dt)
+                telemetry.addData("x", drive.getPoseEstimate().position.u)
+                telemetry.addData("y", drive.getPoseEstimate().position.v)
+                telemetry.addData("current index", gg.currentIndex)
+                telemetry.update()
+                val secondTime = timeSource.markNow()
+                println("section 3 dt: " + (secondTime - firstTime).toDouble(DurationUnit.MILLISECONDS))
+            }
         }
     }
 }

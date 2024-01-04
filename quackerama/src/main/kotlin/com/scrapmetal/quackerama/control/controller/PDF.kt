@@ -23,16 +23,16 @@ import kotlin.math.sign
  * @param continuous whether or not the input is wrapped around (e.g. rotational actuators)
  */
 class PDF(
-    var p: Double,
-    var d: Double,
-    var f: (x: Double) -> Double = { _: Double -> 0.0 },
-    var minPowerToMove: Double,
-    var deadzone: Double  = 0.0,
-    var maxMagnitude: Double  = 1.0,
-    val continuous: Boolean = false
+    private var p: Double,
+    private var d: Double,
+    private var f: (x: Double) -> Double = { _: Double -> 0.0 },
+    private var minPowerToMove: Double = 0.0,
+    private var deadzone: Double = 0.0,
+    private var maxMagnitude: Double = 1.0,
+    private val continuous: Boolean = false,
 ) {
     // L statefulness
-    var lastX = 0.0
+    private var lastX = 0.0
 
     /**
      * Calculate PDF output

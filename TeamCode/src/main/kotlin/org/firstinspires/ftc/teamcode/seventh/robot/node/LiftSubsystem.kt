@@ -25,7 +25,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override var updatePeriod = 1
     private val leftMotor: QuackMotor = QuackMotor(hardwareMap, "liftLeft")
     private val rightMotor: QuackMotor = QuackMotor(hardwareMap, "liftRight")
-    private val enc: QuackQuadrature = QuackQuadrature(hardwareMap, "liftEnc", 1.0, 1.0)
+    private val enc: QuackQuadrature = QuackQuadrature(hardwareMap, "liftEnc", 1.0, 1.0, DcMotorSimple.Direction.FORWARD)
     private val limit: TouchSensor = hardwareMap.get(TouchSensor::class.java, "liftLimit")
 
     init {
@@ -33,7 +33,6 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         rightMotor.setDirection(DcMotorSimple.Direction.FORWARD)
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-        enc.setDirection(DcMotorSimple.Direction.FORWARD)
     }
 
     override fun read() {

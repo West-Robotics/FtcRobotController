@@ -12,7 +12,7 @@ object Utils {
         u0: Double,
         uMin: Double,
         deadzone: Double,
-        max: Double
+        max: Double,
     ): Double {
         return when {
             u0.absoluteValue > deadzone

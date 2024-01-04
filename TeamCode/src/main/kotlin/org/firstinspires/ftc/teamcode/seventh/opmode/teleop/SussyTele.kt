@@ -115,7 +115,7 @@ class SussyTele : LinearOpMode() {
 
         cycleMachine.start()
         Robot.read(intake, lift, output, hang)
-        cycle.update(cycleMachine.state as RobotState, height)
+        cycle.update(cycleMachine.state as RobotState, height, 0.0)
         Robot.write(intake, lift, output, hang)
         waitForStart()
 
@@ -161,7 +161,7 @@ class SussyTele : LinearOpMode() {
             // }
 
             // update all subsystems
-            cycle.update(cycleMachine.state as RobotState, height)
+            cycle.update(cycleMachine.state as RobotState, height, 0.0)
             cycleMachine.update()
 
             drive.setWeightedDrivePower(Pose2d(primary.leftY, -primary.leftX, -primary.rightX))
@@ -177,10 +177,10 @@ class SussyTele : LinearOpMode() {
             telemetry.addData("cycle state", cycleMachine.state as RobotState)
             telemetry.addData("hz ", 1000 / dt)
             telemetry.addData("time", elapsedTime.seconds())
-            telemetry.addData("lift dist", lift.distance)
-            telemetry.addData("lift power", lift.power)
-            telemetry.addData("lift current", lift.current)
-            telemetry.addData("grounded", lift.grounded)
+            // telemetry.addData("lift dist", lift.distance)
+            // telemetry.addData("lift power", lift.power)
+            // telemetry.addData("lift current", lift.current)
+            // telemetry.addData("grounded", lift.grounded)
             telemetry.update()
             Robot.write(intake, lift, output, hang)
         }

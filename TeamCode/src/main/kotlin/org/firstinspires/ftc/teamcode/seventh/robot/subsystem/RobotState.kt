@@ -9,5 +9,4 @@ enum class RobotState {
     SCORE,
     SCORE_L,
     SCORE_R,
-    GROUND
 }

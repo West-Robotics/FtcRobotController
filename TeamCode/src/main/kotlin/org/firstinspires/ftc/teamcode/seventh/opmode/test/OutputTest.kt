@@ -47,12 +47,12 @@ class OutputTest : LinearOpMode() {
             }
             output.update(state, -125.0)
             Robot.write(output)
-            telemetry.addData("max pos", output.armLeft.getCommandedPosition())
+            // telemetry.addData("max pos", output.armLeft.getCommandedPosition())
             telemetry.addData("x", gamepad.gamepad.x)
             telemetry.addData("y", gamepad.gamepad.y)
             telemetry.addData("left filled", output.leftFilled)
             telemetry.addData("right filled", output.rightFilled)
-            telemetry.addData("profile velo", output.mpState.v)
+            // telemetry.addData("profile velo", output.mpState.v)
             telemetry.update()
         }
     }

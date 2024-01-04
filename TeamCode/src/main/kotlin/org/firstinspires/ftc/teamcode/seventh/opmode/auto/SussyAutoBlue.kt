@@ -72,7 +72,7 @@ class SussyAutoBlue : LinearOpMode() {
         intake.setHeight(5)
 
         Robot.read(intake, out)
-        cycle.update(state, height)
+        cycle.update(state, height, 0.0)
         Robot.write(intake, out)
 
         // val propProcessor = PropPositionProcessor()
@@ -149,12 +149,12 @@ class SussyAutoBlue : LinearOpMode() {
             // update all subsystems
             Robot.read(intake, lift, out);
             autoMachine.update()
-            cycle.update(state, height)
+            cycle.update(state, height, 0.0)
             drive.update()
             Robot.write(intake, lift, out);
 
             telemetry.addData("prop pos", traj.prop)
-            telemetry.addData("lift dist", lift.distance)
+            // telemetry.addData("lift dist", lift.distance)
             telemetry.addData("auto state", autoMachine.state as AutoStates)
             telemetry.addData("hz", 1000 / dt)
             telemetry.update()

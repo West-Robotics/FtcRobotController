@@ -16,59 +16,65 @@ data class MPState(val s: Double, val v: Double, val a: Double)
  */
 // TODO: handle when you can't accel to max velo
 class AsymTrapezoidMP(
-        val start: Double,
-        val end: Double,
-        val accel: Double,
-        val decel: Double,
-        var v_max: Double
+        private val start: Double,
+        private val end: Double,
+        private val accel: Double,
+        private val decel: Double,
+        private var v_max: Double,
 ) {
-    var t_accel: Double
-    var t_decel: Double
-    val t_cruise: Double
-    val t_a: Double
-    val t_b: Double
-    val t_total: Double
-    val s_a: Double
-    val s_b: Double
-    val direction = if (start < end) 1 else -1
+    private var tAccel: Double
+    private var tDecel: Double
+    private val tCruise: Double
+    private val tA: Double
+    private val tB: Double
+    private val tTotal: Double
+    private val sA: Double
+    private val sB: Double
+    private val direction = if (start < end) 1 else -1
 
     init {
-        t_accel = if (accel != 0.0) v_max/accel else 0.0
-        t_decel = if (decel != 0.0) -v_max/decel else 0.0
+        tAccel = if (accel != 0.0) v_max/accel else 0.0
+        tDecel = if (decel != 0.0) -v_max/decel else 0.0
         val accelRatioedDistance = (1.0-(accel/(accel+(-decel))))*(end-start).absoluteValue
-        if (0.5*accel*t_accel.pow(2) > accelRatioedDistance) {
-            t_accel = sqrt(accelRatioedDistance/(0.5*accel))
-            t_decel = sqrt(((end-start).absoluteValue - accelRatioedDistance)/(0.5*(-decel)))
-            v_max = accel*t_accel
+        if (0.5*accel*tAccel.pow(2) > accelRatioedDistance) {
+            tAccel = sqrt(accelRatioedDistance/(0.5*accel))
+            tDecel = sqrt(((end-start).absoluteValue - accelRatioedDistance)/(0.5*(-decel)))
+            v_max = accel*tAccel
         }
-        t_cruise = if (v_max != 0.0) ((end-start).absoluteValue-(0.5*accel*t_accel.pow(2)-0.5*decel*t_decel.pow(2)))/v_max else 0.0
-        t_a     = t_accel
-        t_b     = t_accel + t_cruise
-        t_total = t_accel + t_cruise + t_decel
-        s_a = direction*0.5*accel*t_accel.pow(2)
-        s_b = s_a + direction*v_max*t_cruise
+        tCruise = if (v_max != 0.0) {
+            (((end-start).absoluteValue - (0.5*accel*tAccel.pow(2)
+                                           - 0.5*decel*tDecel.pow(2)))
+             / v_max)
+        } else {
+            0.0
+        }
+        tA = tAccel
+        tB = tAccel + tCruise
+        tTotal = tAccel + tCruise + tDecel
+        sA = direction*0.5*accel*tAccel.pow(2)
+        sB = sA + direction*v_max*tCruise
     }
 
     fun update(t: Double): MPState {
         val a = direction*when {
-            t <= t_a -> accel
-            t < t_b -> 0.0
-            t <= t_total -> decel
-            t_total < t -> 0.0
+            t <= tA -> accel
+            t < tB -> 0.0
+            t <= tTotal -> decel
+            tTotal < t -> 0.0
             else -> throw IllegalArgumentException("Received t < 0 as an argument")
         }
         val v = when {
-            t <= t_a -> a*t
-            t < t_b -> direction*v_max
-            t <= t_total -> direction*v_max + a*(t-t_b)
-            t_total < t -> 0.0
+            t <= tA -> a*t
+            t < tB -> direction*v_max
+            t <= tTotal -> direction*v_max + a*(t-tB)
+            tTotal < t -> 0.0
             else -> throw IllegalArgumentException("Received t < 0 as an argument")
         }
         val s = start + when {
-            t <= t_a -> 0.5*a*t.pow(2)
-            t < t_b -> s_a + v*(t-t_a)
-            t <= t_total -> s_b + direction*v_max*(t-t_b) + 0.5*a*(t-t_b).pow(2)
-            t_total < t -> end - start
+            t <= tA -> 0.5*a*t.pow(2)
+            t < tB -> sA + v*(t-tA)
+            t <= tTotal -> sB + direction*v_max*(t-tB) + 0.5*a*(t-tB).pow(2)
+            tTotal < t -> end - start
             else -> throw IllegalArgumentException("Received t < 0 as an argument")
         }
         return MPState(s, v, a)

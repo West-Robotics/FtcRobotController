@@ -1,99 +1,84 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 
-import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.scrapmetal.quackerama.control.controller.PDF
 import com.scrapmetal.quackerama.hardware.QuackMotor
 import com.scrapmetal.quackerama.hardware.QuackQuadrature
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
 
-import org.firstinspires.ftc.teamcode.PIDController
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
+import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.LIFT_HEIGHTS
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
+import kotlin.math.absoluteValue
 
 class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
-    var desiredHeight = 0
-        private set
-    var distance = 0.0
-        private set
-    var power = 0.0
-        private set
-    var velocity = 0.0
-        private set
-    var current = 0.0
-        private set
-    var lastCurrent = current
-        private set
-    var grounded = true
-    private val liftPid = PIDController(Globals.LIFT_P, Globals.LIFT_I, Globals.LIFT_D)
-    var voltage = 13.0
+    data class LiftState(
+        var commandedExtension: Double = 0.0,
+        var extension: Double = 0.0,
+        var power: Double = 0.0,
+        var current: Double = 0.0,
+        var lastCurrent: Double = current,
+        var grounded: Boolean = true,
+    ) val state = LiftState()
+    private val liftPDF = PDF(Globals.LIFT_P, Globals.LIFT_D)
+    var voltage = 13.3
 
-    val liftLeft = QuackMotor(hardwareMap, "liftLeft")
-    val liftRight = QuackMotor(hardwareMap, "liftRight")
-    val enc = QuackQuadrature(hardwareMap, "liftLeft", 155.7, 1.0/Globals.LIFT_DISTANCE_PER_PULSE)
-    val otherEnc = QuackQuadrature(hardwareMap, "liftRight", 155.7, 1.0/Globals.LIFT_DISTANCE_PER_PULSE)
+    private val liftLeft = QuackMotor(hardwareMap, "liftLeft")
+    private val liftRight = QuackMotor(hardwareMap, "liftRight")
+    private val enc = QuackQuadrature(
+            hardwareMap,
+            "liftLeft",
+            8192.0, 1.0/Globals.LIFT_DISTANCE_PER_PULSE,
+            DcMotorSimple.Direction.FORWARD,
+    )
 
     init {
+        // TODO: is brake strong enough?
         liftLeft.setDirection(DcMotorSimple.Direction.FORWARD)
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         liftRight.setDirection(DcMotorSimple.Direction.REVERSE)
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
-        enc.setDirection(DcMotorSimple.Direction.FORWARD)
         enc.reset()
-        otherEnc.setDirection(DcMotorSimple.Direction.REVERSE)
-        otherEnc.reset()
-        liftPid.setOutputRange(0.0, 1.0)
-        liftPid.setTolerance(5.0)
-        liftPid.reset()
-        liftPid.enable()
-        update(-1)
+        update(-0.5, 0.0)
     }
 
     override fun read() {
-        distance = enc.getDist()
-        velocity = enc.getLinearVelocity()
-        lastCurrent = current
-        current = liftLeft.getCurrent(CurrentUnit.AMPS) + liftRight.getCurrent(CurrentUnit.AMPS)
+        state.extension = enc.getDist()
+        state.lastCurrent = state.current
+        state.current = liftLeft.getCurrent(CurrentUnit.AMPS) + liftRight.getCurrent(CurrentUnit.AMPS)
         voltage = Robot.voltage
     }
 
-    fun update(height: Int) {
-        desiredHeight = height
-        if (height != 0) {
-            grounded = false
+    fun update(ce: Double, dt: Double) {
+        state.commandedExtension = ce
+        if (state.extension != 0.0) {
+            state.grounded = false
         }
-        liftPid.setpoint = when (desiredHeight) {
-            -1 -> Globals.LIFT_HEIGHTS.last()
-            else -> Globals.LIFT_HEIGHTS[desiredHeight]
-        }
-        power = liftPid.performPID(distance)
+        state.power = liftPDF.update(state.extension, state.commandedExtension, dt)
     }
 
     override fun write() {
-        // can this be cleaner?
-        if (current > 1.5 && current > lastCurrent && distance < 0.75 && desiredHeight == 0) {
-            if (distance != 0.0) {
+        when {
+            // reground if there's a current spike, we are low, want to be low, and are not reset
+            state.current > 1.5 &&
+                    state.current > state.lastCurrent &&
+                    state.extension < 0.2 &&
+                    state.commandedExtension == LIFT_HEIGHTS[0] &&
+                    state.extension != 0.0
+            -> {
                 enc.reset()
-                power = 0.0
-                grounded = true
+                state.power = 0.0
+                state.grounded = true
             }
-        } else if (liftPid.onTarget()) {
-            power = 0.0
-        } else if (power < 0.0) {
-            power /= if (distance >= 1.0) {
-                2.5
-            } else {
-                2.5
-            }
+            // if we are close enough or grounded, brake
+            (state.extension - state.commandedExtension).absoluteValue < 0.1 || state.grounded
+            -> state.power = 0.0
         }
 
-        if (grounded) {
-            power = 0.0
-        }
-
-        power = power*13.3/voltage
-        liftLeft.setPower(power)
-        liftRight.setPower(power)
+        state.power = state.power*13.3/voltage
+        liftLeft.setPower(state.power)
+        liftRight.setPower(state.power)
     }
 }

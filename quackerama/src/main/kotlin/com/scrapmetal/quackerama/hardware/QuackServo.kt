@@ -20,7 +20,7 @@ class QuackServo(
     name: String,
     pwm: ModelPWM,
     private var thresh: Double = 0.001,
-    usFrame: Double = 5000.0
+    usFrame: Double = 5000.0,
 ) {
     /**
      * PWM ranges for various servo models
