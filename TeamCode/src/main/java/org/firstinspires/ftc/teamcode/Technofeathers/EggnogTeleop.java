@@ -28,7 +28,7 @@ public class EggnogTeleop extends OpMode {
     private int j = 0;
 
     public int intake_state = 0;
-    public int placeholderA = 1;
+    public int intakeOn = 0;
     public int placeholderB = 1;
 
     public int placeholderC = 1;
@@ -62,17 +62,15 @@ public class EggnogTeleop extends OpMode {
     public void loop() {
         controller1.update();
         drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-        if (controller1.AOnce() && placeholderA == 1 && i == 0) {
-            intake.setPower(1);
-            placeholderA = 2;
+        if (controller1.AOnce() && intakeOn == 0 && i == 0) {
             stopper.setPosition(.9);
-            placeholderI = 2;
+            intake.setPower(1);
+            intakeOn = 1;
             //import timer later
-        } else if (controller1.AOnce() && placeholderA == 2 && j == 0){
+        } else if (controller1.AOnce() && intakeOn == 1 && j == 0){
             stopper.setPosition(.37);
-            placeholderI = 1;
             intake.setPower(0);
-            placeholderA = 1;
+            intakeOn = 0;
         }
 
         if (controller1.BOnce() && placeholderG == 1) {

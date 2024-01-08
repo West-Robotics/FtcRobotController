@@ -50,46 +50,51 @@ public class TechnofeathersAutoHopepts extends LinearOpMode {
         ElapsedTime e = new ElapsedTime();
         e.reset();
         e.startTime();
-        drive.move(0.5, 10, 180);
 
-        while(e.time(TimeUnit.SECONDS)<1) {
-            intake.setPower(1);
-        }
+        while (opModeIsActive()) {
+            drive.move(0.5, 10, 180);
 
-        while(e.time(TimeUnit.SECONDS)<2) {
-            while(e.time(TimeUnit.SECONDS)>1) {
-                pivot1.setPosition(180);
-                test.setDesiredPoint(0.4);
-                test.update(pivot1.getPosition());
+            while (e.time(TimeUnit.SECONDS) < 1) {
+                intake.setPower(1);
             }
-        }
 
-        while(e.time(TimeUnit.SECONDS)<3) {
-            while(e.time(TimeUnit.SECONDS)>2){
-                lift1.setPower(0.5);
-                lift2.setPower(0.5);
+            while (e.time(TimeUnit.SECONDS) < 2) {
+                while (e.time(TimeUnit.SECONDS) > 1) {
+                    pivot1.setPosition(180);
+                    /*
+                    test.setDesiredPoint(0.4);
+                    test.update(pivot1.getPosition());
+                     */
+                }
             }
+
+            while (e.time(TimeUnit.SECONDS) < 3) {
+                while (e.time(TimeUnit.SECONDS) > 2) {
+                    lift1.setPower(0.5);
+                    lift2.setPower(0.5);
+                }
+            }
+
+            /*while(e.time(TimeUnit.SECONDS)<3.6) {
+                drive.drive(0,0.3,0);
+            }
+
+             */
+            while (e.time(TimeUnit.SECONDS) < 5) {
+                drive.drive(0, 1, -1);
+            }
+
+
+
+            /*
+            while(e.time(TimeUnit.SECONDS)<1) {
+                drive.drive(0,0.3,0);
+            }
+
+             */
+
+            e.reset();
+            //drive.move(0.4, 60, 0);
         }
-
-        /*while(e.time(TimeUnit.SECONDS)<3.6) {
-            drive.drive(0,0.3,0);
-        }
-
-         */
-        while(e.time(TimeUnit.SECONDS) < 5) {
-            drive.drive(0,1,-1);
-        }
-
-
-
-        /*
-        while(e.time(TimeUnit.SECONDS)<1) {
-            drive.drive(0,0.3,0);
-        }
-
-         */
-
-        e.reset();
-        //drive.move(0.4, 60, 0);
     }
 }
