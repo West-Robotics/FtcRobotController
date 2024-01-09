@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Technofeathers;
+package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,9 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
-@TeleOp(name = "Eggnog Teleop")
-public class EggnogTeleop extends OpMode {
+@TeleOp(name = "TechnofeathersTestTeleop")
+public class TechnofeathersTestTeleop extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
@@ -28,7 +30,7 @@ public class EggnogTeleop extends OpMode {
     private int j = 0;
 
     public int intake_state = 0;
-    public int intakeOn = 0;
+    public int placeholderA = 1;
     public int placeholderB = 1;
 
     public int placeholderC = 1;
@@ -61,16 +63,19 @@ public class EggnogTeleop extends OpMode {
     @Override
     public void loop() {
         controller1.update();
-        drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-        if (controller1.AOnce() && intakeOn == 0 && i == 0) {
-            stopper.setPosition(.9);
+        drive.drive(controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
+
+        if (controller1.AOnce() && placeholderA == 1 && i == 0) {
             intake.setPower(1);
-            intakeOn = 1;
+            placeholderA = 2;
+            stopper.setPosition(.9);
+            placeholderI = 2;
             //import timer later
-        } else if (controller1.AOnce() && intakeOn == 1 && j == 0){
+        } else if (controller1.AOnce() && placeholderA == 2 && j == 0){
             stopper.setPosition(.37);
+            placeholderI = 1;
             intake.setPower(0);
-            intakeOn = 0;
+            placeholderA = 1;
         }
 
         if (controller1.BOnce() && placeholderG == 1) {
@@ -99,7 +104,7 @@ public class EggnogTeleop extends OpMode {
             pivot1.setPosition(0);
             placeholderD = 2;
         } else if (controller1.YOnce() && placeholderD ==2) {
-            pivot1.setPosition(0.80);
+            pivot1.setPosition(1);
             placeholderD = 1;
         }
 

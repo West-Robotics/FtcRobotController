@@ -1,10 +1,13 @@
-package org.firstinspires.ftc.teamcode.Technofeathers;
+package org.firstinspires.ftc.teamcode.Technofeathers.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
 import java.util.concurrent.TimeUnit;
 

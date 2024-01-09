@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Technofeathers;
+package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Controller;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
 
 @TeleOp(name = "TechnofeathersTeleopNew2Controller")
