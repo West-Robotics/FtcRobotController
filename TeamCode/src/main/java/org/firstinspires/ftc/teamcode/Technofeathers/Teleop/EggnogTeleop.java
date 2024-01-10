@@ -26,8 +26,8 @@ public class EggnogTeleop extends OpMode {
     private DcMotor lift2;
     private DcMotor intake;
     private Servo stopper;
-    private int i = 0;
-    private int j = 0;
+    //private int i = 0;
+    //private int j = 0;
 
     public int intake_state = 0;
     public int intakeOn = 0;
@@ -63,13 +63,13 @@ public class EggnogTeleop extends OpMode {
     @Override
     public void loop() {
         controller1.update();
-        drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-        if (controller1.AOnce() && intakeOn == 0 && i == 0) {
+        drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25 + 0.17);
+        if (controller1.AOnce() && intakeOn == 0/* && i == 0*/) {
             stopper.setPosition(.9);
             intake.setPower(1);
             intakeOn = 1;
             //import timer later
-        } else if (controller1.AOnce() && intakeOn == 1 && j == 0){
+        } else if (controller1.AOnce() && intakeOn == 1 /*&& j == 0*/){
             stopper.setPosition(.37);
             intake.setPower(0);
             intakeOn = 0;
@@ -124,8 +124,26 @@ public class EggnogTeleop extends OpMode {
             lift1.setPower(0);
             lift2.setPower(0);
         }
+        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+        //um is this really necessary
+        lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+
+        telemetry.addLine("boop");
+        telemetry.update();
+
+        double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
+        double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
+        if (lift1CurrentRotation > 1) {
+            lift1.setPower(0);
+            lift2.setPower(0);
+        }
+
+        /*
         i = 0;
         j = 0;
+         */
 /*
         if (controller1.left_trigger > 0.9){
             pivot1.setPosition(pivot1.getPosition() + 0.05);

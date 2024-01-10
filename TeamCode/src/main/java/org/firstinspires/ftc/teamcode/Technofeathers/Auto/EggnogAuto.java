@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Auto;
+//TODO: MAKE SURE THIS IS VERSION THAT IS USED DURING COMPETITION
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

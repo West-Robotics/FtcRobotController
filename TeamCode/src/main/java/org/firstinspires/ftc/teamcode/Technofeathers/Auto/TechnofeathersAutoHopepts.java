@@ -29,13 +29,11 @@ public class TechnofeathersAutoHopepts extends LinearOpMode {
     public int placeholderX = 1;
     public int placeholderY = 1;
 
+
+
     @Override public void runOpMode() throws InterruptedException {
 
         TechnofeathersDrive drive = new TechnofeathersDrive(this, hardwareMap);
-        //may be deleted
-
-
-        drive = new TechnofeathersDrive(this, hardwareMap);
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
         grabber = hardwareMap.get(Servo.class, "grabber");
         lift1 = hardwareMap.get(DcMotor.class,  "lift1");
@@ -45,7 +43,7 @@ public class TechnofeathersAutoHopepts extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         stopper = hardwareMap.get(Servo.class, "stopper");
 
-        telemetry.addLine("ur dad");
+        telemetry.addLine("Variables Instantiated");
         telemetry.update();
 
         waitForStart();
@@ -53,66 +51,59 @@ public class TechnofeathersAutoHopepts extends LinearOpMode {
         e.reset();
         e.startTime();
 
-       telemetry.addLine("ur mom");
-       telemetry.update();
-
-        telemetry.addLine("bleep");
-        telemetry.update();
-
        while (opModeIsActive() && !isStopRequested()) {
+
+           lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+           lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+           //um is this really necessary
+           lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+           lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+
            telemetry.addLine("boop");
            telemetry.update();
+
+           double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
+           double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
+           if (lift1CurrentRotation > 3) {
+                lift1.setPower(0);
+                lift2.setPower(0);
+           }
+           telemetry.addLine("Beginning to Utilize Encoders");
+           telemetry.update();
+
            if (e.time(TimeUnit.SECONDS) < 1) {
                drive.drive(0,1,0.17);
            }
            drive.drive(0,0,0);
-           telemetry.addLine("ukfukyg.hlhnkjmgcjdytfuvhjfyr6yfhvnbjhkijojlkh");
+           telemetry.addLine("Drive ran and now it is stopped.");
            telemetry.update();
-
-           telemetry.addLine("aiorjgioaerjgfiosjfw");
-           telemetry.update();
-           // these whiles should be ifs otherwise they will keep runnig by themselves amd be stuck in there
-           // except that is not your issue
-           // a logic thing for later
+            /*
            if (e.time(TimeUnit.SECONDS) < 1) {
                intake.setPower(1);
            }
 
+             */
+           /*
            if (e.time(TimeUnit.SECONDS) < 2 && e.time(TimeUnit.SECONDS) > 1) {
                pivot1.setPosition(180);
-               /*
                test.setDesiredPoint(0.4);
                test.update(pivot1.getPosition());
-               */
-            }
-
-           while (e.time(TimeUnit.SECONDS) < 3 && e.time(TimeUnit.SECONDS) > 2) {
-               lift1.setPower(-1);
-               lift2.setPower(1);
            }
-           lift1.setPower(0.5);
-           lift2.setPower(0.5);
+            */
 
-            /*while(e.time(TimeUnit.SECONDS)<3.6) {
-                drive.drive(0,0.3,0);
-            }
+           if (e.time(TimeUnit.SECONDS) < 3 && e.time(TimeUnit.SECONDS) > 2) {
+               lift1.setPower(0.5);
+               lift2.setPower(0.5);
+           }
 
-             */
-            while (e.time(TimeUnit.SECONDS) < 5) {
-                drive.drive(0, 1, -1);
-            }
+           lift1.setPower(0);
+           lift2.setPower(0);
 
+           pivot1.setPosition(0);
 
+           grabber.setPosition(1);
 
-            /*
-            while(e.time(TimeUnit.SECONDS)<1) {
-                drive.drive(0,0.3,0);
-            }
-
-             */
-
-            e.reset();
-            //drive.move(0.4, 60, 0);
+           e.reset();
         }
     }
 }
