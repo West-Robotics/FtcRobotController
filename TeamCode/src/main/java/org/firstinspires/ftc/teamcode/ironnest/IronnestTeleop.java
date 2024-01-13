@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.ironnest;
+package org.firstinspires.ftc.teamcode.IronNest;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Ironnest")
 public class IronnestTeleop extends OpMode {
-    private Controller controller;
+    private Controller gamepad1;
     private float wristpos;
 
     private DcMotor frontleft;
@@ -28,7 +28,7 @@ public class IronnestTeleop extends OpMode {
     private Servo clawup;
 
     public void init() {
-        controller = new Controller(gamepad1);
+        gamepad1 = new Controller(gamepad1);
         frontleft = hardwareMap.get(DcMotor.class, "frontleft");
         frontright = hardwareMap.get(DcMotor.class, "frontright");
         backleft = hardwareMap.get(DcMotor.class, "backleft");
@@ -102,6 +102,6 @@ public class IronnestTeleop extends OpMode {
         }
 
 
-
+        return 0;
     }
 }
