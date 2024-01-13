@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.Wingman;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Controller;
-import org.firstinspires.ftc.teamcode.Wingman.subsystems.MFDrive;
 import org.firstinspires.ftc.teamcode.Wingman.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.Wingman.subsystems.MFDrive;
 
 @Disabled
 @TeleOp(name = "MF TeleOp")

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.drive.HolonomicDrive;
-
+// you guys  nooed to reorganise your folders and files and maybe make a fork to hide this stuff 
 public class Freehugdrive extends HolonomicDrive {
 
 
