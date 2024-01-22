@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
+import org.firstinspires.ftc.teamcode.seventh.robot.vision.PropPositionProcessor
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.Subsystem
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor

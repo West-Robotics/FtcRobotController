@@ -32,7 +32,7 @@ object Globals {
     @JvmField var LIFT_MIN = -2.0
     @JvmField var LOW = 8.0
     // each height is spaced 4.0 inches apart
-    @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.5) +
+    @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.2) +
                                  DoubleArray(5) { 4.0*it + 10 } +
                                  doubleArrayOf(LOW)
     // 0.76 -> 0.72 -> 0.33

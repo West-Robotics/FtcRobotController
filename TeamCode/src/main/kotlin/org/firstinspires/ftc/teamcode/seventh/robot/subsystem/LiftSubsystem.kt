@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 
+import com.acmerobotics.roadrunner.util.epsilonEquals
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -28,10 +29,10 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     private val liftLeft = QuackMotor(hardwareMap, "liftLeft")
     private val liftRight = QuackMotor(hardwareMap, "liftRight")
     private val enc = QuackQuadrature(
-            hardwareMap,
-            "liftLeft",
-            8192.0, 1.0/Globals.LIFT_DISTANCE_PER_PULSE,
-            DcMotorSimple.Direction.FORWARD,
+        hardwareMap,
+        "liftLeft",
+        8192.0, 1.0/Globals.LIFT_DISTANCE_PER_PULSE,
+        DcMotorSimple.Direction.FORWARD,
     )
 
     init {
@@ -41,7 +42,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         liftRight.setDirection(DcMotorSimple.Direction.REVERSE)
         liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         enc.reset()
-        update(-0.5, 0.0)
+        update(-0.2, 0.0)
     }
 
     override fun read() {
@@ -62,22 +63,22 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun write() {
         when {
             // reground if there's a current spike, we are low, want to be low, and are not reset
-            state.current > 1.5 &&
-                    state.current > state.lastCurrent &&
-                    state.extension < 0.2 &&
-                    state.commandedExtension == LIFT_HEIGHTS[0] &&
-                    state.extension != 0.0
-            -> {
+            state.current > 0.5 &&
+            // state.current > state.lastCurrent &&
+            state.extension < 0.2 &&
+            state.commandedExtension == LIFT_HEIGHTS[0] &&
+            !state.grounded
+                -> {
                 enc.reset()
                 state.power = 0.0
                 state.grounded = true
             }
-            // if we are close enough or grounded, brake
-            (state.extension - state.commandedExtension).absoluteValue < 0.1 || state.grounded
-            -> state.power = 0.0
+            // if we are grounded and don't want to move up, brake
+            state.grounded && state.power < 0.0 -> state.power = 0.0
         }
 
         state.power = state.power*13.3/voltage
+        if (state.power < 0) state.power *= 0.5
         liftLeft.setPower(state.power)
         liftRight.setPower(state.power)
     }

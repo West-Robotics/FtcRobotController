@@ -19,7 +19,14 @@ class LiftTest : LinearOpMode() {
         val gamepad = GamepadEx(gamepad1)
         val liftLeft = QuackMotor(hardwareMap, "liftLeft")
         val liftRight = QuackMotor(hardwareMap, "liftRight")
-        val enc = QuackQuadrature(hardwareMap, "liftLeft", 155.7, 1.0/Globals.LIFT_DISTANCE_PER_PULSE, DcMotorSimple.Direction.FORWARD)
+        val enc = QuackQuadrature(
+            hardwareMap,
+            "liftLeft",
+            8192.0, 1.0/Globals.LIFT_DISTANCE_PER_PULSE,
+            DcMotorSimple.Direction.FORWARD,
+        )
+
+            // TODO: is brake strong enough?
         liftLeft.setDirection(DcMotorSimple.Direction.FORWARD)
         liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE)
         liftRight.setDirection(DcMotorSimple.Direction.REVERSE)
@@ -34,6 +41,7 @@ class LiftTest : LinearOpMode() {
             liftRight.setPower(power)
             telemetry.addData("power", power);
             telemetry.addData("dist", enc.getDist());
+            telemetry.addData("ticks", enc.getTicks());
             telemetry.addData("left current", liftLeft.getCurrent(CurrentUnit.AMPS))
             telemetry.addData("right current", liftRight.getCurrent(CurrentUnit.AMPS))
             telemetry.update();

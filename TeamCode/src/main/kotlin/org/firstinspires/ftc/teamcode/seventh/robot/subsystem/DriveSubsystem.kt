@@ -39,7 +39,7 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         // wallRight = distRight.getRawVoltage()
     }
 
-    fun update(input: Pose2d, correcting: Boolean, fieldOriented: Boolean, dt: Double) {
+    fun update(input: Pose2d, correcting: Boolean, fieldOriented: Boolean, dt: Double, pid: Boolean = true) {
         this.input = input
         this.correcting = correcting
         if (fieldOriented) {
@@ -49,13 +49,16 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
                     input.heading)
         }
         this.input = Pose2d(input.position.unit*Utils.correctWithMinPower(
-                    u0 = input.position.mag,
-                    // magic regression for measured minimum powers
-                    uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
-                    deadzone = 0.05,
-                    max = 1.0),
-                Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt)))
-        // println(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt))
+                                    u0 = input.position.mag,
+                                    // magic regression for measured minimum powers
+                                    uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
+                                    deadzone = 0.05,
+                                    max = 1.0),
+                            if (pid) {
+                                Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt))
+                            } else {
+                                input.heading
+                            })
     }
 
     override fun write() {

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.seventh.opmode.auto
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -15,8 +14,8 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPip
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
+import org.firstinspires.ftc.teamcode.seventh.robot.vision.Vision
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
@@ -60,6 +59,7 @@ class SussyAutoBlue : LinearOpMode() {
         val intake = IntakeSubsystem(hardwareMap)
         val lift = LiftSubsystem(hardwareMap)
         val out = OutputSubsystem(hardwareMap)
+        val vision = Vision(hardwareMap)
 
         val timeSource = TimeSource.Monotonic
         var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
@@ -81,20 +81,10 @@ class SussyAutoBlue : LinearOpMode() {
         //     telemetry.addData("prop position", propProcessor.getPosition())
         //     telemetry.update()
         // }
-        val cameraMonitorViewId: Int = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName);
-        val propCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "propCam"), cameraMonitorViewId);
-        val propPosition = GetPropPositionPipeline()
-        propCam.openCameraDeviceAsync(object: OpenCvCamera.AsyncCameraOpenListener {
-            override fun onOpened() {
-                propCam.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
-            }
-
-            override fun onError(errorCode: Int) { }
-        });
-        propCam.setPipeline(propPosition);
+        vision.enableProp()
         waitForStart()
 
-        val traj = RRTrajectories(drive, Globals.side, Globals.start, Globals.lane, propPosition.getPosition())
+        val traj = RRTrajectories(drive, Globals.side, Globals.start, Globals.lane, vision.getPropPosition())
         drive.poseEstimate = traj.startPose
 
         val autoMachine = StateMachineBuilder()

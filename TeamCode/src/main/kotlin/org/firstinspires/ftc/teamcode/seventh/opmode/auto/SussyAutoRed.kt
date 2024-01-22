@@ -14,9 +14,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPip
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
-import org.firstinspires.ftc.vision.VisionPortal
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation

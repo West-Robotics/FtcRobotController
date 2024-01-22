@@ -5,7 +5,6 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.PropPositionProcessor
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 

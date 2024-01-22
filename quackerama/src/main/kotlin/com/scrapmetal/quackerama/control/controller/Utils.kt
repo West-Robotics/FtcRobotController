@@ -17,7 +17,7 @@ object Utils {
         return when {
             u0.absoluteValue > deadzone
                 -> (max-uMin)/(max-deadzone) * (u0 - u0.sign*deadzone) + u0.sign*uMin
-            else -> (uMin/deadzone) * u0
+            else -> 0.0
         }.coerceIn(-max, max)
     }
 }
