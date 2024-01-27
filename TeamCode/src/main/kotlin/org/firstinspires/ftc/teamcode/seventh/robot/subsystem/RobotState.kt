@@ -5,6 +5,7 @@ enum class RobotState {
     INTAKE,
     SPIT,
     BACKDROP,
+    ALIGN,
     EXTEND,
     SCORE,
     SCORE_L,

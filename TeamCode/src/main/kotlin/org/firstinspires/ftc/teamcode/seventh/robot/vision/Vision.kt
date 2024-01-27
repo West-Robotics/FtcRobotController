@@ -3,13 +3,9 @@ package org.firstinspires.ftc.teamcode.seventh.robot.vision
 import android.util.Size
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
 import org.firstinspires.ftc.vision.VisionPortal
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
-import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
-import org.openftc.easyopencv.OpenCvCameraRotation
 
 // TODO: conflicting camera rez and closed devices?
 class Vision(hardwareMap: HardwareMap) {

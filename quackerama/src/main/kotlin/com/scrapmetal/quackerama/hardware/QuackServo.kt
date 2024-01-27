@@ -19,7 +19,7 @@ class QuackServo(
     hardwareMap: HardwareMap,
     name: String,
     pwm: ModelPWM,
-    private var thresh: Double = 0.001,
+    private var thresh: Double = 0.005,
     usFrame: Double = 5000.0,
 ) {
     /**

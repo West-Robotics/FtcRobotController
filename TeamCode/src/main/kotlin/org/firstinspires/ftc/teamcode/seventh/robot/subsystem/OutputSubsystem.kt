@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import com.scrapmetal.quackerama.hardware.QuackAnalog
 import com.scrapmetal.quackerama.hardware.QuackServo
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.FINGER_CLOSE
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.FINGER_OPEN
+import kotlin.math.ulp
 
 class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     data class OutputState(
@@ -24,9 +26,17 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
         private set
     var rightFilled = false
         private set
+    var curArmAngLeft = 0.0
+        private set
+    var curArmAngRight = 0.0
+        private set
+    var curArmAng = 0.0
+        private set
 
     private val armLeft = QuackServo(hardwareMap, "armLeft", QuackServo.ModelPWM.AXON_MAX)
     private val armRight = QuackServo(hardwareMap, "armRight", QuackServo.ModelPWM.AXON_MAX)
+    private val armEncLeft = QuackAnalog(hardwareMap, "armEncLeft")
+    private val armEncRight = QuackAnalog(hardwareMap, "armEncRight")
     private val pitch = QuackServo(hardwareMap, "pitch", QuackServo.ModelPWM.GENERIC)
     private val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.GOBILDA_SPEED)
     private val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.GOBILDA_SPEED)
@@ -39,6 +49,9 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
         pitch.setDirection(Servo.Direction.REVERSE)
         fingerLeft.setDirection(Servo.Direction.FORWARD)
         fingerRight.setDirection(Servo.Direction.REVERSE)
+        pitch.setPosition(60.0)
+        fingerLeft.setPosition(FINGER_CLOSE)
+        fingerRight.setPosition(FINGER_CLOSE)
     }
 
     override fun read() {
@@ -46,20 +59,23 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
             leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 7.0
             rightFilled = colorRight.getDistance(DistanceUnit.MM) < 7.0
         }
-        // curArmAng = axon stuff
+        curArmAngLeft = armEncLeft.getRawVoltage()
+        curArmAngRight = 3.3 - armEncRight.getRawVoltage()
+        curArmAng = -109.14*(curArmAngLeft + curArmAngRight)/2 + 88.78
     }
 
     fun update(s: RobotState, armAng: Double) {
         robotState = s
         outState = when (s) {
-            RobotState.LOCK     -> OutputState(armAng, 58.0, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.INTAKE   -> OutputState(armAng, 48.0, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SPIT     -> OutputState(armAng, 48.0, FINGER_OPEN, FINGER_OPEN)
-            RobotState.BACKDROP -> OutputState(armAng, 58.0, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.LOCK     -> OutputState(armAng, 65.0, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.INTAKE   -> OutputState(armAng, 55.0, FINGER_OPEN, FINGER_OPEN)
+            RobotState.SPIT     -> OutputState(armAng, 55.0, FINGER_OPEN, FINGER_OPEN)
+            RobotState.BACKDROP -> OutputState(armAng, 65.0, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.ALIGN    -> OutputState(armAng, 65.0, FINGER_CLOSE, FINGER_CLOSE)
             RobotState.EXTEND   -> OutputState(armAng, armAng+120.0, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.SCORE    -> OutputState(armAng, 75.0, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SCORE_L  -> OutputState(armAng, 75.0, FINGER_OPEN, FINGER_CLOSE)
-            RobotState.SCORE_R  -> OutputState(armAng, 75.0, FINGER_CLOSE, FINGER_OPEN)
+            RobotState.SCORE    -> OutputState(armAng, armAng+120.0, FINGER_OPEN, FINGER_OPEN)
+            RobotState.SCORE_L  -> OutputState(armAng, armAng+120.0, FINGER_OPEN, FINGER_CLOSE)
+            RobotState.SCORE_R  -> OutputState(armAng, armAng+120.0, FINGER_CLOSE, FINGER_OPEN)
             // RobotState.SCORE_R  -> OutputState(-armAng-120.0, Globals.FINGER_CLOSE, Globals.FINGER_OPEN)
         }
     }

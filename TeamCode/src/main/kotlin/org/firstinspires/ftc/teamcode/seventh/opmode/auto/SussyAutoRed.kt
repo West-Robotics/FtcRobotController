@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.command.RRTrajectories
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
+import org.firstinspires.ftc.teamcode.seventh.robot.vision.GetPropPositionPipeline
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
@@ -151,7 +151,7 @@ class SussyAutoRed : LinearOpMode() {
 
         // visionPortal.setProcessorEnabled(propProcessor, false)
         // visionPortal.close()
-        while (opModeIsActive() && !isStopRequested) {
+        while (opModeIsActive()) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
             }

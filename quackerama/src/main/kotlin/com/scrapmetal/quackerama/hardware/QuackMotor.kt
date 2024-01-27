@@ -16,7 +16,7 @@ import kotlin.math.abs
  *
  * @param thresh minimum change in commanded power to necessitate a hardware write
  */
-class QuackMotor(val hardwareMap: HardwareMap, name: String, private var thresh: Double = 0.001) {
+class QuackMotor(val hardwareMap: HardwareMap, name: String, private var thresh: Double = 0.005) {
     private val motor = hardwareMap.get(DcMotorEx::class.java, name)
     private var lastPower = 0.0
 

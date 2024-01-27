@@ -4,21 +4,16 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.sfdev.assembly.state.StateMachineBuilder
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.command.RRTrajectories
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
 import org.firstinspires.ftc.teamcode.seventh.robot.vision.Vision
-import org.openftc.easyopencv.OpenCvCamera
-import org.openftc.easyopencv.OpenCvCameraFactory
-import org.openftc.easyopencv.OpenCvCameraRotation
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
@@ -128,7 +123,7 @@ class SussyAutoBlue : LinearOpMode() {
 
         // visionPortal.setProcessorEnabled(propProcessor, false)
         // visionPortal.close()
-        while (opModeIsActive() && !isStopRequested) {
+        while (opModeIsActive()) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
             }

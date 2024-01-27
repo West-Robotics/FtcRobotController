@@ -36,7 +36,7 @@ class OutputTest : LinearOpMode() {
             } else if (gamepad.getButton(GamepadKeys.Button.X)) {
                 state = RobotState.BACKDROP
             } else if (gamepad.getButton(GamepadKeys.Button.Y)) {
-                state = RobotState.SCORE
+                state = RobotState.EXTEND
             // } else if (gamepad.gamepad.guide, gamepad.gamepad.) {
                 // gamepad.gamepad.ps
                 // gamepad.gamepad.share
@@ -45,7 +45,7 @@ class OutputTest : LinearOpMode() {
                 // gamepad.gamepad.touchpad_finger_1_y
                 // output.update(RobotState.EXTEND)
             }
-            output.update(state, -125.0)
+            output.update(state, -120.0)
             Robot.write(output)
             // telemetry.addData("max pos", output.armLeft.getCommandedPosition())
             telemetry.addData("x", gamepad.gamepad.x)

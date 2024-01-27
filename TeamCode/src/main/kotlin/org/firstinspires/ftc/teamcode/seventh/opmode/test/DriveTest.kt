@@ -24,27 +24,34 @@ class DriveTest : LinearOpMode() {
         }
 
         waitForStart()
+        drive.startIMUThread(this)
         while (opModeIsActive() && !isStopRequested) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
             }
             Robot.read(drive)
 
-            drive.update(input = Pose2d(Vector2d(gamepad.leftY, -gamepad.leftX),
-                                        Rotation2d(gamepad.rightX, -gamepad.rightY)),
-                         correcting = false,
-                         fieldOriented = false,
-                         dt = Robot.dt)
+            drive.update(
+                    input = Pose2d(
+                            Vector2d(gamepad.leftY, -gamepad.leftX),
+                            Rotation2d(gamepad.rightX, -gamepad.rightY)
+                    ),
+                    correcting = false,
+                    fieldOriented = false,
+                    dt = Robot.dt,
+                    pid = true,
+            )
 
             Robot.write(drive)
             telemetry.addData("loop time", Robot.dt)
-            telemetry.addData("commanded angle", Rotation2d(gamepad.rightX, -gamepad.rightY).polarAngle)
-            telemetry.addData("current angle", drive.getPoseEstimate().heading.polarAngle)
-            telemetry.addData("error", Rotation2d(gamepad.rightX, -gamepad.rightY).polarAngle - drive.getPoseEstimate().heading.polarAngle)
+            // telemetry.addData("commanded angle", Rotation2d(gamepad.rightX, -gamepad.rightY).polarAngle)
+            // telemetry.addData("current angle", drive.getPoseEstimate().heading.polarAngle)
+            // telemetry.addData("error", Rotation2d(gamepad.rightX, -gamepad.rightY).polarAngle - drive.getPoseEstimate().heading.polarAngle)
             // telemetry.addData("d factor", drive.headingState.d * drive.headingState.dxdt)
             // telemetry.addData("output", drive.headingState.output)
             telemetry.addData("wall left voltage", drive.wallLeft)
             telemetry.addData("wall right voltage", drive.wallRight)
+            telemetry.addData("wall distance (in)", drive.wallDist)
             telemetry.addData("x", drive.getPoseEstimate().position.u)
             telemetry.addData("y", drive.getPoseEstimate().position.v)
             telemetry.addData("heading", drive.getPoseEstimate().heading.polarAngle)

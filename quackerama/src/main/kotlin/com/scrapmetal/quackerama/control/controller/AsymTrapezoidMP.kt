@@ -16,8 +16,8 @@ data class MPState(val s: Double, val v: Double, val a: Double)
  */
 // TODO: handle when you can't accel to max velo
 class AsymTrapezoidMP(
-        private val start: Double,
-        private val end: Double,
+        val start: Double,
+        val end: Double,
         private val accel: Double,
         private val decel: Double,
         private var v_max: Double,
@@ -56,6 +56,7 @@ class AsymTrapezoidMP(
     }
 
     fun update(t: Double): MPState {
+        // TODO: huh???
         val a = direction*when {
             t <= tA -> accel
             t < tB -> 0.0

@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import org.firstinspires.ftc.teamcode.drive.DriveConstants
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.GetPropPositionPipeline
+import org.firstinspires.ftc.teamcode.seventh.robot.vision.GetPropPositionPipeline
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence
 import java.lang.Math.toRadians
 

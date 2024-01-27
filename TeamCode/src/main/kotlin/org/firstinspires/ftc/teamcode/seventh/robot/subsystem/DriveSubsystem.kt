@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.scrapmetal.quackerama.control.Pose2d
 import com.scrapmetal.quackerama.control.Rotation2d
@@ -18,6 +19,8 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         private set
     var wallRight = 0.0
         private set
+    var wallDist = 0.0
+        private set
     var correcting = false
     private var input = Pose2d()
     private val drive = SampleMecanumDrive(hardwareMap)
@@ -35,8 +38,10 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         drive.updatePoseEstimate()
         // this is okay to do every loop since we're bulkreading both hubs anyway
         // TODO: convert to inches
-        // wallLeft = distLeft.getRawVoltage()
-        // wallRight = distRight.getRawVoltage()
+        wallLeft = distLeft.getRawVoltage()
+        wallRight = distRight.getRawVoltage()
+        wallDist = ((4.83055/wallLeft + 0.270722) + (5.18763/wallRight + 0.0107079))/2
+        // old iffy regression: 4.6613/wallRight + 0.579777
     }
 
     fun update(input: Pose2d, correcting: Boolean, fieldOriented: Boolean, dt: Double, pid: Boolean = true) {
@@ -48,17 +53,20 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
                     (input.position.v * cos(drive.poseEstimate.heading) - input.position.u * sin(drive.poseEstimate.heading))),
                     input.heading)
         }
-        this.input = Pose2d(input.position.unit*Utils.correctWithMinPower(
-                                    u0 = input.position.mag,
-                                    // magic regression for measured minimum powers
-                                    uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
-                                    deadzone = 0.05,
-                                    max = 1.0),
-                            if (pid) {
-                                Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt))
-                            } else {
-                                input.heading
-                            })
+        this.input = Pose2d(
+            input.position.unit*Utils.correctWithMinPower(
+                u0 = input.position.mag,
+                // magic regression for measured minimum powers
+                uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.3,
+                deadzone = 0.05,
+                max = 1.0
+            ),
+            if (pid) {
+                Rotation2d(headingPDF.update(drive.poseEstimate.heading, input.heading.polarAngle, dt))
+            } else {
+                input.heading
+            }
+        )
     }
 
     override fun write() {
@@ -67,11 +75,16 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
                 input.heading.polarAngle))
     }
 
+    fun startIMUThread(opMode: LinearOpMode) {
+        drive.startIMUThread(opMode)
+    }
+
     fun setPoseEstimate(pose: Pose2d) {
         drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
                 pose.position.u,
                 pose.position.v,
-                pose.heading.polarAngle)
+                pose.heading.polarAngle
+        )
     }
 
     fun getPoseEstimate(): Pose2d {

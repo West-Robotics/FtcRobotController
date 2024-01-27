@@ -22,7 +22,7 @@ object Globals {
     @JvmField var HEADING_P = 0.01
     @JvmField var HEADING_D = 0.0
     // TODO: WHY DID THIS WORK FINE AT 0.03 BEFORE
-    @JvmField var LIFT_P = 0.7
+    @JvmField var LIFT_P = 0.6
     @JvmField var LIFT_I = 0.0
     @JvmField var LIFT_D = 0.2
     @JvmField var LIFT_F = 0.0
@@ -32,8 +32,8 @@ object Globals {
     @JvmField var LIFT_MIN = -2.0
     @JvmField var LOW = 8.0
     // each height is spaced 4.0 inches apart
-    @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.2) +
-                                 DoubleArray(5) { 4.0*it + 10 } +
+    @JvmField var LIFT_HEIGHTS = doubleArrayOf(0.0) +
+                                 DoubleArray(7) { 2.5*it + 11 } +
                                  doubleArrayOf(LOW)
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39

@@ -12,7 +12,7 @@ import kotlin.math.abs
  * @param pwm servo model, used to determine pwm range
  * @param thresh minimum change in commanded power to necessitate a hardware write
  */
-class QuackCRServo(hardwareMap: HardwareMap, name: String, pwm: ModelPWM, private var thresh: Double = 0.001) {
+class QuackCRServo(hardwareMap: HardwareMap, name: String, pwm: ModelPWM, private var thresh: Double = 0.005) {
     enum class ModelPWM(val min: Double, val max: Double) {
         CR_AXON_MAX(510.0, 2490.0), CR_AXON_MINI(510.0, 2490.0), CR_AXON_MICRO(510.0, 2490.0),
         CR_GOBILDA_TORQUE(900.0, 2100.0), CR_GOBILDA_SPEED(1000.0, 2000.0), CR_GOBILDA_SUPER(1000.0, 2000.0),

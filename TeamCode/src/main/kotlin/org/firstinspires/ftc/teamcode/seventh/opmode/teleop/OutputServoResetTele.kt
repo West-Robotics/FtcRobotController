@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.Servo
+import com.scrapmetal.quackerama.hardware.QuackAnalog
 import com.scrapmetal.quackerama.hardware.QuackServo
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 
@@ -15,6 +16,8 @@ class OutputServoResetTele : LinearOpMode() {
     override fun runOpMode() {
         val armLeft = QuackServo(hardwareMap, "armLeft", QuackServo.ModelPWM.AXON_MAX)
         val armRight = QuackServo(hardwareMap, "armRight", QuackServo.ModelPWM.AXON_MAX)
+        val armEncLeft = QuackAnalog(hardwareMap, "armEncLeft")
+        val armEncRight = QuackAnalog(hardwareMap, "armEncRight")
         val pitch = QuackServo(hardwareMap, "pitch", QuackServo.ModelPWM.GENERIC)
         val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.GOBILDA_SPEED)
         val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.GOBILDA_SPEED)
@@ -29,7 +32,7 @@ class OutputServoResetTele : LinearOpMode() {
         var config = 1
 
         waitForStart()
-        while (opModeIsActive() && !isStopRequested) {
+        while (opModeIsActive()) {
             when {
                 gamepad1.a -> config = 0
                 gamepad1.x -> config = 1
@@ -61,6 +64,12 @@ class OutputServoResetTele : LinearOpMode() {
                     telemetry.addLine("Perpendicular to Slides")
                 }
             }
+            val curArmAngLeft = armEncLeft.getRawVoltage()
+            val curArmAngRight = 3.3 - armEncRight.getRawVoltage()
+            val curArmAng = -109.14*(curArmAngLeft + curArmAngRight)/2 + 88.78
+            telemetry.addData("left voltage", curArmAngLeft)
+            telemetry.addData("right voltage", curArmAngRight)
+            telemetry.addData("ang", curArmAng)
             telemetry.update()
         }
     }

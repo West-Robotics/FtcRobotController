@@ -54,7 +54,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
 
     fun update(ce: Double, dt: Double) {
         state.commandedExtension = ce
-        if (state.extension != 0.0) {
+        if (state.commandedExtension != LIFT_HEIGHTS[0]) {
             state.grounded = false
         }
         state.power = liftPDF.update(state.extension, state.commandedExtension, dt)
@@ -65,7 +65,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
             // reground if there's a current spike, we are low, want to be low, and are not reset
             state.current > 0.5 &&
             // state.current > state.lastCurrent &&
-            state.extension < 0.2 &&
+            state.extension < 0.35 &&
             state.commandedExtension == LIFT_HEIGHTS[0] &&
             !state.grounded
                 -> {
