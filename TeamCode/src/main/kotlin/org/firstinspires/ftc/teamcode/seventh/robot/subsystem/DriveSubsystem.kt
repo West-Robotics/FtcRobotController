@@ -26,13 +26,15 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     private val drive = SampleMecanumDrive(hardwareMap)
     private val distLeft = QuackAnalog(hardwareMap, "distLeft")
     private val distRight = QuackAnalog(hardwareMap, "distRight")
-    private val headingPDF = PDF(p = 0.53,
-                         d = 0.0,
-                         f = { _: Double -> 0.0 },
-                         minPowerToMove = 0.2,
-                         deadzone = 0.1,
-                         maxMagnitude = 1.0,
-                         continuous = true)
+    private val headingPDF = PDF(
+            p = 0.55,
+            d = 0.0,
+            f = { _: Double -> 0.0 },
+            minPowerToMove = 0.2,
+            deadzone = 0.02,
+            maxMagnitude = 1.0,
+            continuous = true,
+    )
 
     override fun read() {
         drive.updatePoseEstimate()
@@ -84,6 +86,14 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
                 pose.position.u,
                 pose.position.v,
                 pose.heading.polarAngle
+        )
+    }
+
+    fun resetHeading() {
+        drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
+                drive.poseEstimate.x,
+                drive.poseEstimate.y,
+                0.0
         )
     }
 

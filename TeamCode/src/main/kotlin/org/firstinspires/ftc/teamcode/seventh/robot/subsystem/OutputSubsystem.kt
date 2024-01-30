@@ -42,6 +42,7 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     private val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.GOBILDA_SPEED)
     private val colorLeft = hardwareMap.get(ColorRangeSensor::class.java, "colorLeft")
     private val colorRight = hardwareMap.get(ColorRangeSensor::class.java, "colorRight")
+    var pivotOffset = 0.0
 
     init {
         armLeft.setDirection(Servo.Direction.REVERSE)
@@ -56,8 +57,8 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
 
     override fun read() {
         if (robotState == RobotState.INTAKE) {
-            leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 7.0
-            rightFilled = colorRight.getDistance(DistanceUnit.MM) < 7.0
+            leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 5.0
+            rightFilled = colorRight.getDistance(DistanceUnit.MM) < 5.0
         }
         curArmAngLeft = armEncLeft.getRawVoltage()
         curArmAngRight = 3.3 - armEncRight.getRawVoltage()
@@ -67,16 +68,16 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     fun update(s: RobotState, armAng: Double) {
         robotState = s
         outState = when (s) {
-            RobotState.LOCK     -> OutputState(armAng, 65.0, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.INTAKE   -> OutputState(armAng, 55.0, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SPIT     -> OutputState(armAng, 55.0, FINGER_OPEN, FINGER_OPEN)
-            RobotState.BACKDROP -> OutputState(armAng, 65.0, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.ALIGN    -> OutputState(armAng, 65.0, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.EXTEND   -> OutputState(armAng, armAng+120.0, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.SCORE    -> OutputState(armAng, armAng+120.0, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SCORE_L  -> OutputState(armAng, armAng+120.0, FINGER_OPEN, FINGER_CLOSE)
-            RobotState.SCORE_R  -> OutputState(armAng, armAng+120.0, FINGER_CLOSE, FINGER_OPEN)
-            // RobotState.SCORE_R  -> OutputState(-armAng-120.0, Globals.FINGER_CLOSE, Globals.FINGER_OPEN)
+            RobotState.LOCK     -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.PRELOCK  -> OutputState(armAng, 55.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.INTAKE   -> OutputState(armAng, 55.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
+            RobotState.SPIT     -> OutputState(armAng, 55.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
+            RobotState.ALIGN    -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.BACKDROP -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.EXTEND   -> OutputState(armAng, armAng+115.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.SCORE    -> OutputState(armAng, armAng+115.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
+            RobotState.SCORE_L  -> OutputState(armAng, armAng+115.0+pivotOffset, FINGER_OPEN, FINGER_CLOSE)
+            RobotState.SCORE_R  -> OutputState(armAng, armAng+115.0+pivotOffset, FINGER_CLOSE, FINGER_OPEN)
         }
     }
 

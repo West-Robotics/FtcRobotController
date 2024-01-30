@@ -82,4 +82,8 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         liftLeft.setPower(state.power)
         liftRight.setPower(state.power)
     }
+
+    fun onTarget(): Boolean {
+        return (state.extension-state.commandedExtension).absoluteValue < 0.2
+    }
 }

@@ -19,7 +19,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
     var robotState = LOCK
     var lastState = robotState
     var height = 0
-    private var armMP = AsymTrapezoidMP(-123.0, -123.0, 0.0, 0.0, 0.0)
+    private var armMP = AsymTrapezoidMP(-120.5, -120.5, 0.0, 0.0, 0.0)
     private var timer = ElapsedTime()
 
     // okay so to be clear all this does is update the states (and also other computations, hm maybe
@@ -35,9 +35,8 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
                     end = when (s) {
                         EXTEND, SCORE, SCORE_L, SCORE_R
                         -> toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120
-
                         LOCK, BACKDROP -> -120.5
-                        INTAKE, SPIT -> -127.0
+                        INTAKE, PRELOCK, SPIT -> -127.0
                         else -> -123.0
                     },
                     accel = 6000.0,
@@ -51,16 +50,21 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
         intake.update(robotState)
         lift.update(
             when (robotState) {
-                INTAKE, LOCK, SPIT -> LIFT_HEIGHTS[0]
-                BACKDROP, ALIGN -> LIFT_HEIGHTS[height]
-                EXTEND, SCORE, SCORE_L, SCORE_R
+                INTAKE, LOCK, PRELOCK, SPIT, ALIGN -> LIFT_HEIGHTS[0]
+                BACKDROP, EXTEND, SCORE, SCORE_L, SCORE_R
                     -> LIFT_HEIGHTS[height] +
                        0.5*extension - 9.25 +
                        sqrt(9.25.pow(2) - (sqrt(3.0)/2).pow(2)*extension.pow(2))
             },
             Robot.dt
         )
-        out.update(robotState, armMP.update(timer.seconds()).s)
+        // if we're already extended, track backdrop distance
+        // otherwise, continue extending via the mp
+        if (s == EXTEND && timer.seconds() > armMP.tTotal) {
+            out.update(robotState, toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120)
+        } else {
+            out.update(robotState, armMP.update(timer.seconds()).s)
+        }
     }
 
     fun onTarget(): Boolean {

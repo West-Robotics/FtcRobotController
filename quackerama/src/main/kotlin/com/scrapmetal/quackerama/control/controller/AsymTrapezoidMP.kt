@@ -27,7 +27,7 @@ class AsymTrapezoidMP(
     private val tCruise: Double
     private val tA: Double
     private val tB: Double
-    private val tTotal: Double
+    val tTotal: Double
     private val sA: Double
     private val sB: Double
     private val direction = if (start < end) 1 else -1
