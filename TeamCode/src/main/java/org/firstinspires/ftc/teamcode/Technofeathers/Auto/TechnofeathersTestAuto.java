@@ -16,27 +16,17 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name="TechnofeathersTestAuto", group="Technofeathers")
 public class TechnofeathersTestAuto extends LinearOpMode {
 
-    TechnofeathersDrive drive;
-    private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
-    private Servo pivot1;
-    private Servo grabber;
-    private DcMotor lift1;
-    private DcMotor lift2;
-    private DcMotor intake;
-    private Servo stopper;
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
-
-    public int intake_state = 0;
-    public int placeholderB = 1;
-    public int placeholderX = 1;
-    public int placeholderY = 1;
-
     @Override public void runOpMode() throws InterruptedException {
 
-        drive = new TechnofeathersDrive(this, hardwareMap);
+        TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
+        Servo pivot1;
+        Servo grabber;
+        DcMotor lift1;
+        DcMotor lift2;
+        DcMotor intake;
+        Servo stopper;
+
+        TechnofeathersDrive drive = new TechnofeathersDrive(this, hardwareMap);
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
         grabber = hardwareMap.get(Servo.class, "grabber");
         lift1 = hardwareMap.get(DcMotor.class,  "lift1");
@@ -45,58 +35,90 @@ public class TechnofeathersTestAuto extends LinearOpMode {
         lift2.setDirection(DcMotorSimple.Direction.REVERSE);
         intake = hardwareMap.get(DcMotor.class, "intake");
         stopper = hardwareMap.get(Servo.class, "stopper");
-        drive = new TechnofeathersDrive(this, hardwareMap);
+
+        telemetry.addLine("Variables Instantiated");
+        telemetry.update();
 
         waitForStart();
         ElapsedTime e = new ElapsedTime();
         e.reset();
-        e.startTime();
-        while (e.time(TimeUnit.SECONDS)<30) {
-                    /*
-            //beginning intake
-            while(e.time(TimeUnit.SECONDS)<1) {
+        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Turns motor PID off
+        //um is this really necessary
+        lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        telemetry.addLine("Resetted Encoders");
+        telemetry.update();
+
+        while (opModeIsActive() && !isStopRequested()) {
+            double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
+            double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
+            /*
+            if (lift1CurrentRotation <= 0) {
+                lift1.setPower(0);
+                lift2.setPower(0);
+                telemetry.addLine("Lift Limit Imposed");
+            }
+
+             */
+
+            if (lift1CurrentRotation > 3) {
+                lift1.setPower(0);
+                lift2.setPower(0);
+                telemetry.addLine("Lift Limit Imposed");
+                telemetry.update();
+            }
+            telemetry.addLine("Encoders Set");
+            telemetry.update();
+
+
+            drive.move(0.5,12,0);
+            telemetry.addLine("Driving");
+            telemetry.update();
+            stopper.setPosition(0.37);
+            telemetry.addData("Time ran: ", e);
+            telemetry.addLine("Driving to backdrop");
+
+            if (2 < e.time(TimeUnit.SECONDS) && e.time(TimeUnit.SECONDS) < 3) {
+                drive.drive(0,0,0);
+                telemetry.addLine("Drive ran and now it is stopped.");
+                telemetry.update();
+                //System.out.println("Drive ran and now is stopped");
+                lift1.setPower(0.5);
+                lift2.setPower(0.5);
+                telemetry.addLine("Drive stopped, lift run.");
+                telemetry.update();
+            }
+
+            lift1.setPower(0);
+            lift2.setPower(0);
+
+            if (e.time(TimeUnit.SECONDS) < 4 && e.time(TimeUnit.SECONDS) > 3) {
+                pivot1.setPosition(0);
+            }
+            if (e.time(TimeUnit.SECONDS) < 5 && e.time(TimeUnit.SECONDS) > 4) {
+                grabber.setPosition(1);
+            }
+            if (e.time(TimeUnit.SECONDS) < 6.5 && e.time(TimeUnit.SECONDS) > 5) {
+                drive.drive(1,0,0.1);
+                stopper.setPosition(0.9);
+            }
+            if (e.time(TimeUnit.SECONDS) < 10 && e.time(TimeUnit.SECONDS) > 6.5) {
+                drive.drive(0,1,0.1);
+            }
+            if (e.time(TimeUnit.SECONDS) < 11 && e.time(TimeUnit.SECONDS) > 10) {
+                drive.drive(0,0,0);
                 intake.setPower(1);
             }
-            */
-
-                //moves forward
-            /*
-            frontRight.setTargetPosition(4);
-            frontLeft.setTargetPosition(4);
-            backRight.setTargetPosition(4);
-            backLeft.setTargetPosition(4);
-
-
-            //moves left
-            frontLeft.setTargetPosition(-1);
-            frontRight.setTargetPosition(1);
-            frontLeft.setTargetPosition(1);
-            backRight.setTargetPosition(-1);
-            */
-            //grabs pixel
-            grabber.setPosition(0);
-
-            //lift go up
-            lift1.setTargetPosition(1);
-            lift2.setTargetPosition(1);
-
-
-            //pivot go up
-            pivot1.setPosition(0);
-
-            //releases pixel
-            grabber.setPosition(1);
-
-            //pivot go down
-            pivot1.setPosition(0.80);
-
-            //lift go down
-            lift1.setTargetPosition(-1);
-            lift2.setTargetPosition(-1);
+            if (e.time(TimeUnit.SECONDS) < 12 && e.time(TimeUnit.SECONDS) > 11) {
+                intake.setPower(0);
+                stopper.setPosition(0.37);
+            }
+            if (e.time(TimeUnit.SECONDS) < 26 && e.time(TimeUnit.SECONDS) > 25) {
+                stopper.setPosition(0.9);
+            }
+            //e.reset();
         }
-
-
-
-        e.reset();
     }
 }

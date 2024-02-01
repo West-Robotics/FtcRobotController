@@ -16,22 +16,15 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name="TechnofeathersAutoHopepts", group="Technofeathers")
 public class TechnofeathersAutoHopepts extends LinearOpMode {
 
-    private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
-    private Servo pivot1;
-    private Servo grabber;
-    private DcMotor lift1;
-    private DcMotor lift2;
-    private DcMotor intake;
-    private Servo stopper;
-
-    public int intake_state = 0;
-    public int placeholderB = 1;
-    public int placeholderX = 1;
-    public int placeholderY = 1;
-
-
-
     @Override public void runOpMode() throws InterruptedException {
+
+        TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
+        Servo pivot1;
+        Servo grabber;
+        DcMotor lift1;
+        DcMotor lift2;
+        DcMotor intake;
+        Servo stopper;
 
         TechnofeathersDrive drive = new TechnofeathersDrive(this, hardwareMap);
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
@@ -44,66 +37,88 @@ public class TechnofeathersAutoHopepts extends LinearOpMode {
         stopper = hardwareMap.get(Servo.class, "stopper");
 
         telemetry.addLine("Variables Instantiated");
-        telemetry.update();
+
 
         waitForStart();
         ElapsedTime e = new ElapsedTime();
         e.reset();
-        e.startTime();
+        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //Turns motor PID off
+        //um is this really necessary
+        lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.addLine("Resetted Encoders");
 
-       while (opModeIsActive() && !isStopRequested()) {
 
-           lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-           lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-           //um is this really necessary
-           lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-           lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-
-           telemetry.addLine("boop");
-           telemetry.update();
-
-           double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
-           double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
-           if (lift1CurrentRotation > 3) {
+        while (opModeIsActive() && !isStopRequested()) {
+            double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
+            double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
+            /*
+            if (lift1CurrentRotation <= 0) {
                 lift1.setPower(0);
                 lift2.setPower(0);
-           }
-           telemetry.addLine("Beginning to Utilize Encoders");
-           telemetry.update();
-
-           if (e.time(TimeUnit.SECONDS) < 1) {
-               drive.drive(0,1,0.17);
-           }
-           drive.drive(0,0,0);
-           telemetry.addLine("Drive ran and now it is stopped.");
-           telemetry.update();
-            /*
-           if (e.time(TimeUnit.SECONDS) < 1) {
-               intake.setPower(1);
-           }
+                telemetry.addLine("Lift Limit Imposed");
+            }
 
              */
-           /*
-           if (e.time(TimeUnit.SECONDS) < 2 && e.time(TimeUnit.SECONDS) > 1) {
-               pivot1.setPosition(180);
-               test.setDesiredPoint(0.4);
-               test.update(pivot1.getPosition());
-           }
-            */
 
-           if (e.time(TimeUnit.SECONDS) < 3 && e.time(TimeUnit.SECONDS) > 2) {
-               lift1.setPower(0.5);
-               lift2.setPower(0.5);
-           }
+            if (lift1CurrentRotation > 3) {
+                lift1.setPower(0);
+                lift2.setPower(0);
+                telemetry.addLine("Lift Limit Imposed");
+            }
 
-           lift1.setPower(0);
-           lift2.setPower(0);
+            if (e.time(TimeUnit.SECONDS) < 2) {
+                drive.drive(0,0.5,0);
+                telemetry.addLine("Driving");
 
-           pivot1.setPosition(0);
+                stopper.setPosition(0.37);
+                telemetry.addLine("Driving to backdrop");
+            }
+            telemetry.addData("Time ran: ", e);
 
-           grabber.setPosition(1);
 
-           e.reset();
+            if (2 < e.time(TimeUnit.SECONDS) && e.time(TimeUnit.SECONDS) < 3) {
+                telemetry.addLine("new loop");
+
+                drive.drive(0,0,0);
+                telemetry.addLine("Drive ran and now it is stopped.");
+
+                //System.out.println("Drive ran and now is stopped");
+                lift1.setPower(0.5);
+                lift2.setPower(0.5);
+                telemetry.addLine("Drive stopped, lift run.");
+
+            }
+
+            lift1.setPower(0);
+            lift2.setPower(0);
+
+            if (e.time(TimeUnit.SECONDS) < 4 && e.time(TimeUnit.SECONDS) > 3) {
+                pivot1.setPosition(0);
+            }
+            if (e.time(TimeUnit.SECONDS) < 5 && e.time(TimeUnit.SECONDS) > 4) {
+                grabber.setPosition(1);
+            }
+            if (e.time(TimeUnit.SECONDS) < 6.5 && e.time(TimeUnit.SECONDS) > 5) {
+                drive.drive(1,0,0.1);
+                stopper.setPosition(0.9);
+            }
+            if (e.time(TimeUnit.SECONDS) < 10 && e.time(TimeUnit.SECONDS) > 6.5) {
+                drive.drive(0,1,0.1);
+            }
+            if (e.time(TimeUnit.SECONDS) < 11 && e.time(TimeUnit.SECONDS) > 10) {
+                drive.drive(0,0,0);
+                intake.setPower(1);
+            }
+            if (e.time(TimeUnit.SECONDS) < 12 && e.time(TimeUnit.SECONDS) > 11) {
+                intake.setPower(0);
+                stopper.setPosition(0.37);
+            }
+            if (e.time(TimeUnit.SECONDS) < 26 && e.time(TimeUnit.SECONDS) > 25) {
+                stopper.setPosition(0.9);
+            }
+            telemetry.update();
         }
     }
 }
