@@ -97,7 +97,6 @@ public class EggnogTeleop extends OpMode {
             placeholderG = 1;
         }
 
-
         if (controller2.dpadUpOnce() && placeholderC == 1) {
             // grabbing pixels
             grabber.setPosition(0);

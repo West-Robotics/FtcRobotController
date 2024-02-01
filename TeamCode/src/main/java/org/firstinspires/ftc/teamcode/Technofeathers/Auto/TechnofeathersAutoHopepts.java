@@ -98,8 +98,8 @@ public class TechnofeathersAutoHopepts extends LinearOpMode {
                 pivot1.setPosition(0);
             }
             if (e.time(TimeUnit.SECONDS) < 5 && e.time(TimeUnit.SECONDS) > 4) {
-                grabber.setPosition(1);
-            }
+		    grabber.setPosition(1);
+	    }
             if (e.time(TimeUnit.SECONDS) < 6.5 && e.time(TimeUnit.SECONDS) > 5) {
                 drive.drive(1,0,0.1);
                 stopper.setPosition(0.9);
