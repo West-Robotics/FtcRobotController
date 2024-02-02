@@ -64,6 +64,7 @@ class PathBuilder {
         fun build() = CubicHermite(label, startPose, startPose.heading.vector*v0, endPose, endPose.heading.vector*v1, constraints)
         inner class Start {
             fun pos(x: Double, y: Double) { startPose = Pose2d(Vector2d(x, y), startPose.heading) }
+            fun pos(v: Vector2d) { startPose = Pose2d(v, startPose.heading) }
             fun ang(theta: Double) {
                 startPose = Pose2d(startPose.position, Rotation2d(cos(theta), sin(theta)))
             }
@@ -72,6 +73,7 @@ class PathBuilder {
         }
         inner class End {
             fun pos(x: Double, y: Double) { endPose = Pose2d(Vector2d(x, y), endPose.heading) }
+            fun pos(v: Vector2d) { endPose = Pose2d(v, endPose.heading) }
             fun ang(theta: Double) { endPose = Pose2d(endPose.position, Rotation2d(cos(theta), sin(theta))) }
             fun v(v: Double) { v1 = v }
         }

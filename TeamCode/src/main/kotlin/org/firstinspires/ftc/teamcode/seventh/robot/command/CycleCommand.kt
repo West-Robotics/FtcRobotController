@@ -25,7 +25,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
     // okay so to be clear all this does is update the states (and also other computations, hm maybe
     // i should change that) of each subsystem not actually cause any hardware change
     fun update(s: RobotState, h: Int, x: Double) {
-        val extension = x.coerceIn(0.0, 6.0) + 4.5
+        val extension = x.coerceIn(0.0, 6.4) + 4.2
         // only update states on transitions
         if (s != robotState) {
             lastState = robotState
@@ -40,7 +40,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
                         else -> -123.0
                     },
                     accel = 6000.0,
-                    decel = -1400.0,
+                    decel = -1000.0, // old: -1400.0
                     v_max = 500.0
             )
             timer = ElapsedTime()
@@ -60,7 +60,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
         )
         // if we're already extended, track backdrop distance
         // otherwise, continue extending via the mp
-        if (s == EXTEND && timer.seconds() > armMP.tTotal) {
+        if ((s == EXTEND || s == SCORE_L || s == SCORE || s == SCORE_R) && timer.seconds() > armMP.tTotal) {
             out.update(robotState, toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120)
         } else {
             out.update(robotState, armMP.update(timer.seconds()).s)

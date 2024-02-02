@@ -28,7 +28,7 @@ object Globals {
     @JvmField var LIFT_MIN = -2.0
     // each height is spaced 2.6 inches apart
     @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.2) +
-                                 DoubleArray(6) { 2.6*it + 11 }
+                                 DoubleArray(6) { 2.6*it + 13.6 }
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39
     @JvmField var FINGER_OPEN = 0.05
@@ -51,4 +51,17 @@ object Globals {
         LANE_2,
         LANE_3,
     } @JvmField var lane = Lane.LANE_1
+    enum class YellowSide {
+        LEFT,
+        RIGHT,
+    }
+    enum class Stack {
+        CLOSE,
+        MIDDLE,
+        FAR,
+    }
+    enum class Park {
+        INNER,
+        OUTER,
+    }
 }

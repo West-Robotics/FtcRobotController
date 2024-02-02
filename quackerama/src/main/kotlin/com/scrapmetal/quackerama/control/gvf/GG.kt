@@ -20,7 +20,7 @@ class GG(val kN: Double, val kA: Double = 0.0, vararg val paths: Path) {
         val state = paths[currentIndex].update(p)
         val distanceToEnd = p.distanceTo(paths[currentIndex].current().endPose.position)
         return if (paths[currentIndex].last() && distanceToEnd < paths[currentIndex].current().constraints.decelDistance) {
-            println("decel thing" + v*kA*v.mag.pow(2)/(2*distanceToEnd))
+            // println("decel thing" + v*kA*v.mag.pow(2)/(2*distanceToEnd))
             Pose2d((paths[currentIndex].current().endPose.position-p).unit
                     * distanceToEnd / paths[currentIndex].current().constraints.decelDistance
                     - v*kA*v.mag.pow(2)/(2*distanceToEnd),

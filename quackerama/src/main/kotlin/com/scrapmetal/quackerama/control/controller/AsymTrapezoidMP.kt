@@ -24,7 +24,7 @@ class AsymTrapezoidMP(
 ) {
     private var tAccel: Double
     private var tDecel: Double
-    private val tCruise: Double
+    private var tCruise: Double
     private val tA: Double
     private val tB: Double
     val tTotal: Double
@@ -36,17 +36,18 @@ class AsymTrapezoidMP(
         tAccel = if (accel != 0.0) v_max/accel else 0.0
         tDecel = if (decel != 0.0) -v_max/decel else 0.0
         val accelRatioedDistance = (1.0-(accel/(accel+(-decel))))*(end-start).absoluteValue
+        tCruise = if (v_max != 0.0) {
+            (((end-start).absoluteValue - (0.5*accel*tAccel.pow(2)
+                    - 0.5*decel*tDecel.pow(2)))
+                    / v_max)
+        } else {
+            0.0
+        }
         if (0.5*accel*tAccel.pow(2) > accelRatioedDistance) {
             tAccel = sqrt(accelRatioedDistance/(0.5*accel))
             tDecel = sqrt(((end-start).absoluteValue - accelRatioedDistance)/(0.5*(-decel)))
             v_max = accel*tAccel
-        }
-        tCruise = if (v_max != 0.0) {
-            (((end-start).absoluteValue - (0.5*accel*tAccel.pow(2)
-                                           - 0.5*decel*tDecel.pow(2)))
-             / v_max)
-        } else {
-            0.0
+            tCruise = 0.0
         }
         tA = tAccel
         tB = tAccel + tCruise
@@ -62,7 +63,7 @@ class AsymTrapezoidMP(
             t < tB -> 0.0
             t <= tTotal -> decel
             tTotal < t -> 0.0
-            else -> throw IllegalArgumentException("Received t < 0 as an argument")
+            else -> throw IllegalArgumentException("Received $t tA: $tA tB: $tB tTotal: $tTotal tCruise: $tCruise tDecel: $tDecel")
         }
         val v = when {
             t <= tA -> a*t
