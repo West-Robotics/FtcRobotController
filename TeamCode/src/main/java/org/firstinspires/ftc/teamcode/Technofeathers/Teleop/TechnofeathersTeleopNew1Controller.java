@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
 @TeleOp(name = "TechnofeathersTeleopNew1Controller")
 public class TechnofeathersTeleopNew1Controller extends OpMode {
+    //ABANDON FOR NOW
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
@@ -65,6 +66,7 @@ public class TechnofeathersTeleopNew1Controller extends OpMode {
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+        pivot1.setPosition(1);
     }
 
     @Override
@@ -96,7 +98,7 @@ public class TechnofeathersTeleopNew1Controller extends OpMode {
 
         if (controller1.dpadUpOnce() && placeholderC == 1) {
             // grabbing pixels
-            grabber.setPosition(0);
+            grabber.setPosition(0.5);
             placeholderC = 2;
         }
 
@@ -142,15 +144,19 @@ public class TechnofeathersTeleopNew1Controller extends OpMode {
         double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
         double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
 
-        if (controller1.startOnce() && planeLaunched == 0) {
+        if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
             airplaneLauncher.setPosition(0.1);
             planeLaunched = 1;
         }
 
-        if(controller1.startOnce() && planeLaunched == 1) {
+        if(controller1.right_trigger > 0.9 && planeLaunched == 1) {
             airplaneLauncher.setPosition(0.9);
             planeLaunched = 0;
         }
+        if(controller1.backOnce()){
+            pivot1.setPosition(0.5);
+        }
+
         /*
         i = 0;
         j = 0;

@@ -76,7 +76,7 @@ public class TechnofeathersAutoHopepts extends LinearOpMode {
                 telemetry.addLine("Driving to backdrop");
             }
             telemetry.addData("Time ran: ", e);
-
+            telemetry.addLine("Out of loop");
 
             if (2 < e.time(TimeUnit.SECONDS) && e.time(TimeUnit.SECONDS) < 3) {
                 telemetry.addLine("new loop");
