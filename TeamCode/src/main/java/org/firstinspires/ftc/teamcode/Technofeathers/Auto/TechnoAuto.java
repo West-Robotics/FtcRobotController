@@ -110,13 +110,13 @@ public class TechnoAuto extends LinearOpMode{
 
         dist = distanceSensor.getDistance(DistanceUnit.CM);
         if (dist<115){
-
+            left(0.5,1075);
             double target = 15;
             goToDistance(target,1);
             releaseIntake();
             state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
             targetAngle = -90;
-            changeAngle(target,2,-1);
+            changeAngle(target,1,-1);
             goToDistance(target,1);
             pixelate();
 
@@ -124,41 +124,7 @@ public class TechnoAuto extends LinearOpMode{
 
             runWithEncoder(1, 1, 0.5, 1680);
 
-            double output;
-            output = 0.8;
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            int ticks = 500;
-
-            leftPos+=ticks;
-            rightPos+=ticks;
-
-            frontLeft.setTargetPosition(leftPos);
-            backLeft.setTargetPosition(leftPos);
-            frontRight.setTargetPosition(rightPos);
-            backRight.setTargetPosition(rightPos);
-
-            frontLeft.setPower(-output);
-            backLeft.setPower(output);
-            frontRight.setPower(output);
-            backRight.setPower(-output);
-
-            while (opModeIsActive() && (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy())){
-                idle();
-            }
-
-            frontLeft.setPower(0);
-            backLeft.setPower(0);
-            frontRight.setPower(0);
-            backRight.setPower(0);
-
-            frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            right(0.5,537);
 
             dist = distanceSensor.getDistance(DistanceUnit.CM);
             if (dist < 130) {
@@ -369,6 +335,77 @@ public class TechnoAuto extends LinearOpMode{
         backLeft.setPower(-strength);
         frontRight.setPower(strength);
         backRight.setPower(strength);
+    }
+
+    public void right(double output,int ticks){
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftPos+=ticks;
+        rightPos+=ticks;
+
+        frontLeft.setTargetPosition(leftPos);
+        backLeft.setTargetPosition(leftPos);
+        frontRight.setTargetPosition(rightPos);
+        backRight.setTargetPosition(rightPos);
+
+        frontLeft.setPower(-output);
+        backLeft.setPower(output);
+        frontRight.setPower(output);
+        backRight.setPower(-output);
+
+        while (opModeIsActive() && (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy())){
+            idle();
+        }
+
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void left(double output, int ticks){
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftPos+=ticks;
+        rightPos+=ticks;
+
+        frontLeft.setTargetPosition(leftPos);
+        backLeft.setTargetPosition(leftPos);
+        frontRight.setTargetPosition(rightPos);
+        backRight.setTargetPosition(rightPos);
+
+        frontLeft.setPower(-output);
+        backLeft.setPower(output);
+        frontRight.setPower(output);
+        backRight.setPower(-output);
+
+        while (opModeIsActive() && (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy())){
+            idle();
+        }
+
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 }

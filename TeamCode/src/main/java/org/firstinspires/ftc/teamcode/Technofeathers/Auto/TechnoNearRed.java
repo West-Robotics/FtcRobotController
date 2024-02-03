@@ -115,14 +115,15 @@ public class TechnoNearRed extends LinearOpMode{
             releaseIntake();
             state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
             targetAngle = 90;
-            changeAngle(target,2,-1);
-            goToDistance(15,1);
+            changeAngle(target,1,-1);
+            goToDistance(2,1);
             pixelate();
+            runWithEncoder(-0.25, -0.25, 0.4,537);
 
         } else {
 
-            runWithEncoder(1, 1, 0.5, 1680);
-            left(0.75, 1680);
+            runWithEncoder(1, 1, 0.5, 538);
+            left(0.75, 537);
 
             dist = distanceSensor.getDistance(DistanceUnit.CM);
             if (dist < 130) {
@@ -132,9 +133,8 @@ public class TechnoNearRed extends LinearOpMode{
                 releaseIntake();
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
                 targetAngle = 90;
-                changeAngle(targetAngle,2,-1);
-                dist = distanceSensor.getDistance(DistanceUnit.CM);
-                target = 8;
+                changeAngle(targetAngle,1,1);
+                target = 2;
                 goToDistance(target,1);
                 pixelate();
 
@@ -144,19 +144,19 @@ public class TechnoNearRed extends LinearOpMode{
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
                 targetAngle = -90;
                 changeAngle(targetAngle, 2, 1);
-                dist = distanceSensor.getDistance(DistanceUnit.CM);
-                goToDistance(5,1);
+
                 releaseIntake();
                 runWithEncoder(-1,-1,0.5,1680);
 
                 targetAngle = 90;
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-                changeAngle(targetAngle,2,1);
+                changeAngle(targetAngle,1,-1);
 
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
-                double target = 5;
+                double target = 2;
                 goToDistance(target,1);
                 pixelate();
+                
             }
 
         }
@@ -164,6 +164,7 @@ public class TechnoNearRed extends LinearOpMode{
     }
 
     public void pixelate(){
+        /*
         double pos;
         double pivpos;
         double grab2pos;
@@ -181,6 +182,20 @@ public class TechnoNearRed extends LinearOpMode{
         do {
             grab2pos = grabber.getPosition();
         }   while (opModeIsActive() && grab2pos<1);
+
+         */
+        ElapsedTime teleopTimer1 = new ElapsedTime();
+        teleopTimer1.reset();
+        while (teleopTimer1.seconds() < 0.5) {
+            grabber.setPosition(0.67);
+        }
+        while (0.5 < teleopTimer1.seconds() && teleopTimer1.seconds() < 1.5) {
+            lift1.setPower(1);
+            lift2.setPower(1);
+        }
+        while (1.5 < teleopTimer1.seconds() && teleopTimer1.seconds() < 2.2) {
+            pivot1.setPosition(0);
+        }
     }
 
     public void changeAngle(double targetAng, int OneToGreaterTwoToLess, int negLeftPosRight){
