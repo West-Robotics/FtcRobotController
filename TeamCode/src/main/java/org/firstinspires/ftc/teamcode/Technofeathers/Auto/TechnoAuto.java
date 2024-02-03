@@ -115,7 +115,7 @@ public class TechnoAuto extends LinearOpMode{
             goToDistance(target,1);
             releaseIntake();
             state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-            targetAngle = -90;
+            targetAngle = Math.toRadians(-90);
             changeAngle(target,1,-1);
             goToDistance(target,1);
             pixelate();
@@ -133,7 +133,7 @@ public class TechnoAuto extends LinearOpMode{
                 goToDistance(target,1);
                 releaseIntake();
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-                targetAngle = -90;
+                targetAngle = Math.toRadians(-90);
                 changeAngle(targetAngle,2,-1);
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
                 target = 8;
@@ -144,14 +144,14 @@ public class TechnoAuto extends LinearOpMode{
 
                 runWithEncoder(4,4,0.8,1680);
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-                targetAngle = 90;
+                targetAngle = Math.toRadians(90);
                 changeAngle(targetAngle, 2, 1);
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
                 goToDistance(5,1);
                 releaseIntake();
                 runWithEncoder(-1,-1,0.5,1680);
 
-                targetAngle = -90;
+                targetAngle = Math.toRadians(-90);
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
                 changeAngle(targetAngle,2,-1);
 

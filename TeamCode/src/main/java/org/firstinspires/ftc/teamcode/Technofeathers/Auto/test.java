@@ -107,7 +107,7 @@ public class test extends LinearOpMode{
 
            while (opModeIsActive()){
                state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-               targetAngle = -90;
+               targetAngle = Math.toRadians(-90);
                double strength = PIDControl(targetAngle,state);
                righting(strength);
            }
