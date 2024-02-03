@@ -72,7 +72,7 @@ public class TechnoNearRed extends LinearOpMode{
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        distanceSensor = hardwareMap.get(DistanceSensor.class,"distance");
+        distanceSensor = hardwareMap.get(DistanceSensor.class,"distSense1");
         imu = hardwareMap.get(BHI260IMU.class, "imu");
         lift1 = hardwareMap.get(DcMotor.class,"lift1");
         lift2 = hardwareMap.get(DcMotor.class,"lift2");
@@ -156,7 +156,7 @@ public class TechnoNearRed extends LinearOpMode{
                 double target = 2;
                 goToDistance(target,1);
                 pixelate();
-                
+
             }
 
         }
