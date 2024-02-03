@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,8 +12,8 @@ import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
-@TeleOp(name = "EggnogTeleop")
-public class EggnogTeleop extends OpMode {
+@TeleOp(name = "EggnogTeleopAutomated")
+public class EggnogTeleopAutomated extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
@@ -73,15 +72,21 @@ public class EggnogTeleop extends OpMode {
     public void loop() {
         controller1.update();
         drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-
         if (controller1.left_stick_x == 0 && controller1.left_stick_y == 0 && controller1.right_stick_x == 0) {
             drive.drive(0,0,0);
         }
 
         //drive.drive(-controller1.left_stick_x, -controller1.left_stick_y/1.25, -controller1.right_stick_x/1.25);
+
+
+        if(controller1.dpadLeftOnce()) {
+            ScoringPosition();
+        }
+        if(controller1.dpadRightOnce()) {
+            PixelDropAndReset();
+        }
         if (controller1.AOnce() && intakeOn == 0) {
-            stopper.setPosition(.9);
-            intake.setPower(1);
+            IntakeRun();
             intakeOn = 1;
             //import timer later
         } else if (controller1.AOnce() && intakeOn == 1){
@@ -89,6 +94,7 @@ public class EggnogTeleop extends OpMode {
             intake.setPower(0);
             intakeOn = 0;
         }
+        //lift at good position, stopper down, intake
 
         if (controller1.BOnce() && placeholderG == 1) {
             intake.setPower(-1);
@@ -191,5 +197,41 @@ public class EggnogTeleop extends OpMode {
         //} else if (controller1.dpadRight()){
         //pivot1.setPosition(.75);
         //}
+    }
+    private void ScoringPosition() {
+        ElapsedTime teleopTimer1 = new ElapsedTime();
+        teleopTimer1.reset();
+        while (teleopTimer1.seconds() < 0.5) {
+            grabber.setPosition(0.67);
+        }
+        while (0.5 < teleopTimer1.seconds() && teleopTimer1.seconds() < 1.5) {
+            lift1.setPower(1);
+            lift2.setPower(1);
+        }
+        while (1.5 < teleopTimer1.seconds() && teleopTimer1.seconds() < 2.2) {
+            pivot1.setPosition(0);
+        }
+    }
+    public void PixelDropAndReset() {
+        ElapsedTime teleopTimer2 = new ElapsedTime();
+        teleopTimer2.reset();
+        while(teleopTimer2.seconds() < 0.7) {
+            grabber.setPosition(1);
+        }
+
+        while(0.7 < teleopTimer2.seconds() && teleopTimer2.seconds() < 1.2) {
+            lift1.setPower(-1);
+            lift2.setPower(-1);
+        }
+    }
+    public void IntakeRun() {
+        ElapsedTime teleopTimer3 = new ElapsedTime();
+        teleopTimer3.reset();
+        while(teleopTimer3.seconds() < 0.5) {
+            stopper.setPosition(.9);
+        }
+        while(1 < teleopTimer3.seconds() && teleopTimer3.seconds() < 2) {
+            intake.setPower(1);
+        }
     }
 }

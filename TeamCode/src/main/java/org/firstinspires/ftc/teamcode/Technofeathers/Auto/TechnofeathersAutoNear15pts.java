@@ -42,7 +42,6 @@ public class TechnofeathersAutoNear15pts extends LinearOpMode {
 
         telemetry.addLine("Variables Instantiated");
 
-
         waitForStart();
         ElapsedTime e = new ElapsedTime();
         e.reset();
