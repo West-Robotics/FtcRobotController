@@ -371,4 +371,74 @@ public class TechnoFarBlue extends LinearOpMode{
         frontRight.setPower(strength);
         backRight.setPower(strength);
     }
+    public void right(double output,int ticks){
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftPos+=ticks;
+        rightPos+=ticks;
+
+        frontLeft.setTargetPosition(leftPos);
+        backLeft.setTargetPosition(leftPos);
+        frontRight.setTargetPosition(rightPos);
+        backRight.setTargetPosition(rightPos);
+
+        frontLeft.setPower(-output);
+        backLeft.setPower(output);
+        frontRight.setPower(output);
+        backRight.setPower(-output);
+
+        while (opModeIsActive() && (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy())){
+            idle();
+        }
+
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void left(double output, int ticks){
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftPos+=ticks;
+        rightPos+=ticks;
+
+        frontLeft.setTargetPosition(leftPos);
+        backLeft.setTargetPosition(leftPos);
+        frontRight.setTargetPosition(rightPos);
+        backRight.setTargetPosition(rightPos);
+
+        frontLeft.setPower(-output);
+        backLeft.setPower(output);
+        frontRight.setPower(output);
+        backRight.setPower(-output);
+
+        while (opModeIsActive() && (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy())){
+            idle();
+        }
+
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 }

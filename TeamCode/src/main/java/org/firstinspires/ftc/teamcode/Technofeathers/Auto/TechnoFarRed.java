@@ -111,55 +111,51 @@ public class TechnoFarRed extends LinearOpMode{
         if (dist<115){
 
             double target = 15;
-            goToDistance(target,2);
+            goToDistance(target,1);
             releaseIntake();
             state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-            targetAngle = -90;
+            targetAngle = 90;
             changeAngle(target,2,-1);
+            goToDistance(15,1);
             pixelate();
 
         } else {
 
             runWithEncoder(1, 1, 0.5, 1680);
-            double output;
-            output = 0.8;
-            frontLeft.setPower(output);
-            backLeft.setPower(-output);
-            frontRight.setPower(-output);
-            backRight.setPower(output);
+            right(0.75,1680);
 
             dist = distanceSensor.getDistance(DistanceUnit.CM);
             if (dist < 130) {
                 double target = 5;
                 // if dist>5 doesn't work try (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy()) for both
-                goToDistance(target,2);
+                goToDistance(target,1);
                 releaseIntake();
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-                targetAngle = -90;
+                targetAngle = 90;
                 changeAngle(targetAngle,2,-1);
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
                 target = 8;
-                goToDistance(target,2);
+                goToDistance(target,1);
                 pixelate();
 
             } else {
 
-                runWithEncoder(4,4,0.8,1680);
+                runWithEncoder(3,3,0.8,1680);
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
                 targetAngle = 90;
                 changeAngle(targetAngle, 2, 1);
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
-                goToDistance(5,2);
+                goToDistance(5,1);
                 releaseIntake();
                 runWithEncoder(-1,-1,0.5,1680);
 
-                targetAngle = -90;
+                targetAngle = 90;
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
                 changeAngle(targetAngle,2,-1);
 
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
                 double target = 5;
-                goToDistance(target,2);
+                goToDistance(target,1);
                 pixelate();
             }
 
@@ -337,5 +333,75 @@ public class TechnoFarRed extends LinearOpMode{
         backLeft.setPower(-strength);
         frontRight.setPower(strength);
         backRight.setPower(strength);
+    }
+    public void right(double output,int ticks){
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftPos+=ticks;
+        rightPos+=ticks;
+
+        frontLeft.setTargetPosition(leftPos);
+        backLeft.setTargetPosition(leftPos);
+        frontRight.setTargetPosition(rightPos);
+        backRight.setTargetPosition(rightPos);
+
+        frontLeft.setPower(-output);
+        backLeft.setPower(output);
+        frontRight.setPower(output);
+        backRight.setPower(-output);
+
+        while (opModeIsActive() && (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy())){
+            idle();
+        }
+
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+    public void left(double output, int ticks){
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+        leftPos+=ticks;
+        rightPos+=ticks;
+
+        frontLeft.setTargetPosition(leftPos);
+        backLeft.setTargetPosition(leftPos);
+        frontRight.setTargetPosition(rightPos);
+        backRight.setTargetPosition(rightPos);
+
+        frontLeft.setPower(-output);
+        backLeft.setPower(output);
+        frontRight.setPower(output);
+        backRight.setPower(-output);
+
+        while (opModeIsActive() && (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy())){
+            idle();
+        }
+
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }
