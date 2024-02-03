@@ -40,9 +40,6 @@ public class TechnofeathersAutoNear11pts extends LinearOpMode {
         }
 
          */
-        while(e.time(TimeUnit.SECONDS) < 3.6) {
-            drive.drive(0,0,-1);
-        }
 
 
 

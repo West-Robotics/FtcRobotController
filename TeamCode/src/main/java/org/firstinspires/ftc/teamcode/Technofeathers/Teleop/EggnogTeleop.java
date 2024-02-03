@@ -28,13 +28,10 @@ public class EggnogTeleop extends OpMode {
     //private int i = 0;
     //private int j = 0;
 
-    public int intake_state = 0;
     public int intakeOn = 0;
     public int planeLaunched = 0;
-    public int placeholderB = 1;
-
-    public int placeholderC = 1;
-    public int placeholderD = 1;
+    public int grabbedPixels = 0;
+    public int pivotReadyToDrop = 1;
 
     public int placeholderE = 1;
     public int placeholderF = 1;
@@ -75,12 +72,12 @@ public class EggnogTeleop extends OpMode {
         //ig alex likes driving it this way
 
         //drive.drive(-controller1.left_stick_x, -controller1.left_stick_y/1.25, -controller1.right_stick_x/1.25);
-        if (controller1.AOnce() && intakeOn == 0/* && i == 0*/) {
+        if (controller1.AOnce() && intakeOn == 0) {
             stopper.setPosition(.9);
             intake.setPower(1);
             intakeOn = 1;
             //import timer later
-        } else if (controller1.AOnce() && intakeOn == 1 /*&& j == 0*/){
+        } else if (controller1.AOnce() && intakeOn == 1){
             stopper.setPosition(.37);
             intake.setPower(0);
             intakeOn = 0;
@@ -95,24 +92,24 @@ public class EggnogTeleop extends OpMode {
         }
 
 
-        if (controller1.dpadUpOnce() && placeholderC == 1) {
+        if (controller1.dpadUpOnce() && grabbedPixels == 0) {
             // grabbing pixels
-            grabber.setPosition(0.5);
-            placeholderC = 2;
+            grabber.setPosition(0.67);
+            grabbedPixels = 1;
         }
 
-        if (controller1.dpadDownOnce() && placeholderC == 2) {
+        if (controller1.dpadDownOnce() && grabbedPixels == 1) {
             // releasing pixels
             grabber.setPosition(1);
-            placeholderC = 1;
+            grabbedPixels = 0;
         }
 
-        if (controller1.YOnce() && placeholderD == 1) {
+        if (controller1.YOnce() && pivotReadyToDrop == 0) {
             pivot1.setPosition(0);
-            placeholderD = 2;
-        } else if (controller1.YOnce() && placeholderD ==2) {
+            pivotReadyToDrop = 1;
+        } else if (controller1.YOnce() && pivotReadyToDrop == 1) {
             pivot1.setPosition(1);
-            placeholderD = 1;
+            pivotReadyToDrop = 0;
         }
 /*
         if (controller1.startOnce() && controller1.B()) {
@@ -144,7 +141,7 @@ public class EggnogTeleop extends OpMode {
         double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
 
         if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
-            airplaneLauncher.setPosition(0.1);
+            airplaneLauncher.setPosition(0.5);
             planeLaunched = 1;
         }
 
@@ -153,7 +150,7 @@ public class EggnogTeleop extends OpMode {
             planeLaunched = 0;
         }
         if(controller1.backOnce()){
-            pivot1.setPosition(0.5);
+            pivot1.setPosition(0.25);
         }
 
         /*
