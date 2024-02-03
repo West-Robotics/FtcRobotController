@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -21,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.prefs.PreferenceChangeEvent;
 
 @Autonomous
-public class TechnoAuto extends LinearOpMode{
+public class TechnoFarRed extends LinearOpMode{
 
     private DistanceSensor distanceSensor;
     double dist;
@@ -111,12 +110,28 @@ public class TechnoAuto extends LinearOpMode{
         if (dist<115){
 
             double target = 15;
-            goToDistance(target,2);
-            releaseIntake();
+            while (opModeIsActive() && dist>target){
+                dist = distanceSensor.getDistance(DistanceUnit.CM);
+                double strenght = PIDControlForStraight(target,dist);
+                power(strenght);
+            }
+            intakeTicks+=1680;
+            intake.setTargetPosition(intakeTicks);
+            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            intake.setPower(0.5);
+            while (opModeIsActive() && intake.isBusy()){
+                idle();
+            }
             state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
             targetAngle = -90;
-            changeAngle(target,2,-1);
-            pixelate();
+            while (opModeIsActive() && state<targetAngle){
+                state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
+                double strong = PIDControl(targetAngle,state);
+                lefting(strong);
+            }
+            grabber.setPosition(0.5);
+            pivot1.setPosition(0);
+            grabber.setPosition(1);
 
         } else {
 
@@ -132,95 +147,81 @@ public class TechnoAuto extends LinearOpMode{
             if (dist < 130) {
                 double target = 5;
                 // if dist>5 doesn't work try (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy()) for both
-                goToDistance(target,2);
-                releaseIntake();
+                while (opModeIsActive() && dist > 5) {
+                    dist = distanceSensor.getDistance(DistanceUnit.CM);
+                    double strenght = PIDControlForStraight(target, dist);
+                    power(strenght);
+                }
+                intakeTicks += 1680;
+                intake.setTargetPosition(intakeTicks);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intake.setPower(0.5);
+                while (opModeIsActive() && intake.isBusy()) {
+                    idle();
+                }
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
                 targetAngle = -90;
-                changeAngle(targetAngle,2,-1);
+                while (opModeIsActive() && state < targetAngle) {
+                    state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+                    double strong = PIDControl(targetAngle, state);
+                    lefting(strong);
+                }
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
                 target = 8;
-                goToDistance(target,2);
-                pixelate();
+                while (opModeIsActive() && dist > 8) {
+                    dist = distanceSensor.getDistance(DistanceUnit.CM);
+                    double strenght = PIDControlForStraight(target, dist);
+                    power(strenght);
+                }
+
+                grabber.setPosition(0.5);
+                pivot1.setPosition(0);
+                grabber.setPosition(1);
 
             } else {
 
                 runWithEncoder(4,4,0.8,1680);
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
                 targetAngle = 90;
-                changeAngle(targetAngle, 2, 1);
+                while (opModeIsActive() && state < targetAngle){
+                    state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
+                    double strenght = PIDControl(targetAngle,state);
+                    righting(strenght);
+                }
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
-                goToDistance(5,2);
-                releaseIntake();
+                while (opModeIsActive() && dist>5){
+                    dist = distanceSensor.getDistance(DistanceUnit.CM);
+                    double strength = PIDControlForStraight(5,dist);
+                    power(strength);
+                }
+                intakeTicks+=1680;
+                intake.setTargetPosition(intakeTicks);
+                intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intake.setPower(0.5);
+                while (opModeIsActive()&& intake.isBusy()){
+                    idle();
+                }
                 runWithEncoder(-1,-1,0.5,1680);
 
                 targetAngle = -90;
                 state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-                changeAngle(targetAngle,2,-1);
-
+                while (opModeIsActive() && state > targetAngle){
+                    state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
+                    double strength = PIDControl(targetAngle,state);
+                    righting(strength);
+                }
                 dist = distanceSensor.getDistance(DistanceUnit.CM);
                 double target = 5;
-                goToDistance(target,2);
-                pixelate();
+                while (opModeIsActive() && dist>target){
+                    dist = distanceSensor.getDistance(DistanceUnit.CM);
+                    double strength = PIDControlForStraight(5,dist);
+                    power(strength);
+                }
+                grabber.setPosition(0.5);
+                pivot1.setPosition(0);
+                grabber.setPosition(1);
             }
 
-        }
-
-    }
-
-    public void pixelate(){
-        grabber.setPosition(0.5);
-        pivot1.setPosition(0);
-        grabber.setPosition(1);
-    }
-
-    public void changeAngle(double targetAng, int OneToGreaterTwoToLess, int negLeftPosRight){
-
-        if (OneToGreaterTwoToLess ==1){
-            do {
-                state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-                double strength = PIDControl(targetAng, state);
-                if (negLeftPosRight == -1){
-                    lefting(strength);
-                } else if (negLeftPosRight == 1){
-                    righting(strength);
-                }
-            } while (opModeIsActive() && targetAng > state);
-        } else if(OneToGreaterTwoToLess ==2){
-            do {
-                state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-                double strength = PIDControl(targetAng, state);
-                if (negLeftPosRight == -1){
-                    lefting(strength);
-                } else if(negLeftPosRight == 1){
-                    righting(strength);
-                }
-            } while (opModeIsActive() && targetAng < state);
-        }
-    }
-
-    public void goToDistance(double targetDist,int OneToGreaterTwoToLess){
-        if (OneToGreaterTwoToLess ==1) {
-            do {
-                dist = distanceSensor.getDistance(DistanceUnit.CM);
-                double strength = PIDControlForStraight(targetDist,dist);
-                power(strength);
-            } while (opModeIsActive() && dist > targetDist);
-        } else if (OneToGreaterTwoToLess ==2) {
-            do {
-                dist = distanceSensor.getDistance(DistanceUnit.CM);
-                double strength = PIDControlForStraight(targetDist,dist);
-                power(strength);
-            } while(opModeIsActive() && dist < targetDist);
-        }
-    }
-
-    public void releaseIntake(){
-        intakeTicks+=1680;
-        intake.setTargetPosition(intakeTicks);
-        intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.setPower(0.5);
-        while (opModeIsActive() && intake.isBusy()){
-            idle();
         }
 
     }
