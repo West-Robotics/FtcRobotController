@@ -31,7 +31,7 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
             d = 0.0,
             f = { _: Double -> 0.0 },
             minPowerToMove = 0.2,
-            deadzone = 0.02,
+            deadzone = 0.04,
             maxMagnitude = 1.0,
             continuous = true,
     )

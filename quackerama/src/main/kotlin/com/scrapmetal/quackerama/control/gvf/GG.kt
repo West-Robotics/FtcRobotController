@@ -30,4 +30,11 @@ class GG(val kN: Double, val kA: Double = 0.0, vararg val paths: Path) {
                     Rotation2d(paths[currentIndex].current().constraints.heading))
         }
     }
+
+    fun onTarget(v: Vector2d): Boolean {
+        return v.distanceTo(paths[currentIndex].paths.last().endPose.position) < 0.8
+    }
+    fun error(v: Vector2d): Double {
+        return v.distanceTo(paths[currentIndex].current().endPose.position)
+    }
 }

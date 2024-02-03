@@ -22,6 +22,7 @@ class Line(
 ) : PathSegment {
     val tau = (endPose.position - startPose.position).unit
     val length = (endPose.position - startPose.position).mag
+    val positions = Array(151) { t: Int -> invoke(t/150.0) }
     override fun invoke(t: Double): Vector2d {
         // LERP
         return startPose.position*(1-t) + endPose.position*t
@@ -32,12 +33,13 @@ class Line(
     }
 
     override fun closestT(p: Vector2d): Double {
-        val c = (p - startPose.position).mag
-        // magic to find the length of the side that lays on the path for the triangle described by
-        // the start point, current point, and closest point on the path
-        val a = (c * sin(PI/2 - (atan2(p.v, p.u)
-                                    - atan2(startPose.position.v, startPose.position.u))))
-        return a / length
+        // val c = (p - startPose.position).mag
+        // // magic to find the length of the side that lays on the path for the triangle described by
+        // // the start point, current point, and closest point on the path
+        // val a = (c * sin(PI/2 - (atan2(p.v, p.u)
+        //                             - atan2(startPose.position.v, startPose.position.u))))
+        // return a / length
+        return positions.indexOf(positions.minBy { q: Vector2d -> q.distanceTo(p) })/150.0
     }
 
     override fun update(p: Vector2d): GVFState {
@@ -48,6 +50,10 @@ class Line(
                 else -> it
             }
         }
+        println("startPose $startPose")
+        println("endPose $endPose")
+        println("closest T $t")
+        println("error ${invoke(t) - p}")
         return GVFState(tau, invoke(t) - p, t)
     }
 }
