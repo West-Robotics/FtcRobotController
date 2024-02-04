@@ -162,9 +162,9 @@ class SussyTele : LinearOpMode() {
                 height += 3
             } else if (secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
                 height = 0
-            } else if (secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && height > 1) {
+            } else if (secondary.wasJustPressed(GamepadKeys.Button.X) && height > 1) {
                 height--
-            } else if (secondary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) && height < 5) {
+            } else if (secondary.wasJustPressed(GamepadKeys.Button.Y) && height < 5) {
                 height++
             }
 
@@ -176,11 +176,11 @@ class SussyTele : LinearOpMode() {
                 hang.update(HangSubsystem.HangState.STOP)
             }
 
-            if (secondary.wasJustPressed(GamepadKeys.Button.Y)) {
-                intake.raise()
-            } else if (secondary.wasJustPressed(GamepadKeys.Button.X)) {
-                intake.lower()
-            }
+            // if (secondary.wasJustPressed(GamepadKeys.Button.Y)) {
+            //     intake.raise()
+            // } else if (secondary.wasJustPressed(GamepadKeys.Button.X)) {
+            //     intake.lower()
+            // }
 
             if (secondary.wasJustPressed(GamepadKeys.Button.START)) {
                 output.pivotOffset -= 1.0

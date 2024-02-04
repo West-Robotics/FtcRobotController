@@ -12,7 +12,7 @@ class CameraTest : LinearOpMode() {
         Globals.AUTO = true
         val vision = Vision(hardwareMap)
         // vision.disableProp()
-        vision.enableAtag()
+        // vision.enableAtag()
 
         while (opModeInInit()) {
             // telemetry.addData("fps", vision.getFps())

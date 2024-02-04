@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
+import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
+import org.openftc.easyopencv.OpenCvCameraRotation
 
 // TODO: conflicting camera rez and closed devices?
 class Vision(hardwareMap: HardwareMap) {
@@ -22,25 +24,25 @@ class Vision(hardwareMap: HardwareMap) {
     val propPosition = GetPropPositionPipeline()
 
     // === vision portal ===
-    val atagProcessor = AprilTagProcessor.easyCreateWithDefaults()
-    val visionPortal = VisionPortal.Builder()
-            .setCamera(hardwareMap.get(WebcamName::class.java, "camera"))
-            .addProcessor(atagProcessor)
-            .setCameraResolution(Size(1280, 720))
-            .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-            .enableLiveView(false)
-            .setAutoStopLiveView(true)
-            .build()
+    // val atagProcessor = AprilTagProcessor.easyCreateWithDefaults()
+    // val visionPortal = VisionPortal.Builder()
+    //         .setCamera(hardwareMap.get(WebcamName::class.java, "camera"))
+    //         .addProcessor(atagProcessor)
+    //         .setCameraResolution(Size(1280, 720))
+    //         .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+    //         .enableLiveView(false)
+    //         .setAutoStopLiveView(true)
+    //         .build()
 
     init {
-        // camera.openCameraDeviceAsync( object : OpenCvCamera.AsyncCameraOpenListener {
-        //     override fun onOpened() {
-        //         camera.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
-        //     }
+        camera.openCameraDeviceAsync( object : OpenCvCamera.AsyncCameraOpenListener {
+            override fun onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
 
-        //     override fun onError(errorCode: Int) {}
-        // })
-        visionPortal.setProcessorEnabled(atagProcessor, false)
+            override fun onError(errorCode: Int) {}
+        })
+        // visionPortal.setProcessorEnabled(atagProcessor, false)
     }
 
     fun getPropPosition(): GetPropPositionPipeline.PropPosition {
@@ -56,20 +58,20 @@ class Vision(hardwareMap: HardwareMap) {
         camera.setPipeline(propPosition)
     }
 
-    // fun disableProp() {
-    //     camera.closeCameraDevice()
+    fun disableProp() {
+        camera.closeCameraDevice()
+    }
+
+    // fun enableAtag() {
+    //     visionPortal.setProcessorEnabled(atagProcessor, true)
     // }
 
-    fun enableAtag() {
-        visionPortal.setProcessorEnabled(atagProcessor, true)
-    }
+    // fun disableAtag() {
+    //     visionPortal.setProcessorEnabled(atagProcessor, false)
+    // }
 
-    fun disableAtag() {
-        visionPortal.setProcessorEnabled(atagProcessor, false)
-    }
-
-    fun getFps() = visionPortal.fps
-    fun getDets() = atagProcessor?.freshDetections
+    // fun getFps() = visionPortal.fps
+    // fun getDets() = atagProcessor?.freshDetections
 
     // TODO: get fps, stream format, toggle atag, optimize gain/exposure/focus
     // disable prop

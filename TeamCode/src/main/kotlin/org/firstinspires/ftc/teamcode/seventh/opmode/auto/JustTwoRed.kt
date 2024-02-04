@@ -25,30 +25,10 @@ import kotlin.time.TimeSource
 
 @Autonomous(name =
 """
-⬛🟥🟥🟥⬛🟩🟩🟩⬛🟫🟫🟫⬛🟧🟧🟧⬛🟨🟨🟨⬛
-🟥🟥🟦🟦🟩🟩🟦🟦🟫🟫🟦🟦🟧🟧🟦🟦🟨🟨🟦🟦🟦
-🟥🟥🟥🟥🟩🟩🟩🟩🟫🟫🟫🟫🟧🟧🟧🟧🟨🟨🟨🟨🟦
-⬛🟥⬛🟥⬛🟩⬛🟩⬛🟫⬛🟫⬛🟧⬛🟧⬛🟨⬛🟨⬛
-⬛🟨🟨🟨⬛🟥🟥🟥⬛🟩🟩🟩⬛🟫🟫🟫⬛🟧🟧🟧⬛
-🟨🟨🟦🟦🟥🟥🟦🟦🟩🟩🟦🟦🟫🟫🟦🟦🟧🟧🟦🟦🟦
-🟨🟨🟨🟨🟥🟥🟥🟥🟩🟩🟩🟩🟫🟫🟫🟫🟧🟧🟧🟧🟦
-⬛🟨⬛🟨⬛🟥⬛🟥⬛🟩⬛🟩⬛🟫⬛🟫⬛🟧⬛🟧⬛
-⬛🟧🟧🟧⬛🟨🟨🟨⬛🟥🟥🟥⬛🟩🟩🟩⬛🟫🟫🟫⬛
-🟧🟧🟦🟦🟨🟨🟦🟦🟥🟥🟦🟦🟩🟩🟦🟦🟫🟫🟦🟦🟦
-🟧🟧🟧🟧🟨🟨🟨🟨🟥🟥🟥🟥🟩🟩🟩🟩🟫🟫🟫🟫🟦
-⬛🟧⬛🟧⬛🟨⬛🟨⬛🟥⬛🟥⬛🟩⬛🟩⬛🟫⬛🟫⬛
-⬛🟫🟫🟫⬛🟧🟧🟧⬛🟨🟨🟨⬛🟥🟥🟥⬛🟩🟩🟩⬛
-🟫🟫🟦🟦🟧🟧🟦🟦🟨🟨🟦🟦🟥🟥🟦🟦🟩🟩🟦🟦🟦
-🟫🟫🟫🟫🟧🟧🟧🟧🟨🟨🟨🟨🟥🟥🟥🟥🟩🟩🟩🟩🟦
-⬛🟫⬛🟫⬛🟧⬛🟧⬛🟨⬛🟨⬛🟥⬛🟥⬛🟩⬛🟩⬛
-⬛🟩🟩🟩⬛🟫🟫🟫⬛🟧🟧🟧⬛🟨🟨🟨⬛🟥🟥🟥⬛
-🟩🟩🟦🟦🟫🟫🟦🟦🟧🟧🟦🟦🟨🟨🟦🟦🟥🟥🟦🟦🟦
-🟩🟩🟩🟩🟫🟫🟫🟫🟧🟧🟧🟧🟨🟨🟨🟨🟥🟥🟥🟥🟦
-⬛🟩⬛🟩⬛🟫⬛🟫⬛🟧⬛🟧⬛🟨⬛🟨⬛🟥⬛🟥⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
+RED JUST TWO
 """
 )
-class SussyAuto : LinearOpMode() {
+class JustTwoRed : LinearOpMode() {
     enum class AutoStates {
         TO_PURPLE,
         DROP_PURPLE,
@@ -56,21 +36,13 @@ class SussyAuto : LinearOpMode() {
         BACKDROP,
         EXTEND,
         SCORE,
-        ADIOS,
         RETRACT,
         LOCK,
-        TO_STACKS,
-        INTAKE_STACKS,
-        INTAKE_SLIDE,
-        INTAKE_STACKS2,
-        IN_TRANSIT,
-        PRELOCK,
-        INTAKE_LOCK,
-        TO_BACKDROP,
         PARK,
     }
     override fun runOpMode() {
         Globals.AUTO = true
+        Globals.side = Globals.Side.RED
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         var CONTROL_HUB: LynxModule = allHubs[0]
@@ -101,83 +73,9 @@ class SussyAuto : LinearOpMode() {
         Robot.write(intake, output)
 
         vision.enableProp()
-        val paths = AutoPaths(
-                Globals.Side.RED,
-                Globals.Start.CLOSE,
-                Globals.Lane.LANE_2,
-                Globals.YellowSide.LEFT,
-                Globals.Stack.CLOSE,
-                Globals.Park.INNER,
-                GetPropPositionPipeline.PropPosition.MIDDLE
-        )
-        drive.setPoseEstimate(paths.initPose)
-        val gg = GG(
-                kN = 0.4,
-                kA = 0.0001, // was 0.0004
-                paths.purple,
-                paths.yellow,
-                paths.intake,
-                paths.intakeSlide,
-                paths.score,
-                paths.parkPath,
-        )
         // waitForStart()
         var cycleCount = -1
-        val autoMachine = StateMachineBuilder()
-                .state(AutoStates.TO_PURPLE)
-                    .transition { gg.onTarget(drive.getPoseEstimate().position) }
-                    .transitionTimed(3.0)
-                .state(AutoStates.DROP_PURPLE)
-                    .onEnter { intake.setHeight(5) }
-                    .transitionTimed(0.5)
-                    .onExit { gg.currentIndex++ }
-                .state(AutoStates.TO_YELLOW)
-                    .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.BACKDROP)
-                    .transitionTimed(3.0)
-                .state(AutoStates.BACKDROP)
-                    .onEnter { height = if (cycleCount == -1) 1 else 3; state = RobotState.BACKDROP }
-                    .transitionTimed(1.0)
-                .state(AutoStates.EXTEND)
-                    .onEnter { state = RobotState.EXTEND }
-                    .transitionTimed(0.5)
-                .state(AutoStates.SCORE)
-                    .onEnter { state = RobotState.SCORE }
-                    .transitionTimed(0.5)
-                .state(AutoStates.RETRACT)
-                    .onEnter { state = RobotState.BACKDROP }
-                    .transitionTimed(0.5)
-                .state(AutoStates.LOCK)
-                    .onEnter { height = 0; state = RobotState.LOCK }
-                    .transition({ cycleCount == -1 }, AutoStates.TO_STACKS, { cycleCount = 0 } )
-                    .transition({ cycleCount == 0 }, AutoStates.PARK, { cycleCount = 1 } )
-                .state(AutoStates.TO_STACKS)
-                    .onEnter { state = RobotState.INTAKE; gg.currentIndex++ }
-                    .transitionTimed(4.0)
-                .state(AutoStates.INTAKE_STACKS)
-                    .transitionTimed(1.0)
-                    .onExit { gg.currentIndex++ }
-                .state(AutoStates.INTAKE_SLIDE)
-                    .transitionTimed(2.0)
-                .state(AutoStates.INTAKE_STACKS2)
-                    .onEnter { intake.setHeight(4) }
-                    .transitionTimed(1.0)
-                .state(AutoStates.IN_TRANSIT)
-                    .onEnter { gg.currentIndex++ }
-                    .transitionTimed(1.5)
-                .state(AutoStates.PRELOCK)
-                    .onEnter { state = RobotState.PRELOCK }
-                    .transitionTimed(0.5)
-                .state(AutoStates.INTAKE_LOCK)
-                    .onEnter { state = RobotState.LOCK }
-                    .transitionTimed(0.5)
-                .state(AutoStates.TO_BACKDROP)
-                    .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.BACKDROP)
-                    .transitionTimed(5.0)
-                .state(AutoStates.PARK)
-                    .onEnter { gg.currentIndex++ }
-                .build()
 
-        autoMachine.start()
         drive.startIMUThread(this)
         while (opModeInInit()) {
             CONTROL_HUB.clearBulkCache()
@@ -185,17 +83,62 @@ class SussyAuto : LinearOpMode() {
             telemetry.addData("x", drive.getPoseEstimate().position.u)
             telemetry.addData("y", drive.getPoseEstimate().position.v)
             telemetry.addData("heading", drive.getPoseEstimate().heading.polarAngle)
+            telemetry.addData("prop", vision.getPropPosition())
             telemetry.update()
         }
 
-        // visionPortal.setProcessorEnabled(propProcessor, false)
-        // visionPortal.close()
+        val paths = AutoPaths(
+                Globals.Side.RED,
+                Globals.Start.CLOSE,
+                Globals.Lane.LANE_2,
+                Globals.YellowSide.LEFT,
+                Globals.Stack.CLOSE,
+                Globals.Park.INNER,
+                vision.getPropPosition(),
+        )
+        vision.disableProp()
+        drive.setPoseEstimate(paths.initPose)
+        val gg = GG(
+                kN = 0.4,
+                kA = 0.0001, // was 0.0004
+                paths.purple,
+                paths.yellow,
+                paths.parkPath,
+        )
+        val autoMachine = StateMachineBuilder()
+                .state(AutoStates.TO_PURPLE)
+                    .transitionTimed(2.5)
+                .state(AutoStates.DROP_PURPLE)
+                    .onEnter { intake.setHeight(5) }
+                    .transitionTimed(0.5)
+                    .onExit { gg.currentIndex++ }
+                .state(AutoStates.TO_YELLOW)
+                    .transitionTimed(2.0)
+                .state(AutoStates.BACKDROP)
+                    .onEnter { height = 1; state = RobotState.BACKDROP }
+                    .transitionTimed(1.5)
+                .state(AutoStates.EXTEND)
+                    .onEnter { state = RobotState.EXTEND }
+                    .transitionTimed(1.0)
+                .state(AutoStates.SCORE)
+                    .onEnter { state = RobotState.SCORE }
+                    .transitionTimed(1.0)
+                .state(AutoStates.RETRACT)
+                    .onEnter { state = RobotState.BACKDROP }
+                    .transitionTimed(1.0)
+                .state(AutoStates.LOCK)
+                    .onEnter { height = 0; state = RobotState.LOCK }
+                    .transitionTimed(1.0)
+                .state(AutoStates.PARK)
+                    .onEnter { gg.currentIndex++ }
+                .build()
+
+        autoMachine.start()
         while (opModeIsActive()) {
             CONTROL_HUB.clearBulkCache()
             val loop = timeSource.markNow()
             val dt = (loop - loopTime).toDouble(DurationUnit.MILLISECONDS)
             loopTime = loop
-            gamepad.readButtons()
 
             // update all subsystems
             Robot.read(drive, intake, lift, output);
@@ -216,8 +159,8 @@ class SussyAuto : LinearOpMode() {
             // telemetry.addData("lift dist", lift.distance)
             telemetry.addData("hz", 1000 / dt)
             telemetry.addData("current index", gg.currentIndex)
-            telemetry.addData("error", gg.error(drive.getPoseEstimate().position))
-            telemetry.addData("onTarget", gg.onTarget(drive.getPoseEstimate().position))
+            // telemetry.addData("error", gg.error(drive.getPoseEstimate().position))
+            // telemetry.addData("onTarget", gg.onTarget(drive.getPoseEstimate().position))
             telemetry.addData("state", autoMachine.state as AutoStates)
             telemetry.update()
         }

@@ -49,29 +49,56 @@ class GetPropPositionPipeline : OpenCvPipeline() {
 
         // find which area has the most saturation: should be where big fat cube is
         maxOf(leftSum.`val`[1], middleSum.`val`[1], rightSum.`val`[1]).let {
-            when (it) {
-                leftSum.`val`[1] -> {
-                    position = PropPosition.LEFT
-                    Imgproc.rectangle(input, left_pointA, left_pointB, GREEN, 8)
-                    Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
-                    Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
-                    position = PropPosition.LEFT
+            if (Globals.side == Globals.Side.RED) {
+                when {
+                    it == middleSum.`val`[1] && it > 1000000.0 -> {
+                        position = PropPosition.MIDDLE
+                        Imgproc.rectangle(input, middle_pointA, middle_pointB, GREEN, 8)
+                        Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
+                        Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
+                        position = PropPosition.MIDDLE
+                    }
+                    it == rightSum.`val`[1] && it > 1000000.0 -> {
+                        position = PropPosition.RIGHT
+                        Imgproc.rectangle(input, right_pointA, right_pointB, GREEN, 8)
+                        Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
+                        Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
+                        position = PropPosition.RIGHT
+                    }
+                    else -> {
+                        position = PropPosition.LEFT
+                        Imgproc.rectangle(input, left_pointA, left_pointB, GREEN, 8)
+                        Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
+                        Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
+                        position = PropPosition.LEFT
+                    }
                 }
-                middleSum.`val`[1] -> {
-                    position = PropPosition.MIDDLE
-                    Imgproc.rectangle(input, middle_pointA, middle_pointB, GREEN, 8)
-                    Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
-                    Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
-                    position = PropPosition.MIDDLE
-                }
-                rightSum.`val`[1] -> {
-                    position = PropPosition.RIGHT
-                    Imgproc.rectangle(input, right_pointA, right_pointB, GREEN, 8)
-                    Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
-                    Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
-                    position = PropPosition.RIGHT
+            } else if (Globals.side == Globals.Side.BLUE) {
+                when {
+                    it == middleSum.`val`[1] && it > 1000000.0 -> {
+                        position = PropPosition.MIDDLE
+                        Imgproc.rectangle(input, middle_pointA, middle_pointB, GREEN, 8)
+                        Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
+                        Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
+                        position = PropPosition.MIDDLE
+                    }
+                    it == leftSum.`val`[1] && it > 1000000.0 -> {
+                        position = PropPosition.LEFT
+                        Imgproc.rectangle(input, left_pointA, left_pointB, GREEN, 8)
+                        Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
+                        Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
+                        position = PropPosition.LEFT
+                    }
+                    else -> {
+                        position = PropPosition.RIGHT
+                        Imgproc.rectangle(input, right_pointA, right_pointB, GREEN, 8)
+                        Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
+                        Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
+                        position = PropPosition.RIGHT
+                    }
                 }
             }
+            println("max sat $it")
         }
 
         hsv.release()

@@ -5,17 +5,17 @@ import com.acmerobotics.dashboard.config.Config
 @Config
 object Globals {
     @JvmField var LEFT_REGION_X = 20.0
-    @JvmField var LEFT_REGION_Y = 420.0
+    @JvmField var LEFT_REGION_Y = 380.0
     @JvmField var LEFT_REGION_WIDTH = 200.0
     @JvmField var LEFT_REGION_HEIGHT = 100.0
 
-    @JvmField var MIDDLE_REGION_X = 600.0
-    @JvmField var MIDDLE_REGION_Y = 420.0
-    @JvmField var MIDDLE_REGION_WIDTH = 200.0
+    @JvmField var MIDDLE_REGION_X = 400.0
+    @JvmField var MIDDLE_REGION_Y = 380.0
+    @JvmField var MIDDLE_REGION_WIDTH = 450.0
     @JvmField var MIDDLE_REGION_HEIGHT = 100.0
 
-    @JvmField var RIGHT_REGION_X = 1080.0
-    @JvmField var RIGHT_REGION_Y = 420.0
+    @JvmField var RIGHT_REGION_X = 1000.0
+    @JvmField var RIGHT_REGION_Y = 380.0
     @JvmField var RIGHT_REGION_WIDTH = 200.0
     @JvmField var RIGHT_REGION_HEIGHT = 100.0
 
@@ -28,14 +28,14 @@ object Globals {
     @JvmField var LIFT_MIN = -2.0
     // each height is spaced 2.6 inches apart
     @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.2) +
-                                 DoubleArray(6) { 2.6*it + 13.6 }
+                                 DoubleArray(6) { 2.6*it + 14.5 }
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39
     @JvmField var FINGER_OPEN = 0.05
     @JvmField var FINGER_CLOSE = 0.0
 
     // outer roller auto stack angle for servo
-    @JvmField var STACK_HEIGHT = doubleArrayOf(0.19, 0.22, 0.25, 0.27, 0.3)
+    @JvmField var STACK_HEIGHT = doubleArrayOf(0.19, 0.22, 0.25, 0.285, 0.3)
 
     @JvmField var AUTO = false
     enum class Side {
