@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
-@Autonomous(name="TechnofeathersTestAuto", group="Technofeathers")
-public class TechnofeathersTestAuto extends LinearOpMode {
+@Autonomous(name="EggnogAutoNearRed", group="Technofeathers")
+public class EggnogAutoNearRed extends LinearOpMode {
 
     @Override public void runOpMode() throws InterruptedException {
         TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
@@ -42,7 +42,6 @@ public class TechnofeathersTestAuto extends LinearOpMode {
 
         telemetry.addLine("Variables Instantiated");
 
-
         waitForStart();
         ElapsedTime e = new ElapsedTime();
         e.reset();
@@ -59,7 +58,7 @@ public class TechnofeathersTestAuto extends LinearOpMode {
             //double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
 
 
-            if (lift1CurrentRotation > 4) {
+            if (lift1CurrentRotation > 2) {
                 lift1.setPower(0);
                 lift2.setPower(0);
                 telemetry.addLine("Lift Limit Imposed");
@@ -69,6 +68,8 @@ public class TechnofeathersTestAuto extends LinearOpMode {
                 liftTooHigh = 0;
             }
 
+
+
             if (distSense1.getDistance(INCH) <= 4) {
                 tooClose = 1;
                 drive.drive(0,0,0);
@@ -76,8 +77,10 @@ public class TechnofeathersTestAuto extends LinearOpMode {
             else {
                 tooClose = 0;
             }
-            telemetry.addData("Distance: ", distSense1.getDistance(INCH));
+            /*telemetry.addData("Distance: ", distSense1.getDistance(INCH));
             telemetry.addData("Time ran: ", e);
+
+             */
             /*
             if(e.seconds() < 0.5 && distSense1.getDistance(INCH) < 30) {
                 telemetry.addLine("Center");
@@ -88,13 +91,18 @@ public class TechnofeathersTestAuto extends LinearOpMode {
                 telemetry.addLine("Left");
             }
             */
-            if (e.seconds() < 2 && tooClose == 0) {
-                drive.drive(-0.3,-0.375,0);
+            if (e.seconds() < 3.0 /*&& tooClose == 0*/) {
+                drive.drive(-0.45,-0.5,0.04);
+                grabber.setPosition(0.67);
                 telemetry.addLine("Driving");
+                stopper.setPosition(0.37);
                 telemetry.addLine("Driving to backdrop");
             }
+            while (3.4 < e.seconds() && e.seconds() < 4.3) {
+                drive.drive(-0.2,-0.4,0);
+            }
 
-            if (2 < e.seconds() && e.seconds() < 4 && liftTooHigh == 0) {
+            if (4.5 < e.seconds() && e.seconds() < 5.2 && liftTooHigh == 0) {
                 drive.drive(0,0,0);
                 telemetry.addLine("Drive ran and now it is stopped.");
                 lift1.setPower(0.5);
@@ -102,14 +110,34 @@ public class TechnofeathersTestAuto extends LinearOpMode {
                 telemetry.addLine("Drive stopped, lift run.");
             }
 
-            if (e.seconds() < 5 && e.seconds() > 4) {
+            if (e.seconds() < 6.9 && e.seconds() > 6.1) {
                 lift1.setPower(0);
                 lift2.setPower(0);
                 pivot1.setPosition(0);
+                drive.drive(0,0.1,0);
             }
-            if (e.seconds() < 7 && e.seconds() > 6) {
+
+
+            while(6.9 < e.seconds() && e.seconds() < 7.1) {
+                drive.drive(0,0.1,0);
+            }
+
+            while(7.1 < e.seconds() && e.seconds() < 7.5) {
+                drive.drive(0,0,0);
+            }
+            if (e.seconds() < 8.1 && e.seconds() > 7.5) {
                 grabber.setPosition(1);
             }
+            while (8.6 < e.seconds() && e.seconds() < 8.9) {
+                drive.drive(0,0,0);
+            }
+            /*
+            while (8.9 < e.seconds() && e.seconds() < 9.25) {
+                lift1.setPower(-0.5);
+                lift2.setPower(-0.5);
+            }
+
+             */
             /*
             if (e.seconds() < 6.5 && e.seconds() > 5 && tooClose == 0) {
                 drive.drive(1,0,0.1);
@@ -131,7 +159,6 @@ public class TechnofeathersTestAuto extends LinearOpMode {
             }
 
              */
-
             telemetry.update();
         }
     }

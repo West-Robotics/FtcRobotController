@@ -2,9 +2,9 @@
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Technofeathers.Teleop.EggnogTeleopAutomated;
+import org.firstinspires.ftc.teamcode.Technofeathers.Teleop.EggnogTeleopAutomated1Controller;
 
-public class ScoringPosition extends EggnogTeleopAutomated{
+public class ScoringPosition extends EggnogTeleopAutomated1Controller{
     public void PixelScoringPosition() throws InterruptedException {
         ElapsedTime e = new ElapsedTime();
         e.reset();
