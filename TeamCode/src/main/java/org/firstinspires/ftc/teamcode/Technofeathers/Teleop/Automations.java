@@ -65,6 +65,8 @@ public class Automations extends EggnogTeleopTest{
         intake.setPower(0);
         if (intakeStopTimer.seconds() >= 4) {
             dylanRan = 0;
+            //Must NOT recognize truss (should be fine if we drive straight) or oncoming robots (oh noooo); implement color sensor perhaps?
+            telemetry.addLine("Dylan will be run as soon as robot detects something within range");
         }
     }
 }

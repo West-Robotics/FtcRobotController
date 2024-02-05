@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.INCH;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -127,40 +129,11 @@ public class EggnogTeleopTest extends OpMode {
             airplaneLauncher.setPosition(0.9);
             planeLaunched = 0;
         }
+
         if(controller1.backOnce()){
             pivot1.setPosition(0.25);
         }
 
-        /*
-        i = 0;
-        j = 0;
-         */
-/*
-        if (controller1.left_trigger > 0.9){
-            pivot1.setPosition(pivot1.getPosition() + 0.05);
-            //pivot2.setPosition(pivot2.getPosition()+0.05);
-        } else if (controller1.right_trigger > 0.9){
-            pivot1.setPosition(pivot1.getPosition()-0.05);
-            //pivot2.setPosition(pivot2.getPosition()-0.05);
-        }
-
- */
-
-        /*if (controller1.BOnce() ) {
-            intake.setPower(-1);
-        }
-
-        if (controller1.BOnce()){
-            intake.setPower(0);
-        }
-        */
-
-
-        //if (controller1.dpadRight()){
-        //pivot1.setPosition(.65);
-
-        //} else if (controller1.dpadRight()){
-        //pivot1.setPosition(.75);
-        //}
+        telemetry.addData("Distance from nearest object: ", distSense1.getDistance(INCH));
     }
 }

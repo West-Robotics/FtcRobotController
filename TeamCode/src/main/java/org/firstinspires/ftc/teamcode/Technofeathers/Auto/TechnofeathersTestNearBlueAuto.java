@@ -82,7 +82,7 @@ public class TechnofeathersTestNearBlueAuto extends LinearOpMode {
 
 
             while (e.seconds() < 0.7) {
-                if (distSense1.getDistance(INCH) <= 30 && SpikeMark == 0) {
+                if (distSense1.getDistance(INCH) <= 30 && SpikeMark == 0 && SpikeMark == 1) {
                     drive.drive(-0.2,-0.5,0);
                     telemetry.addLine("Driving to Center");
                     SpikeMark = 1;

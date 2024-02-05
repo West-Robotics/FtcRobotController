@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -27,6 +28,7 @@ public class EggnogTeleop1Controller extends OpMode {
     public DcMotor intake;
     public Servo stopper;
     public DistanceSensor distSense1;
+    public ColorSensor colorSense1;
     //private int i = 0;
     //private int j = 0;
     double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
@@ -62,7 +64,6 @@ public class EggnogTeleop1Controller extends OpMode {
         stopper = hardwareMap.get(Servo.class, "stopper");
         airplaneLauncher = hardwareMap.get(Servo.class, "airplaneLauncher");
         distSense1 = hardwareMap.get(DistanceSensor.class, "distSense1");
-
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
@@ -151,9 +152,6 @@ public class EggnogTeleop1Controller extends OpMode {
             lift1.setPower(0);
             lift2.setPower(0);
         }
-
-        double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
-        double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
 
         if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
             airplaneLauncher.setPosition(0.5);

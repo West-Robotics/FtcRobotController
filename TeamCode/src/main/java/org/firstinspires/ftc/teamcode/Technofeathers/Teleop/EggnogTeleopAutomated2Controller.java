@@ -177,7 +177,6 @@ public class EggnogTeleopAutomated2Controller extends OpMode {
         telemetry.update();
 
     }
-    /*
     private void ScoringPosition() {
         ElapsedTime teleopTimer1 = new ElapsedTime();
         teleopTimer1.reset();
@@ -192,12 +191,12 @@ public class EggnogTeleopAutomated2Controller extends OpMode {
             pivot1.setPosition(0);
         }
     }
-
-    public void PixelDropAndReset() {
+    private void PixelDropAndReset() {
         ElapsedTime teleopTimer2 = new ElapsedTime();
         teleopTimer2.reset();
         while(teleopTimer2.seconds() < 0.7) {
             grabber.setPosition(1);
+            grabbedPixels = 0;
         }
 
         while(0.7 < teleopTimer2.seconds() && teleopTimer2.seconds() < 0.8) {
@@ -207,6 +206,7 @@ public class EggnogTeleopAutomated2Controller extends OpMode {
 
         while(0.87 < teleopTimer2.seconds() && teleopTimer2.seconds() < 1.5) {
             pivot1.setPosition(1);
+            pivotReadyToDrop = 0;
         }
     }
     public void IntakeRun() {
@@ -218,7 +218,6 @@ public class EggnogTeleopAutomated2Controller extends OpMode {
         while(1 < teleopTimer3.seconds() && teleopTimer3.seconds() < 1.4) {
             intake.setPower(1);
         }
+        intakeOn = 1;
     }
-
-     */
 }

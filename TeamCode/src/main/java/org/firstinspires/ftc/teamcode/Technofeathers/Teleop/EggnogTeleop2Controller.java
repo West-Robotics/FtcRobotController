@@ -154,9 +154,6 @@ public class EggnogTeleop2Controller extends OpMode {
             lift2.setPower(0);
         }
 
-        double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
-        double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
-
         if (controller2.right_trigger > 0.9 && planeLaunched == 0) {
             airplaneLauncher.setPosition(0.5);
             planeLaunched = 1;
