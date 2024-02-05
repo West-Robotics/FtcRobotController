@@ -111,7 +111,7 @@ public class test extends LinearOpMode{
                double strength = PIDControl(targetAngle,state);
                righting(strength);
            }
-
+           
         }
 
         public void pixelate(){

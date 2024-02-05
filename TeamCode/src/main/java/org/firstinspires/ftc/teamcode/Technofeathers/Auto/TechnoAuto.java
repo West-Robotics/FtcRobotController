@@ -110,7 +110,7 @@ public class TechnoAuto extends LinearOpMode{
 
         dist = distanceSensor.getDistance(DistanceUnit.CM);
         if (dist<115){
-            left(0.5,1075);
+            left(0.5,1076);
             double target = 15;
             goToDistance(target,1);
             releaseIntake();
