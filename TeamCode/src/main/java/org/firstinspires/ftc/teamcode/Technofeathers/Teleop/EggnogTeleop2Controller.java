@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,32 +12,30 @@ import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
-@TeleOp(name = "TechnofeathersTeleopNew2Controller")
-public class TechnofeathersTeleopNew2Controller extends OpMode {
-    //ABANDON FOR NOW
+@TeleOp(name = "EggnogTeleop2Controller")
+public class EggnogTeleop2Controller extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
-    private TechnofeathersDrive drive;
-    private Controller controller1;
-    private Controller controller2;
-    private Servo pivot1;
-    private Servo grabber;
-    private Servo airplaneLauncher;
-    private DcMotor lift1;
-    private DcMotor lift2;
-    private DcMotor intake;
-    private Servo stopper;
+    public TechnofeathersDrive drive;
+    public Controller controller1;
+    public Controller controller2;
+    public Servo pivot1;
+    public Servo grabber;
+    public Servo airplaneLauncher;
+    public DcMotor lift1;
+    public DcMotor lift2;
+    public DcMotor intake;
+    public Servo stopper;
+    public DistanceSensor distSense1;
     //private int i = 0;
     //private int j = 0;
-
-    public int intake_state = 0;
+    double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public int intakeOn = 0;
+    public int liftTooHigh = 0;
     public int planeLaunched = 0;
-    public int placeholderB = 1;
-
-    public int placeholderC = 1;
-    public int placeholderD = 1;
+    public int grabbedPixels = 0;
+    public int pivotReadyToDrop = 1;
 
     public int placeholderE = 1;
     public int placeholderF = 1;
@@ -63,12 +62,13 @@ public class TechnofeathersTeleopNew2Controller extends OpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         stopper = hardwareMap.get(Servo.class, "stopper");
         airplaneLauncher = hardwareMap.get(Servo.class, "airplaneLauncher");
+        distSense1 = hardwareMap.get(DistanceSensor.class, "distSense1");
 
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-        pivot1.setPosition(1);
+        //pivot1.setPosition(1);
     }
 
     @Override
@@ -76,15 +76,25 @@ public class TechnofeathersTeleopNew2Controller extends OpMode {
         controller1.update();
         controller2.update();
         drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-        //ig alex likes driving it this way
+
+        if (controller1.left_stick_x == 0 && controller1.left_stick_y == 0 && controller1.right_stick_x == 0) {
+            drive.drive(0,0,0);
+        }
+
+        if (lift1CurrentRotation >=4) {
+            liftTooHigh = 1;
+        }
+        else {
+            liftTooHigh = 0;
+        }
 
         //drive.drive(-controller2.left_stick_x, -controller2.left_stick_y/1.25, -controller2.right_stick_x/1.25);
-        if (controller2.AOnce() && intakeOn == 0/* && i == 0*/) {
+        if (controller2.AOnce() && intakeOn == 0) {
             stopper.setPosition(.9);
             intake.setPower(1);
             intakeOn = 1;
             //import timer later
-        } else if (controller2.AOnce() && intakeOn == 1 /*&& j == 0*/){
+        } else if (controller2.AOnce() && intakeOn == 1){
             stopper.setPosition(.37);
             intake.setPower(0);
             intakeOn = 0;
@@ -99,24 +109,24 @@ public class TechnofeathersTeleopNew2Controller extends OpMode {
         }
 
 
-        if (controller2.dpadUpOnce() && placeholderC == 1) {
+        if (controller2.dpadUpOnce() && grabbedPixels == 0) {
             // grabbing pixels
-            grabber.setPosition(0.5);
-            placeholderC = 2;
+            grabber.setPosition(0.67);
+            grabbedPixels = 1;
         }
 
-        if (controller2.dpadDownOnce() && placeholderC == 2) {
+        if (controller2.dpadDownOnce() && grabbedPixels == 1) {
             // releasing pixels
             grabber.setPosition(1);
-            placeholderC = 1;
+            grabbedPixels = 0;
         }
 
-        if (controller2.YOnce() && placeholderD == 1) {
+        if (controller2.YOnce() && pivotReadyToDrop == 0) {
             pivot1.setPosition(0);
-            placeholderD = 2;
-        } else if (controller2.YOnce() && placeholderD == 2) {
+            pivotReadyToDrop = 1;
+        } else if (controller2.YOnce() && pivotReadyToDrop == 1) {
             pivot1.setPosition(1);
-            placeholderD = 1;
+            pivotReadyToDrop = 0;
         }
 /*
         if (controller2.startOnce() && controller2.B()) {
@@ -133,22 +143,19 @@ public class TechnofeathersTeleopNew2Controller extends OpMode {
         }
 
         //lift
-        if (controller2.leftBumper()) {
-            lift1.setPower(0.5);
-            lift2.setPower(0.5);
+        if (controller2.leftBumper() && liftTooHigh == 0) {
+            lift1.setPower(1);
+            lift2.setPower(1);
         } else if (controller2.rightBumper()) {
-            lift1.setPower(-0.5);
-            lift2.setPower(-0.5);
+            lift1.setPower(-1);
+            lift2.setPower(-1);
         } else {
             lift1.setPower(0);
             lift2.setPower(0);
         }
 
-        double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
-        double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
-
         if (controller2.right_trigger > 0.9 && planeLaunched == 0) {
-            airplaneLauncher.setPosition(0.1);
+            airplaneLauncher.setPosition(0.5);
             planeLaunched = 1;
         }
 
@@ -157,7 +164,7 @@ public class TechnofeathersTeleopNew2Controller extends OpMode {
             planeLaunched = 0;
         }
         if(controller2.backOnce()){
-            pivot1.setPosition(0.5);
+            pivot1.setPosition(0.25);
         }
 
         /*

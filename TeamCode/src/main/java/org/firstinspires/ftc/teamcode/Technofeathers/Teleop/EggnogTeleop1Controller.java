@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
-@TeleOp(name = "EggnogTeleop")
-public class EggnogTeleop extends OpMode {
+@TeleOp(name = "EggnogTeleop1Controller")
+public class EggnogTeleop1Controller extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
@@ -28,10 +28,12 @@ public class EggnogTeleop extends OpMode {
     public DcMotor intake;
     public Servo stopper;
     public DistanceSensor distSense1;
+    public ColorSensor colorSense1;
     //private int i = 0;
     //private int j = 0;
-
+    double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public int intakeOn = 0;
+    public int liftTooHigh = 0;
     public int planeLaunched = 0;
     public int grabbedPixels = 0;
     public int pivotReadyToDrop = 1;
@@ -42,6 +44,7 @@ public class EggnogTeleop extends OpMode {
     public int placeholderG = 1;
     public int placeholderH = 1;
     public int placeholderI = 1;
+
 
     public ElapsedTime timer = new ElapsedTime();
 
@@ -61,12 +64,11 @@ public class EggnogTeleop extends OpMode {
         stopper = hardwareMap.get(Servo.class, "stopper");
         airplaneLauncher = hardwareMap.get(Servo.class, "airplaneLauncher");
         distSense1 = hardwareMap.get(DistanceSensor.class, "distSense1");
-
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-        pivot1.setPosition(1);
+        //pivot1.setPosition(1);
     }
 
     @Override
@@ -76,6 +78,13 @@ public class EggnogTeleop extends OpMode {
 
         if (controller1.left_stick_x == 0 && controller1.left_stick_y == 0 && controller1.right_stick_x == 0) {
             drive.drive(0,0,0);
+        }
+
+        if (lift1CurrentRotation >=4) {
+            liftTooHigh = 1;
+        }
+        else {
+            liftTooHigh = 0;
         }
 
         //drive.drive(-controller1.left_stick_x, -controller1.left_stick_y/1.25, -controller1.right_stick_x/1.25);
@@ -133,19 +142,16 @@ public class EggnogTeleop extends OpMode {
         }
 
         //lift
-        if (controller1.leftBumper()) {
-            lift1.setPower(0.5);
-            lift2.setPower(0.5);
+        if (controller1.leftBumper() && liftTooHigh == 0) {
+            lift1.setPower(1);
+            lift2.setPower(1);
         } else if (controller1.rightBumper()) {
-            lift1.setPower(-0.5);
-            lift2.setPower(-0.5);
+            lift1.setPower(-1);
+            lift2.setPower(-1);
         } else {
             lift1.setPower(0);
             lift2.setPower(0);
         }
-
-        double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
-        double lift2CurrentRotation = lift2.getCurrentPosition()/537.7;
 
         if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
             airplaneLauncher.setPosition(0.5);

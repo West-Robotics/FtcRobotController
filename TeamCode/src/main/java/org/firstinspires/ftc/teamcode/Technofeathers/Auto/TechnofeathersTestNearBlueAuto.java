@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
-@Autonomous(name="TechnofeathersTestAuto", group="Technofeathers")
-public class TechnofeathersTestAuto extends LinearOpMode {
+@Autonomous(name="TechnofeathersTestNearBlueAuto", group="Technofeathers")
+public class TechnofeathersTestNearBlueAuto extends LinearOpMode {
 
     @Override public void runOpMode() throws InterruptedException {
         TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
@@ -28,6 +28,7 @@ public class TechnofeathersTestAuto extends LinearOpMode {
         DistanceSensor distSense1;
         int tooClose = 0;
         int liftTooHigh = 0;
+        int SpikeMark = 0;
 
         TechnofeathersDrive drive = new TechnofeathersDrive(this, hardwareMap);
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
@@ -78,23 +79,85 @@ public class TechnofeathersTestAuto extends LinearOpMode {
             }
             telemetry.addData("Distance: ", distSense1.getDistance(INCH));
             telemetry.addData("Time ran: ", e);
-            /*
-            if(e.seconds() < 0.5 && distSense1.getDistance(INCH) < 30) {
-                telemetry.addLine("Center");
+
+
+            while (e.seconds() < 0.7) {
+                if (distSense1.getDistance(INCH) <= 30 && SpikeMark == 0 && SpikeMark == 1) {
+                    drive.drive(-0.2,-0.5,0);
+                    telemetry.addLine("Driving to Center");
+                    SpikeMark = 1;
+                }
+                else {
+                    drive.drive(0,0,0);
+                    telemetry.addLine("Not Center");
+                }
             }
-            else if (0.5 < e.seconds() && e.seconds() < 1.5) {
-                drive.drive(0,0,-0.4);
-                //if (distSense1.)
-                telemetry.addLine("Left");
+
+
+            while (0.7 < e.seconds() && e.seconds() < 1.4) {
+                drive.drive(0,0,0);
+                if (SpikeMark == 0) {
+                    drive.drive(0.3, 0, 0);
+                    if(distSense1.getDistance(INCH) <= 30) {
+                        drive.drive(0,0,0);
+                        telemetry.addLine("Left");
+                        SpikeMark = 2;
+                    }
+                    else {
+                        telemetry.addLine("Not Left");
+                    }
+                }
             }
-            */
-            if (e.seconds() < 2 && tooClose == 0) {
+
+            while (1.4 < e.seconds() && e.seconds() < 2) {
+                if (SpikeMark == 2) {
+                    drive.drive(0.2,-0.5,0);
+                    telemetry.addLine("Driving to Left");
+                }
+            }
+
+            while (2 < e.seconds() && e.seconds() < 3) {
+                drive.drive(0,0,0);
+                if (SpikeMark == 0) {
+                    drive.drive(0.35,0.5,0);
+                    SpikeMark = 3;
+                }
+            }
+
+            if (SpikeMark == 1) {
+                while (3 < e.seconds() && e.seconds() < 3.7) {
+                    drive.drive(0,0.5,-0.25);
+                    telemetry.addLine("Resetting Position");
+                }
+                while (3.7 < e.seconds() && e.seconds() < 3.8) {
+                    drive.drive(0,0,0);
+                }
+            }
+
+            if (SpikeMark == 2) {
+                while(3 < e.seconds() && e.seconds() < 3.7) {
+                    drive.drive(-0.3, -0.3, -0.25);
+                }
+                while (3.7 < e.seconds() && e.seconds() < 3.8) {
+                    drive.drive(0,0,0);
+                }
+            }
+
+            if (SpikeMark == 3) {
+                while (3 < e.seconds() && e.seconds() < 4) {
+                    drive.drive(-0.5,0.5,-0.25);
+                }
+                while (4 < e.seconds() && e.seconds() < 4.1) {
+                    drive.drive(0,0,0);
+                }
+            }
+
+            if (14 < e.seconds() && e.seconds() < 16 && tooClose == 0) {
                 drive.drive(-0.3,-0.375,0);
                 telemetry.addLine("Driving");
                 telemetry.addLine("Driving to backdrop");
             }
-
-            if (2 < e.seconds() && e.seconds() < 4 && liftTooHigh == 0) {
+            if (16 < e.seconds() && e.seconds() < 18 && liftTooHigh == 0) {
                 drive.drive(0,0,0);
                 telemetry.addLine("Drive ran and now it is stopped.");
                 lift1.setPower(0.5);
@@ -102,13 +165,33 @@ public class TechnofeathersTestAuto extends LinearOpMode {
                 telemetry.addLine("Drive stopped, lift run.");
             }
 
-            if (e.seconds() < 5 && e.seconds() > 4) {
+            if (e.seconds() < 19 && e.seconds() > 18) {
                 lift1.setPower(0);
                 lift2.setPower(0);
                 pivot1.setPosition(0);
             }
-            if (e.seconds() < 7 && e.seconds() > 6) {
-                grabber.setPosition(1);
+            if (e.seconds() < 21 && e.seconds() > 20) {
+                if(SpikeMark == 1) {
+                    grabber.setPosition(1);
+                }
+                if(SpikeMark == 2) {
+                    while(e.seconds() < 20.5 && e.seconds() > 20) {
+                        drive.drive(0.15, 0,0);
+                    }
+                    while(20.5 < e.seconds() && e.seconds() < 21) {
+                        drive.drive(0,0,0);
+                        grabber.setPosition(1);
+                    }
+                }
+                if(SpikeMark == 3) {
+                    while(e.seconds() < 20.5 && e.seconds() > 20) {
+                        drive.drive(-0.15, 0,0);
+                    }
+                    while(20.5 < e.seconds() && e.seconds() < 21) {
+                        drive.drive(0,0,0);
+                        grabber.setPosition(1);
+                    }
+                }
             }
             /*
             if (e.seconds() < 6.5 && e.seconds() > 5 && tooClose == 0) {
