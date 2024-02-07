@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
 public class Limitations extends Automations{
+    /*
     double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public boolean LiftLimitation() {
         if (lift1CurrentRotation > 4) {
@@ -26,6 +27,8 @@ public class Limitations extends Automations{
             return false;
         }
     }
+
+     */
     public boolean BackdropVeryClose() {
         if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y) {
             //tooCloseToBackdrop = 1;

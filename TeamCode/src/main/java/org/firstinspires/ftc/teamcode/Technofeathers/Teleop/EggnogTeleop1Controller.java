@@ -10,15 +10,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controller;
-import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
+//import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersTestDrive;
 
 @TeleOp(name = "EggnogTeleop1Controller")
 public class EggnogTeleop1Controller extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
-    public TechnofeathersDrive drive;
+    public TechnofeathersTestDrive drive;
     public Controller controller1;
     public Servo pivot1;
     public Servo grabber;
@@ -31,7 +32,6 @@ public class EggnogTeleop1Controller extends OpMode {
     public ColorSensor colorSense1;
     //private int i = 0;
     //private int j = 0;
-    double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public int intakeOn = 0;
     public int liftTooHigh = 0;
     public int planeLaunched = 0;
@@ -50,7 +50,8 @@ public class EggnogTeleop1Controller extends OpMode {
 
     @Override
     public void init() {
-        drive = new TechnofeathersDrive(this, hardwareMap);
+        //drive = new TechnofeathersDrive(this, hardwareMap);
+        drive = new TechnofeathersTestDrive();
         controller1 = new Controller(gamepad1);
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
         grabber = hardwareMap.get(Servo.class, "grabber");
@@ -74,18 +75,21 @@ public class EggnogTeleop1Controller extends OpMode {
     @Override
     public void loop() {
         controller1.update();
-        drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
+        drive.setupMotors(hardwareMap);
+        drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
 
         if (controller1.left_stick_x == 0 && controller1.left_stick_y == 0 && controller1.right_stick_x == 0) {
             drive.drive(0,0,0);
         }
-
+        /*
         if (lift1CurrentRotation >=4) {
             liftTooHigh = 1;
         }
         else {
             liftTooHigh = 0;
         }
+
+         */
 
         //drive.drive(-controller1.left_stick_x, -controller1.left_stick_y/1.25, -controller1.right_stick_x/1.25);
         if (controller1.AOnce() && intakeOn == 0) {
@@ -142,7 +146,7 @@ public class EggnogTeleop1Controller extends OpMode {
         }
 
         //lift
-        if (controller1.leftBumper() && liftTooHigh == 0) {
+        if (controller1.leftBumper()) {
             lift1.setPower(1);
             lift2.setPower(1);
         } else if (controller1.rightBumper()) {

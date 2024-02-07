@@ -22,7 +22,7 @@ public class Automations extends EggnogTeleopTest{
         }
 
         grabbedPixels = 1;
-        while (0.5 < scoringPositionTimer.seconds() && scoringPositionTimer.seconds() < 1.4 && liftTooHigh == 0) {
+        while (0.5 < scoringPositionTimer.seconds() && scoringPositionTimer.seconds() < 1.4/* && liftTooHigh == 0*/) {
             lift1.setPower(1);
             lift2.setPower(1);
         }

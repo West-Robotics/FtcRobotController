@@ -30,9 +30,9 @@ public class EggnogTeleopAutomated1Controller extends OpMode {
     public Servo stopper;
     public DistanceSensor distSense1;
 
-    double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
+    //double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public int intakeOn = 0;
-    public int liftTooHigh = 0;
+    //public int liftTooHigh = 0;
     public int tooCloseToBackdrop = 0;
     public int planeLaunched = 0;
     public int grabbedPixels = 0;
@@ -81,13 +81,15 @@ public class EggnogTeleopAutomated1Controller extends OpMode {
         if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y) {
             drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
         }
-
+        /*
         if (lift1CurrentRotation >=4) {
             liftTooHigh = 1;
         }
         else {
             liftTooHigh = 0;
         }
+
+         */
 
         if(controller1.dpadLeftOnce()) {
             pixelate.ScoringPosition();
@@ -143,7 +145,7 @@ public class EggnogTeleopAutomated1Controller extends OpMode {
         }
 
         //lift
-        if (controller1.leftBumper() && liftTooHigh == 0) {
+        if (controller1.leftBumper()/* && liftTooHigh == 0*/) {
             lift1.setPower(1);
             lift2.setPower(1);
         } else if (controller1.rightBumper()) {
@@ -180,7 +182,7 @@ public class EggnogTeleopAutomated1Controller extends OpMode {
         while (teleopTimer1.seconds() < 0.5) {
             grabber.setPosition(0.67);
         }
-        while (0.5 < teleopTimer1.seconds() && teleopTimer1.seconds() < 1.4 && liftTooHigh == 0) {
+        while (0.5 < teleopTimer1.seconds() && teleopTimer1.seconds() < 1.4/* && liftTooHigh == 0*/) {
             lift1.setPower(1);
             lift2.setPower(1);
         }

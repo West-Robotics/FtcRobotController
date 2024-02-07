@@ -31,7 +31,7 @@ public class EggnogTeleopTest extends OpMode {
     public DistanceSensor distSense1;
     //private int i = 0;
     //private int j = 0;
-    double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
+    //double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public int intakeOn = 0;
     public int liftTooHigh = 0;
     public int planeLaunched = 0;

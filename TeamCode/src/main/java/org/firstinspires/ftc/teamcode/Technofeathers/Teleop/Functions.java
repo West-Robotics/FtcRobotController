@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 public class Functions extends Limitations{
     ElapsedTime e = new ElapsedTime();
     public void LiftGoUp() {
-        if (LiftLimitation()) {
+        if (false/*LiftLimitation()*/) {
             lift1.setPower(0);
             lift2.setPower(0);
         }
