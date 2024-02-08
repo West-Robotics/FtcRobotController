@@ -69,13 +69,13 @@ public class EggnogTeleop1Controller extends OpMode {
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+        drive.setupMotors(hardwareMap);
         //pivot1.setPosition(1);
     }
 
     @Override
     public void loop() {
         controller1.update();
-        drive.setupMotors(hardwareMap);
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
 
 

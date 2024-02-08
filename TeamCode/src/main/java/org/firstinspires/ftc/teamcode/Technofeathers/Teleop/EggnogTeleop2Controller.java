@@ -13,7 +13,12 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
 @TeleOp(name = "EggnogTeleop2Controller")
-public class EggnogTeleop2Controller extends OpMode {
+public class
+
+
+
+
+EggnogTeleop2Controller extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
