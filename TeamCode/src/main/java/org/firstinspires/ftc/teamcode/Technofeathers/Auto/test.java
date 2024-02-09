@@ -91,7 +91,7 @@ public class test extends LinearOpMode{
                             new Orientation(
                                     AxesReference.INTRINSIC,
                                     AxesOrder.ZYX,
-                                    AngleUnit.RADIANS,
+                                    AngleUnit.DEGREES,
                                     90,
                                     0,
                                     -90,
@@ -103,15 +103,15 @@ public class test extends LinearOpMode{
 
             waitForStart();
 
-
-
-           while (opModeIsActive()){
-               state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
+            runWithEncoder(1,1,0.5,538);
+/*
+            while (opModeIsActive()){
+               state = Math.toRadians(imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
                targetAngle = Math.toRadians(-90);
                double strength = PIDControl(targetAngle,state);
                righting(strength);
            }
-           
+           */
         }
 
         public void pixelate(){
