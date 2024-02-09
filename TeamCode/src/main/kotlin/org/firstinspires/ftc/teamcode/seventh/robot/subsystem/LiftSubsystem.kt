@@ -20,7 +20,6 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         var extension: Double = 0.0,
         var power: Double = 0.0,
         var current: Double = 0.0,
-        var lastCurrent: Double = current,
         var grounded: Boolean = true,
     ) val state = LiftState()
     private val liftPDF = PDF(Globals.LIFT_P, Globals.LIFT_D)
@@ -47,9 +46,16 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
 
     override fun read() {
         state.extension = enc.getDist()
-        state.lastCurrent = state.current
-        state.current = liftLeft.getCurrent(CurrentUnit.AMPS) + liftRight.getCurrent(CurrentUnit.AMPS)
-        voltage = Robot.voltage
+        // only read current right when we need it (looptime destroyer)
+        if (
+            !state.grounded &&
+            state.extension < 0.35 &&
+            state.commandedExtension == LIFT_HEIGHTS[0]
+        ) {
+            state.current = liftLeft.getCurrent(CurrentUnit.AMPS) +
+                            liftRight.getCurrent(CurrentUnit.AMPS)
+        }
+        // voltage = Robot.voltage
     }
 
     fun update(ce: Double, dt: Double) {

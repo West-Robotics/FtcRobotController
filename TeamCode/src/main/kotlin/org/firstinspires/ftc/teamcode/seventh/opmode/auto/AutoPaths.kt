@@ -105,7 +105,7 @@ class AutoPaths(
             hermite {
                 label("blue to right prop")
                 start {
-                    pos(initPose.position); ang(toRadians(-45.0)); v(15.0)
+                    pos(initPose.position); ang(toRadians(-20.0)); v(25.0)
                 }
                 end {
                     pos(propPose.position); ang(toRadians(180.0)); v(15.0)
@@ -146,17 +146,6 @@ class AutoPaths(
             end(stackPose.position)
             constraints {
                 decelDist(24.0)
-                heading(toRadians(0.0))
-            }
-        }
-    }
-    val intakeSlide = path {
-        line {
-            label("shift slide")
-            start(stackPose.position)
-            end(stackPose.position + if (side == Side.RED) Vector2d(0.0, -6.0) else Vector2d(0.0, +6.0))
-            constraints {
-                decelDist(10.0)
                 heading(toRadians(0.0))
             }
         }

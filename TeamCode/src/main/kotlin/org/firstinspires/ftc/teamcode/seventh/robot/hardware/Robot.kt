@@ -17,19 +17,21 @@ object Robot {
         private set
     val timeSource = TimeSource.Monotonic
     var lastTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
-    private var voltageTimer = ElapsedTime()
+    // private var voltageTimer = ElapsedTime()
 
-    fun read(vararg subsystems: Subsystem) {
+    fun dtUpdate() {
         val currentTime = timeSource.markNow()
         dt = (currentTime - lastTime).toDouble(DurationUnit.MILLISECONDS)
         lastTime = currentTime
+    }
+    fun read(vararg subsystems: Subsystem) {
         for (s in subsystems) {
             s.read()
         }
-        if (voltageTimer.seconds() > 5.0) {
-            voltage = hardwareMap.voltageSensor.iterator().next().voltage
-            voltageTimer.reset()
-        }
+        // if (voltageTimer.seconds() > 5.0) {
+        //     voltage = hardwareMap.voltageSensor.iterator().next().voltage
+        //     voltageTimer.reset()
+        // }
     }
 
     fun write(vararg subsystems: Subsystem) {

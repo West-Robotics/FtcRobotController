@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.seventh.opmode.auto
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
 import com.qualcomm.hardware.lynx.LynxModule
@@ -25,7 +27,7 @@ import kotlin.time.TimeSource
 
 @Autonomous(name =
 """
-RED JUST TWO
+WAH
 """
 )
 class JustTwoRed : LinearOpMode() {
@@ -48,7 +50,7 @@ class JustTwoRed : LinearOpMode() {
         var CONTROL_HUB: LynxModule = allHubs[0]
         for (hub in allHubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
-            if (hub.isParent() && LynxConstants.isEmbeddedSerialNumber(hub.serialNumber)) {
+            if (hub.isParent && LynxConstants.isEmbeddedSerialNumber(hub.serialNumber)) {
                 CONTROL_HUB = hub
             }
         }
@@ -59,14 +61,13 @@ class JustTwoRed : LinearOpMode() {
         val vision = Vision(hardwareMap)
         val gamepad = GamepadEx(gamepad1)
 
-        val timeSource = TimeSource.Monotonic
-        var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
-
         val cycle = CycleCommand(intake, lift, output)
 
         var state = RobotState.LOCK
         var height = 0
         intake.setHeight(1)
+
+        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         Robot.read(intake, output)
         cycle.update(state, height, 0.0)
@@ -135,15 +136,15 @@ class JustTwoRed : LinearOpMode() {
 
         autoMachine.start()
         while (opModeIsActive()) {
+            // TODO: see if latency reduction attempt affects looptimes
+//            var firstTime = timeSource.markNow()
             CONTROL_HUB.clearBulkCache()
-            val loop = timeSource.markNow()
-            val dt = (loop - loopTime).toDouble(DurationUnit.MILLISECONDS)
-            loopTime = loop
-
-            // update all subsystems
-            Robot.read(drive, intake, lift, output);
+            Robot.dtUpdate()
             autoMachine.update()
-            cycle.update(state, height, drive.wallDist)
+//            var secondTime = timeSource.markNow()
+//            println("section 1 dt: " + (secondTime - firstTime).toDouble(DurationUnit.MILLISECONDS))
+
+            Robot.read(drive)
             val input = gg.update(drive.getPoseEstimate().position, drive.getVelocity().position)
             drive.update(
                     input = input,
@@ -153,16 +154,21 @@ class JustTwoRed : LinearOpMode() {
                     dt = Robot.dt,
                     pid = true,
             )
-            Robot.write(drive, intake, lift, output);
+            Robot.write(drive)
 
-            // telemetry.addData("prop pos", traj.prop)
-            // telemetry.addData("lift dist", lift.distance)
-            telemetry.addData("hz", 1000 / dt)
+            // the ordering of subsystem read/writes is deliberate
+            // intake latency doesn't matter
+            // output has its own servo pid
+            // lift is controlled by this loop
+            // this minimizes latency for the lift
+            Robot.read(intake, output, lift)
+            cycle.update(state, height, drive.wallDist)
+            Robot.write(lift, output, intake)
+            telemetry.addData("robot hz", 1000 / Robot.dt)
             telemetry.addData("current index", gg.currentIndex)
-            // telemetry.addData("error", gg.error(drive.getPoseEstimate().position))
-            // telemetry.addData("onTarget", gg.onTarget(drive.getPoseEstimate().position))
             telemetry.addData("state", autoMachine.state as AutoStates)
             telemetry.update()
         }
+        Globals.pose = drive.getPoseEstimate()
     }
 }

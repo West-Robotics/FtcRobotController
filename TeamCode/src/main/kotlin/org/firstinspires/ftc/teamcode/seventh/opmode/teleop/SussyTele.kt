@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
+import kotlin.math.pow
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
@@ -58,7 +59,7 @@ class SussyTele : LinearOpMode() {
         var CONTROL_HUB: LynxModule = allHubs[0]
         for (hub in allHubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
-            if (hub.isParent() && LynxConstants.isEmbeddedSerialNumber(hub.serialNumber)) {
+            if (hub.isParent && LynxConstants.isEmbeddedSerialNumber(hub.serialNumber)) {
                 CONTROL_HUB = hub
             }
         }
@@ -72,13 +73,12 @@ class SussyTele : LinearOpMode() {
 
         val primary = GamepadEx(gamepad1)
         val secondary = GamepadEx(gamepad2)
-
-        val timeSource = TimeSource.Monotonic
-        var loopTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
-
-        var height = 0
         var fillEdge = false
         var fillTimer = ElapsedTime()
+        var lastJoystickDown = false
+        var lastJoystickUp = false
+
+        var height = 0
         val cycle = CycleCommand(intake, lift, output)
         var lastState = RobotState.LOCK
         val cycleMachine = StateMachineBuilder()
@@ -96,7 +96,7 @@ class SussyTele : LinearOpMode() {
                 .state(RobotState.INTAKE)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.B) }, RobotState.PRELOCK)
                     .transition({ fillEdge && fillTimer.seconds() > 0.25 }, RobotState.PRELOCK, { fillTimer = ElapsedTime() })
-                    .transition({ secondary.wasJustPressed(GamepadKeys.Button.BACK) }, RobotState.SPIT)
+                    .transition({ secondary.wasJustPressed(GamepadKeys.Button.BACK) && !gamepad2.guide}, RobotState.SPIT)
                     .onExit { lastState = RobotState.INTAKE }
                 .state(RobotState.SPIT)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.B) }, RobotState.LOCK)
@@ -141,6 +141,7 @@ class SussyTele : LinearOpMode() {
         Robot.read(intake, lift, output, hang)
         cycle.update(cycleMachine.state as RobotState, height, 0.0)
         Robot.write(intake, lift, output, hang)
+        drive.setPoseEstimate(Globals.pose)
         waitForStart()
 
         drive.startIMUThread(this)
@@ -148,76 +149,15 @@ class SussyTele : LinearOpMode() {
         while (opModeIsActive()) {
             // === STANDARD UPDATES ===
             CONTROL_HUB.clearBulkCache()
-            val loop = timeSource.markNow()
-            val dt = (loop - loopTime).toDouble(DurationUnit.MILLISECONDS)
-            loopTime = loop
-            Robot.read(drive, intake, lift, output, hang)
             primary.readButtons()
             secondary.readButtons()
+            cycleMachine.update()
+            Robot.dtUpdate()
 
+            Robot.read(drive)
             if (gamepad1.guide) {
                 drive.resetHeading()
             }
-            if (secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) && height + 3 < 5) {
-                height += 3
-            } else if (secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                height = 0
-            } else if (secondary.wasJustPressed(GamepadKeys.Button.X) && height > 1) {
-                height--
-            } else if (secondary.wasJustPressed(GamepadKeys.Button.Y) && height < 5) {
-                height++
-            }
-
-            if (secondary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9) {
-                hang.update(HangSubsystem.HangState.RAISE)
-            } else if (secondary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9) {
-                hang.update(HangSubsystem.HangState.LOWER)
-            } else {
-                hang.update(HangSubsystem.HangState.STOP)
-            }
-
-            // if (secondary.wasJustPressed(GamepadKeys.Button.Y)) {
-            //     intake.raise()
-            // } else if (secondary.wasJustPressed(GamepadKeys.Button.X)) {
-            //     intake.lower()
-            // }
-
-            if (secondary.wasJustPressed(GamepadKeys.Button.START)) {
-                output.pivotOffset -= 1.0
-            } else if (secondary.wasJustPressed(GamepadKeys.Button.BACK)) {
-                output.pivotOffset += 1.0
-            }
-
-            // update all subsystems
-            cycleMachine.update()
-            // TODO: use heading pid all the time
-            if (
-                cycleMachine.state as RobotState == RobotState.ALIGN ||
-                cycleMachine.state as RobotState == RobotState.EXTEND ||
-                cycleMachine.state as RobotState == RobotState.SCORE_L ||
-                cycleMachine.state as RobotState == RobotState.SCORE_R
-            ) {
-                drive.update(
-                        Pose2d(Vector2d(primary.leftY, -primary.leftX), Rotation2d(0.0)),
-                        correcting = false,
-                        fieldOriented = false,
-                        dt = Robot.dt,
-                        pid = true
-                )
-            } else {
-                drive.update(
-                        Pose2d(Vector2d(primary.leftY, -primary.leftX), Rotation2d(-primary.rightX)),
-                        correcting = false,
-                        fieldOriented = false,
-                        dt = Robot.dt,
-                        pid = false
-                )
-            }
-            cycle.update(
-                    cycleMachine.state as RobotState,
-                    height,
-                    drive.wallDist
-            )
             if (output.leftFilled && output.rightFilled && !fillEdge) {
                 fillEdge = true
                 fillTimer = ElapsedTime()
@@ -226,22 +166,64 @@ class SussyTele : LinearOpMode() {
             } else if (!output.leftFilled && !output.rightFilled && fillEdge) {
                 fillEdge = false
             }
+            (cycleMachine.state as RobotState == RobotState.ALIGN ||
+            cycleMachine.state as RobotState == RobotState.EXTEND ||
+            cycleMachine.state as RobotState == RobotState.SCORE_L ||
+            cycleMachine.state as RobotState == RobotState.SCORE_R).let {
+                drive.update(
+                        Pose2d(
+                            Vector2d(primary.leftY, -primary.leftX),
+                            Rotation2d(if (it) 0.0 else -primary.rightX.pow(2)),
+                        ),
+                        correcting = false,
+                        fieldOriented = false,
+                        dt = Robot.dt,
+                        pid = it
+                )
+            }
+            Robot.write(drive)
 
+            Robot.read(hang, intake, output, lift)
+            val joystickDown = secondary.leftY > -0.7
+            val joystickUp = secondary.leftY > 0.7
+            when {
+                secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) && height + 3 < 5 -> height += 3
+                secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) &&
+                    (cycleMachine.state == RobotState.BACKDROP ||
+                    cycleMachine.state == RobotState.LOCK) -> height = 0
+                joystickDown && !lastJoystickDown && height > 1 -> height--
+                joystickUp && !lastJoystickUp && height < 4 -> height++
+                secondary.wasJustPressed(GamepadKeys.Button.X) -> intake.lower()
+                secondary.wasJustPressed(GamepadKeys.Button.Y) -> intake.raise()
+                // subdivisions?
+                secondary.wasJustPressed(GamepadKeys.Button.BACK) && gamepad2.guide -> output.pivotOffset -= 22.5
+                secondary.wasJustPressed(GamepadKeys.Button.START) && gamepad2.guide -> output.pivotOffset += 22.5
+            }
+            lastJoystickDown = joystickDown
+            lastJoystickUp = joystickUp
+
+            if (secondary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9) {
+                hang.update(HangSubsystem.HangState.RAISE)
+            } else if (secondary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9) {
+                hang.update(HangSubsystem.HangState.LOWER)
+            } else {
+                hang.update(HangSubsystem.HangState.STOP)
+            }
+            cycle.update(
+                    cycleMachine.state as RobotState,
+                    height,
+                    drive.wallDist
+            )
+            Robot.write(lift, output, intake, hang)
             telemetry.addData("cycle state", cycleMachine.state as RobotState)
-            telemetry.addData("hz ", 1000 / dt)
+            telemetry.addData("hz ", 1000 / Robot.dt)
             telemetry.addData("lift height", height)
             telemetry.addData("lift commanded", lift.state.commandedExtension)
             telemetry.addData("lift dist", lift.state.extension)
-            // telemetry.addData("lift power", lift.state.power)
-            // telemetry.addData("lift current", lift.state.current)
             telemetry.addData("grounded", lift.state.grounded)
-            // telemetry.addData("arm on target", cycle.onTarget())
-            // telemetry.addData("arm goal", cycle.endGoal())
-            telemetry.addData("current arm", cycle.curAng())
             telemetry.addData("left dets", output.leftFilled)
             telemetry.addData("right dets", output.rightFilled)
             telemetry.update()
-            Robot.write(drive, intake, lift, output, hang)
         }
     }
 }

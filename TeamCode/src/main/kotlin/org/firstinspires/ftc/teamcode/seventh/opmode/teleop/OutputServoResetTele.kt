@@ -19,14 +19,14 @@ class OutputServoResetTele : LinearOpMode() {
         val armEncLeft = QuackAnalog(hardwareMap, "armEncLeft")
         val armEncRight = QuackAnalog(hardwareMap, "armEncRight")
         val pitch = QuackServo(hardwareMap, "pitch", QuackServo.ModelPWM.GENERIC)
-        val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.GOBILDA_SPEED)
-        val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.GOBILDA_SPEED)
+        val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.AXON_MICRO)
+        val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.AXON_MICRO)
 
         armLeft.setDirection(Servo.Direction.REVERSE)
         armRight.setDirection(Servo.Direction.FORWARD)
         pitch.setDirection(Servo.Direction.REVERSE)
-        fingerLeft.setDirection(Servo.Direction.FORWARD)
-        fingerRight.setDirection(Servo.Direction.REVERSE)
+        fingerLeft.setDirection(Servo.Direction.REVERSE)
+        fingerRight.setDirection(Servo.Direction.FORWARD)
 
         val gamepad = GamepadEx(gamepad1)
         var config = 1

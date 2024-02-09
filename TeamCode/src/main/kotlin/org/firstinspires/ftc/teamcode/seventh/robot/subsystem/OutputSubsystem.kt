@@ -38,8 +38,8 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     private val armEncLeft = QuackAnalog(hardwareMap, "armEncLeft")
     private val armEncRight = QuackAnalog(hardwareMap, "armEncRight")
     private val pitch = QuackServo(hardwareMap, "pitch", QuackServo.ModelPWM.GENERIC)
-    private val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.GOBILDA_SPEED)
-    private val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.GOBILDA_SPEED)
+    private val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.AXON_MICRO)
+    private val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.AXON_MICRO)
     private val colorLeft = hardwareMap.get(ColorRangeSensor::class.java, "colorLeft")
     private val colorRight = hardwareMap.get(ColorRangeSensor::class.java, "colorRight")
     var pivotOffset = 0.0
@@ -48,8 +48,8 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
         armLeft.setDirection(Servo.Direction.REVERSE)
         armRight.setDirection(Servo.Direction.FORWARD)
         pitch.setDirection(Servo.Direction.REVERSE)
-        fingerLeft.setDirection(Servo.Direction.FORWARD)
-        fingerRight.setDirection(Servo.Direction.REVERSE)
+        fingerLeft.setDirection(Servo.Direction.REVERSE)
+        fingerRight.setDirection(Servo.Direction.FORWARD)
         pitch.setPosition(60.0)
         fingerLeft.setPosition(FINGER_CLOSE)
         fingerRight.setPosition(FINGER_CLOSE)
@@ -57,8 +57,8 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
 
     override fun read() {
         if (robotState == RobotState.INTAKE) {
-            leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 5.0
-            rightFilled = colorRight.getDistance(DistanceUnit.MM) < 5.0
+            leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 14.0
+            rightFilled = colorRight.getDistance(DistanceUnit.MM) < 14.0
         }
         curArmAngLeft = armEncLeft.getRawVoltage()
         curArmAngRight = 3.3 - armEncRight.getRawVoltage()
@@ -69,9 +69,9 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
         robotState = s
         outState = when (s) {
             RobotState.LOCK     -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.PRELOCK  -> OutputState(armAng, 55.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.INTAKE   -> OutputState(armAng, 55.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SPIT     -> OutputState(armAng, 55.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
+            RobotState.PRELOCK  -> OutputState(armAng, 62.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.INTAKE   -> OutputState(armAng, 62.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
+            RobotState.SPIT     -> OutputState(armAng, 62.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
             RobotState.ALIGN    -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
             RobotState.BACKDROP -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
             RobotState.EXTEND   -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)

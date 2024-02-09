@@ -23,11 +23,11 @@ import java.lang.Math.toDegrees
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-@Autonomous(name =
-"""
-BLUE JUST TWO
-"""
-)
+// @Autonomous(name =
+// """
+// PAIN
+// """
+// )
 class JustTwoBlue : LinearOpMode() {
     enum class AutoStates {
         TO_PURPLE,

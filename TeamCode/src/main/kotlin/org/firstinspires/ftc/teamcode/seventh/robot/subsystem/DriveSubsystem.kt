@@ -11,6 +11,7 @@ import com.scrapmetal.quackerama.hardware.QuackAnalog
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import java.lang.Math.toRadians
 import kotlin.math.PI
+import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -23,6 +24,7 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         private set
     var correcting = false
     private var input = Pose2d()
+    private var lastInput = input
     private val drive = SampleMecanumDrive(hardwareMap)
     private val distLeft = QuackAnalog(hardwareMap, "distLeft")
     private val distRight = QuackAnalog(hardwareMap, "distRight")
@@ -72,9 +74,15 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
 
     override fun write() {
-        drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
-                input.position.u, input.position.v,
-                input.heading.polarAngle))
+        if (
+            (lastInput.position.u - input.position.u).absoluteValue > 0.005 ||
+            (lastInput.position.v - input.position.v).absoluteValue > 0.005 ||
+            (lastInput.heading.polarAngle - input.heading.polarAngle).absoluteValue > 0.005
+        ) {
+            drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
+                    input.position.u, input.position.v,
+                    input.heading.polarAngle))
+        }
     }
 
     fun startIMUThread(opMode: LinearOpMode) {

@@ -30,20 +30,22 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
         if (s != robotState) {
             lastState = robotState
             robotState = s
-            armMP = AsymTrapezoidMP(
+            if ((s == LOCK && robotState == BACKDROP) || (s == BACKDROP && robotState == LOCK)) {
+                armMP = AsymTrapezoidMP(
                     start = out.curArmAng,
                     end = when (s) {
                         EXTEND, SCORE, SCORE_L, SCORE_R
-                        -> toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120
+                            -> toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120
                         LOCK, BACKDROP -> -120.5
                         INTAKE, PRELOCK, SPIT -> -127.0
                         else -> -123.0
                     },
                     accel = 6000.0,
-                    decel = -1000.0, // old: -1400.0
+                    decel = -1200.0, // old: -1400.0
                     v_max = 500.0
-            )
-            timer = ElapsedTime()
+                )
+                timer = ElapsedTime()
+            }
         }
         height = h
         // TODO: worry about only starting intake when lift reaches bottom
@@ -58,10 +60,18 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
             },
             Robot.dt
         )
-        // if we're already extended, track backdrop distance
-        // otherwise, continue extending via the mp
-        if ((s == EXTEND || s == SCORE_L || s == SCORE || s == SCORE_R) && timer.seconds() > armMP.tTotal) {
-            out.update(robotState, toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120)
+        if ((s == EXTEND || s == SCORE_L || s == SCORE || s == SCORE_R)) {
+            // if we're already extended, track backdrop distance
+            if (timer.seconds() > armMP.tTotal) {
+                out.update(robotState, toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120)
+            } else if (h == 0) {
+                // if we're still inside the bot don't extend out
+                // TODO: do based on position not desired height
+                out.update(BACKDROP, armMP.update(timer.seconds()).s)
+            } else {
+                // otherwise, continue extending via the mp
+                out.update(robotState, armMP.update(timer.seconds()).s)
+            }
         } else {
             out.update(robotState, armMP.update(timer.seconds()).s)
         }
