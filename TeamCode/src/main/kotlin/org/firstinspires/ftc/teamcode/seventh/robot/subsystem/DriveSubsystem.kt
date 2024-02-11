@@ -74,15 +74,15 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
 
     override fun write() {
-        if (
-            (lastInput.position.u - input.position.u).absoluteValue > 0.005 ||
-            (lastInput.position.v - input.position.v).absoluteValue > 0.005 ||
-            (lastInput.heading.polarAngle - input.heading.polarAngle).absoluteValue > 0.005
-        ) {
+        // if (
+        //     (lastInput.position.u - input.position.u).absoluteValue > 0.005 ||
+        //     (lastInput.position.v - input.position.v).absoluteValue > 0.005 ||
+        //     (lastInput.heading.polarAngle - input.heading.polarAngle).absoluteValue > 0.005
+        // ) {
             drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
                     input.position.u, input.position.v,
                     input.heading.polarAngle))
-        }
+        // }
     }
 
     fun startIMUThread(opMode: LinearOpMode) {

@@ -22,12 +22,12 @@ object Globals {
     @JvmField var RIGHT_REGION_HEIGHT = 100.0
 
     // TODO: WHY DID THIS WORK FINE AT 0.03 BEFORE
-    @JvmField var LIFT_P = 1.6
+    @JvmField var LIFT_P = 1.2
     @JvmField var LIFT_D = 0.0
     // 4.398 in spool circum / 8192 ppr
     @JvmField var LIFT_DISTANCE_PER_PULSE = 4.398 / 8192
     @JvmField var LIFT_MAX = 30.0
-    @JvmField var LIFT_MIN = -2.0
+    var LIFT_MIN = -2.0
     // each height is spaced 2.6 inches apart
     @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.2) +
                                  DoubleArray(5) { 2.6*it + 14.4 }

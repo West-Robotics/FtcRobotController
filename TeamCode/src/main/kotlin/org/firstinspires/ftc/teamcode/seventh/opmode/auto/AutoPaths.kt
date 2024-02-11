@@ -40,13 +40,13 @@ class AutoPaths(
                 else -> Pose2d()
     }
     val stackPose = when {
-        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+6.0, -38.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+6.0, 38.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+7.0, -38.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+7.0, 38.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val backdropPose = when {
-        side == Side.RED -> Pose2d(Vector2d(48.0,-38.0+0.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE -> Pose2d(Vector2d(48.0,38.0-0.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED -> Pose2d(Vector2d(52.0,-38.0+0.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE -> Pose2d(Vector2d(52.0,38.0-0.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val yellowPose = when {

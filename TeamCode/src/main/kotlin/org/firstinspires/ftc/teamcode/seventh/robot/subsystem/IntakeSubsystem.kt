@@ -42,7 +42,7 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
             RobotState.INTAKE -> Pair(1.0, rollerHeight)
             RobotState.LOCK -> Pair(0.0, rollerHeight)
             RobotState.PRELOCK -> Pair(0.0, rollerHeight)
-            RobotState.SPIT -> Pair(-0.4, 1)
+            RobotState.SPIT -> Pair(-1.0, 1)
             else -> Pair(power, rollerHeight)
         }.let {
             power = it.first
