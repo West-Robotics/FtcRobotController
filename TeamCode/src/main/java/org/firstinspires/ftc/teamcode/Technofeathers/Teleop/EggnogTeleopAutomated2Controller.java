@@ -48,7 +48,6 @@ public class EggnogTeleopAutomated2Controller extends OpMode {
     public int placeholderI = 1;
 
     private ElapsedTime e = new ElapsedTime();
-    private Automations pixelate = new Automations();
 
     @Override
     public void init() {
@@ -94,10 +93,10 @@ public class EggnogTeleopAutomated2Controller extends OpMode {
         }
 
         if(controller2.dpadLeftOnce()) {
-            pixelate.ScoringPosition();
+            //pixelate.ScoringPosition();
         }
         if(controller2.dpadRightOnce()) {
-            pixelate.PixelDropAndReset();
+            //pixelate.PixelDropAndReset();
         }
         if (controller2.AOnce() && intakeOn == 0) {
             intake.setPower(1);

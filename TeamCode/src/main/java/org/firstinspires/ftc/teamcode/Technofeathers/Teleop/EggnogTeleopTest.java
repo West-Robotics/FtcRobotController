@@ -11,16 +11,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controller;
-import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersTestDrive;
 
 @TeleOp(name = "EggnogTeleopTest")
 public class EggnogTeleopTest extends OpMode {
     private TechnofeathersPDTest test = new TechnofeathersPDTest(0.1);
     //smaller kp = slowing down earlier
     //bigger kp = slowing down later
-    public TechnofeathersDrive drive;
+    public TechnofeathersTestDrive drive;
     public Controller controller1;
+    /*
     public Servo pivot1;
     public Servo grabber;
     public Servo airplaneLauncher;
@@ -28,7 +29,10 @@ public class EggnogTeleopTest extends OpMode {
     public DcMotor lift2;
     public DcMotor intake;
     public Servo stopper;
+
+     */
     public DistanceSensor distSense1;
+
     //private int i = 0;
     //private int j = 0;
     //double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
@@ -47,14 +51,16 @@ public class EggnogTeleopTest extends OpMode {
     public int placeholderH = 1;
     public int placeholderI = 1;
 
+    public Functions functions;
+
 
     public ElapsedTime timer = new ElapsedTime();
-    private Functions functions = new Functions();
 
     @Override
     public void init() {
-        drive = new TechnofeathersDrive(this, hardwareMap);
+        drive = new TechnofeathersTestDrive();
         controller1 = new Controller(gamepad1);
+        /*
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
         grabber = hardwareMap.get(Servo.class, "grabber");
         lift1 = hardwareMap.get(DcMotor.class,  "lift1");
@@ -73,67 +79,146 @@ public class EggnogTeleopTest extends OpMode {
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
         //pivot1.setPosition(1);
+
+         */
+        functions.setUp();
     }
 
     @Override
     public void loop() {
         controller1.update();
-        drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
+        drive.drive(controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
 
-        //drive.drive(-controller1.left_stick_x, -controller1.left_stick_y/1.25, -controller1.right_stick_x/1.25);
-        if (controller1.AOnce() && intakeOn == 0) {
-            stopper.setPosition(.9);
-            intake.setPower(1);
-            intakeOn = 1;
-            //import timer later
-        } else if (controller1.AOnce() && intakeOn == 1){
-            stopper.setPosition(.37);
-            intake.setPower(0);
-            intakeOn = 0;
-            dylanRan = 0;
-            //Once intake stops, Dylan can run; needs extreme testing
-            //TODO: Difference between backdrop and border needs to be figured out;
+        if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y && dylanRan == 0) {
+            drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
+            functions.scoringPosition();
+            dylanRan = 1;
+        }
+        /*
+        if (lift1CurrentRotation >=4) {
+            liftTooHigh = 1;
+        }
+        else {
+            liftTooHigh = 0;
         }
 
-        if (controller1.BOnce() && placeholderG == 1) {
-            intake.setPower(-1);
-            placeholderG = 2;
-        } else if (controller1.BOnce() && placeholderG == 2){
-            intake.setPower(0);
-            placeholderG = 1;
+         */
+
+        if(controller1.dpadLeftOnce()) {
+            functions.scoringPosition();
+        }
+
+        if(controller1.dpadRightOnce()) {
+            functions.pixelDropAndReset();
+        }
+
+        if (controller1.AOnce()) {
+            functions.intakeRun();
+        }
+        else if (controller1.AOnce()){
+            functions.intakeStop();
+            dylanRan = 0;
+        }
+
+        if (controller1.BOnce()) {
+            functions.intakePushOut();
+        }
+        else if (controller1.BOnce()){
+            functions.intakeStop();
+        }
+
+        if (controller1.dpadUpOnce()) {
+            // grabbing pixels
+            functions.grabberGrab();
+        }
+
+        if (controller1.dpadDownOnce()) {
+            // releasing pixels
+            functions.grabberDrop();
+        }
+
+        if (controller1.YOnce()) {
+            functions.pivotOut();
+            functions.pivotIn();
+            //will run which one is the one available
+        }
+
+        if (controller1.XOnce()) {
+            functions.stopperDown();
+            functions.stopperUp();
         }
 
         //lift
-        if (controller1.leftBumper() && liftTooHigh == 0) {
-            functions.LiftGoUp();
-        } else if (controller1.rightBumper()) {
-            functions.LiftGoDown();
-        } else {
-            functions.StopLift();
+        if (controller1.leftBumper()/* && liftTooHigh == 0*/) {
+            functions.liftGoUp();
         }
-
-        if (dylanRan == 0) {
-            functions.Dylan();
+        else if (controller1.rightBumper()) {
+            functions.liftGoDown();
         }
-
-        if (controller1.dpadRight()) {
-            functions.Dave();
+        else {
+            functions.liftStop();
         }
 
         if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
-            airplaneLauncher.setPosition(0.5);
-            planeLaunched = 1;
+            functions.launchAirplane();
         }
-
         if(controller1.right_trigger > 0.9 && planeLaunched == 1) {
-            airplaneLauncher.setPosition(0.9);
-            planeLaunched = 0;
+            //airplaneLauncher.setPosition(0.9);
+            //planeLaunched = 0;
         }
-
         if(controller1.backOnce()){
-            pivot1.setPosition(0.25);
+            //pivot1.setPosition(0.25);
+        }
+        telemetry.update();
+
+    }
+    /*
+    private void ScoringPosition() {
+        ElapsedTime teleopTimer1 = new ElapsedTime();
+        teleopTimer1.reset();
+        while (teleopTimer1.seconds() < 0.5) {
+            grabber.setPosition(0.67);
+        }
+        while (0.5 < teleopTimer1.seconds() && teleopTimer1.seconds() < 1.4) {
+            lift1.setPower(1);
+            lift2.setPower(1);
+        }
+        while (1.4 < teleopTimer1.seconds() && teleopTimer1.seconds() < 2) {
+            pivot1.setPosition(0);
+        }
+    }
+
+     */
+    /*
+    private void PixelDropAndReset() {
+        ElapsedTime teleopTimer2 = new ElapsedTime();
+        teleopTimer2.reset();
+        while(teleopTimer2.seconds() < 0.7) {
+            grabber.setPosition(1);
+            grabbedPixels = 0;
         }
 
-        telemetry.addData("Distance from nearest object: ", distSense1.getDistance(INCH));
+        while(0.7 < teleopTimer2.seconds() && teleopTimer2.seconds() < 0.8) {
+            lift1.setPower(-1);
+            lift2.setPower(-1);
+        }
+
+        while(0.87 < teleopTimer2.seconds() && teleopTimer2.seconds() < 1.5) {
+            pivot1.setPosition(1);
+            pivotReadyToDrop = 0;
+        }
     }
+    public void IntakeRun() {
+        ElapsedTime teleopTimer3 = new ElapsedTime();
+        teleopTimer3.reset();
+        while(teleopTimer3.seconds() < 0.5) {
+            stopper.setPosition(.9);
+        }
+        while(1 < teleopTimer3.seconds() && teleopTimer3.seconds() < 1.4) {
+            intake.setPower(1);
+        }
+        intakeOn = 1;
+    }
+    */
+
 }
