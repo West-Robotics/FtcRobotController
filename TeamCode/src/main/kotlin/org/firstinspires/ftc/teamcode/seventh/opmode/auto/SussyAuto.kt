@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
+import com.scrapmetal.quackerama.control.Pose2d
+import com.scrapmetal.quackerama.control.Rotation2d
+import com.scrapmetal.quackerama.control.Vector2d
 import com.scrapmetal.quackerama.control.gvf.GG
 import com.sfdev.assembly.state.StateMachineBuilder
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
@@ -49,10 +52,10 @@ class SussyAuto : LinearOpMode() {
         TO_PURPLE,
         DROP_PURPLE,
         TO_YELLOW,
+        RESET_POSE,
         BACKDROP,
         EXTEND,
         SCORE,
-        ADIOS,
         RETRACT,
         LOCK,
         TO_STACKS,
@@ -96,8 +99,16 @@ class SussyAuto : LinearOpMode() {
                     .transitionTimed(0.5)
                     .onExit { gg.currentIndex++ }
                 .state(AutoStates.TO_YELLOW)
-                    .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.BACKDROP)
+                    .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.RESET_POSE)
                     .transitionTimed(3.0)
+                .state(AutoStates.RESET_POSE)
+                    .onEnter { drive.getPoseEstimate().let {
+                        drive.setPoseEstimate(Pose2d(
+                            Vector2d(72.0-9.75-drive.wallDist-6.875, it.position.v),
+                            it.heading
+                        ))
+                    } }
+                    .transitionTimed(1.0)
                 .state(AutoStates.BACKDROP)
                     .onEnter { height = if (stackCount == 5) 1 else 2; state = RobotState.BACKDROP }
                     .transitionTimed(1.0)
@@ -108,25 +119,24 @@ class SussyAuto : LinearOpMode() {
                     .onEnter { state = RobotState.SCORE }
                     .transitionTimed(0.5)
                 .state(AutoStates.RETRACT)
-                    .onEnter { state = RobotState.BACKDROP }
+                    .onEnter { state = RobotState.BACKDROP; gg.currentIndex++ }
                     .transitionTimed(0.5)
                 .state(AutoStates.LOCK)
                     .onEnter { height = 0; state = RobotState.LOCK }
                     .transition({ stackCount == 5 }, AutoStates.TO_STACKS)
                     .transition({ stackCount == 3 }, AutoStates.PARK, { stackCount = 1 } )
                 .state(AutoStates.TO_STACKS)
-                    .onEnter { gg.currentIndex++; intake.setHeight(5) }
-                // .onEnter { gg.currentIndex++; intake.setHeight(stackCount); state = RobotState.INTAKE }
+                    .onEnter { intake.setHeight(stackCount) }
                     .transitionTimed(3.0)
                 .state(AutoStates.INTAKE_STACKS)
                     .onEnter { timer.reset() }
                     .transitionTimed(2.0)
-                    .onExit { gg.currentIndex++ }
+                    .onExit { gg.currentIndex++; timer.reset() }
                 .state(AutoStates.TO_BACKDROP)
-                    .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.BACKDROP)
-                    .transitionTimed(5.0)
-                .state(AutoStates.PARK)
-                    .onEnter { gg.currentIndex++ }
+                    // .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.RESET_POSE)
+                    .transitionTimed(3.0, AutoStates.RESET_POSE)
+                // .state(AutoStates.PARK)
+                //     .onEnter { gg.currentIndex++ }
                 .build()
         intake.setHeight(1)
         Robot.read(intake, output)
@@ -151,8 +161,8 @@ class SussyAuto : LinearOpMode() {
         vision.disableProp()
         drive.setPoseEstimate(paths.initPose)
         gg = GG(
-                kN = 0.4,
-                kA = 0.0001, // was 0.0004
+                kN = 0.8,
+                kA = 0.000005, // was 0.0004
                 paths.purple,
                 paths.yellow,
                 paths.intake,
@@ -163,17 +173,15 @@ class SussyAuto : LinearOpMode() {
 
         val timeSource = TimeSource.Monotonic
         while (opModeIsActive()) {
-            val t1b = timeSource.markNow()
             CONTROL_HUB.clearBulkCache()
             Robot.dtUpdate()
             autoMachine.update()
-            val t1e = timeSource.markNow()
 
-            val t2b = timeSource.markNow()
             // update all subsystems
             Robot.read(intake, output, lift, drive)
-            val t2e = timeSource.markNow()
-            val input = gg.update(drive.getPoseEstimate().position, drive.getVelocity().position)
+            val input = gg.update(drive.getPoseEstimate().position, drive.getVelocity().position).let {
+                Pose2d(it.position*13.3/Robot.voltage, it.heading)
+            }
             drive.update(
                     input = input,
                     correcting = false,
@@ -188,26 +196,35 @@ class SussyAuto : LinearOpMode() {
                     -> { state = RobotState.INTAKE }
                 autoMachine.state as AutoStates == AutoStates.INTAKE_STACKS && timer.seconds() > 0.75
                     -> { intake.setHeight(4); stackCount -= 2}
-                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5
+                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5 && state == RobotState.INTAKE
                     -> { state = RobotState.PRELOCK; timer.reset() }
-                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5
+                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5 && state == RobotState.PRELOCK
                     -> { state = RobotState.LOCK }
             }
-            cycle.update(state, height, drive.wallDist)
-            val t3b = timeSource.markNow()
-            Robot.write(drive, lift, output, intake)
-            val t3e = timeSource.markNow()
+            // cycle.update(state, height, drive.wallDist)
+            cycle.update(RobotState.LOCK, height, drive.wallDist)
+            // when (autoMachine.state as AutoStates) {
+            //     AutoStates.BACKDROP, AutoStates.EXTEND, AutoStates.SCORE
+            //         -> Robot.write(lift, output, intake)
+            //     else -> Robot.write(drive, lift, output, intake)
+            // }
+            // rip
+            when (autoMachine.state as AutoStates) {
+                AutoStates.BACKDROP, AutoStates.EXTEND, AutoStates.SCORE
+                -> Robot.write(output, intake)
+                else -> Robot.write(drive, output, intake)
+            }
 
             telemetry.addData("hz", 1000 / Robot.dt)
-            telemetry.addData("current index", gg.currentIndex)
+            // telemetry.addData("current index", gg.currentIndex)
             telemetry.addData("error", gg.error(drive.getPoseEstimate().position))
             telemetry.addData("onTarget", gg.onTarget(drive.getPoseEstimate().position))
             telemetry.addData("x", drive.getPoseEstimate().position.u)
             telemetry.addData("y", drive.getPoseEstimate().position.v)
-            telemetry.addData("state", autoMachine.state as AutoStates)
-            telemetry.addData("read", (t2e-t2b).toDouble(DurationUnit.MILLISECONDS))
-            telemetry.addData("write", (t3e-t3b).toDouble(DurationUnit.MILLISECONDS))
-            telemetry.addData("wall", drive.wallDist)
+            // telemetry.addData("state", autoMachine.state as AutoStates)
+            // telemetry.addData("read", (t2e-t2b).toDouble(DurationUnit.MILLISECONDS))
+            // telemetry.addData("write", (t3e-t3b).toDouble(DurationUnit.MILLISECONDS))
+            // telemetry.addData("wall", drive.wallDist)
             telemetry.update()
         }
     }

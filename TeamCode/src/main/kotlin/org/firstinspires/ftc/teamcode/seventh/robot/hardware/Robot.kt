@@ -8,7 +8,7 @@ import kotlin.time.TimeSource
 
 object Robot {
     lateinit var hardwareMap: HardwareMap
-    var voltage = 13.0
+    var voltage = 13.3
         private set
     /**
      * The time in ms since the last robot read
@@ -17,7 +17,7 @@ object Robot {
         private set
     val timeSource = TimeSource.Monotonic
     var lastTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
-    // private var voltageTimer = ElapsedTime()
+    private var voltageTimer = ElapsedTime()
 
     fun dtUpdate() {
         val currentTime = timeSource.markNow()
@@ -28,10 +28,10 @@ object Robot {
         for (s in subsystems) {
             s.read()
         }
-        // if (voltageTimer.seconds() > 5.0) {
-        //     voltage = hardwareMap.voltageSensor.iterator().next().voltage
-        //     voltageTimer.reset()
-        // }
+        if (voltageTimer.seconds() > 10.0) {
+            voltage = hardwareMap.voltageSensor.iterator().next().voltage
+            voltageTimer.reset()
+        }
     }
 
     fun write(vararg subsystems: Subsystem) {

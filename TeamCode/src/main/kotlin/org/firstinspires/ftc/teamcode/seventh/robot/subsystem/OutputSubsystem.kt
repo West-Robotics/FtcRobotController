@@ -56,7 +56,7 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
 
     override fun read() {
-        if (robotState == RobotState.INTAKE) {
+        if (robotState == RobotState.INTAKE && !Globals.AUTO) {
             leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 14.0
             rightFilled = colorRight.getDistance(DistanceUnit.MM) < 14.0
         }
@@ -74,10 +74,10 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
             RobotState.SPIT     -> OutputState(armAng, 62.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
             RobotState.ALIGN    -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
             RobotState.BACKDROP -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.EXTEND   -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.SCORE    -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SCORE_L  -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_OPEN, FINGER_CLOSE)
-            RobotState.SCORE_R  -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_CLOSE, FINGER_OPEN)
+            RobotState.EXTEND   -> OutputState(armAng, armAng+110.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.SCORE    -> OutputState(armAng, armAng+110.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
+            RobotState.SCORE_L  -> OutputState(armAng, armAng+110.0+pivotOffset, FINGER_OPEN, FINGER_CLOSE)
+            RobotState.SCORE_R  -> OutputState(armAng, armAng+110.0+pivotOffset, FINGER_CLOSE, FINGER_OPEN)
         }
     }
 

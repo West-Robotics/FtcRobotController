@@ -44,7 +44,12 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         // TODO: convert to inches
         wallLeft = distLeft.getRawVoltage()
         wallRight = distRight.getRawVoltage()
-        wallDist = ((4.83055/wallLeft + 0.270722) + (5.18763/wallRight + 0.0107079))/2
+        // if left voltage is way off, just ignore it
+        wallDist = if ((wallLeft - wallRight).absoluteValue < 0.2) {
+            ( (5.20673/wallLeft + 0.0355149) + (5.18763/wallRight + 0.0107079) ) / 2
+        } else {
+            (5.18763/wallRight + 0.0107079)
+        }
         // old iffy regression: 4.6613/wallRight + 0.579777
     }
 

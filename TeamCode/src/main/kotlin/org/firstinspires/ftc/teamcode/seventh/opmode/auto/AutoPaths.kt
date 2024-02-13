@@ -39,25 +39,25 @@ class AutoPaths(
                 prop == PropPosition.RIGHT && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(8.0, 36.0), Rotation2d(toRadians(0.0)))
                 else -> Pose2d()
     }
-    val stackPose = when {
-        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+7.0, -38.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+7.0, 38.0), Rotation2d(toRadians(0.0)))
-        else -> Pose2d()
-    }
-    val backdropPose = when {
-        side == Side.RED -> Pose2d(Vector2d(52.0,-38.0+0.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE -> Pose2d(Vector2d(52.0,38.0-0.0), Rotation2d(toRadians(0.0)))
-        else -> Pose2d()
-    }
     val yellowPose = when {
-        side == Side.RED && prop == PropPosition.LEFT -> Pose2d(Vector2d(47.0, -31.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(47.0, -37.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && prop == PropPosition.RIGHT -> Pose2d(Vector2d(47.0, -41.5), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(47.0, 41.5), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(47.0, 37.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.RIGHT -> Pose2d(Vector2d(47.0, 31.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && prop == PropPosition.LEFT -> Pose2d(Vector2d(50.0, -31.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(50.0, -37.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && prop == PropPosition.RIGHT -> Pose2d(Vector2d(50.0, -41.5), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(50.0, 41.5), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(50.0, 37.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.RIGHT -> Pose2d(Vector2d(50.0, 31.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     } + if (yellowSide == YellowSide.RIGHT) Pose2d(Vector2d(0.0, -3.0), Rotation2d()) else Pose2d()
+    val backdropPose = when {
+        side == Side.RED -> Pose2d(Vector2d(50.0,-38.0+0.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE -> Pose2d(Vector2d(50.0,38.0-0.0), Rotation2d(toRadians(0.0)))
+        else -> Pose2d()
+    }
+    val stackPose = when {
+        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+8.5, -36.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+botOffset+8.5, 36.0), Rotation2d(toRadians(0.0)))
+        else -> Pose2d()
+    }
     val parkPose = when {
         side == Side.RED && park == Park.INNER -> Pose2d(Vector2d(72.0-12.0-botOffset-5.0, -8.0))
         side == Side.BLUE && park == Park.INNER -> Pose2d(Vector2d(72.0-12.0-botOffset-5.0, 8.0))
@@ -65,17 +65,6 @@ class AutoPaths(
     }
 
     // === PATHS ===
-    val outOfTheWay = path {
-        line {
-            label("start to out")
-            start(initPose.position)
-            end(initPose.position + Vector2d(7.0, 0.0))
-            constraints {
-                decelDist(10.0)
-                heading(propPose.heading.polarAngle)
-            }
-        }
-    }
     val purple = path {
         if (prop == PropPosition.MIDDLE || (prop == PropPosition.RIGHT && side == Side.RED) || (prop == PropPosition.LEFT && side == Side.BLUE)) {
             line {
@@ -123,7 +112,7 @@ class AutoPaths(
             start(propPose.position)
             end(yellowPose.position)
             constraints {
-                decelDist(16.0)
+                decelDist(24.0)
                 heading(toRadians(0.0))
             }
         }
@@ -134,7 +123,7 @@ class AutoPaths(
             start(stackPose.position)
             end(backdropPose.position)
             constraints {
-                decelDist(16.0)
+                decelDist(32.0)
                 heading(toRadians(0.0))
             }
         }
@@ -145,7 +134,7 @@ class AutoPaths(
             start(backdropPose.position)
             end(stackPose.position)
             constraints {
-                decelDist(24.0)
+                decelDist(32.0)
                 heading(toRadians(0.0))
             }
         }

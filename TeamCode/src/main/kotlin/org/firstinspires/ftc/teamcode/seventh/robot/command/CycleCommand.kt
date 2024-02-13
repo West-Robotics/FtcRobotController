@@ -26,11 +26,12 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
     // i should change that) of each subsystem not actually cause any hardware change
     fun update(s: RobotState, h: Int, x: Double) {
         val extension = x.coerceIn(0.0, 6.4) + 4.2
+        // val extension = x.coerceIn(0.0, 6.4) + 4.2
         // only update states on transitions
         if (s != robotState) {
             lastState = robotState
             robotState = s
-            if ((s == LOCK && robotState == BACKDROP) || (s == BACKDROP && robotState == LOCK)) {
+            if (!(s == LOCK && robotState == BACKDROP) && !(s == BACKDROP && robotState == LOCK)) {
                 armMP = AsymTrapezoidMP(
                     start = out.curArmAng,
                     end = when (s) {
@@ -41,7 +42,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
                         else -> -123.0
                     },
                     accel = 6000.0,
-                    decel = -1200.0, // old: -1400.0
+                    decel = -1000.0, // old: -1400.0
                     v_max = 500.0
                 )
                 timer = ElapsedTime()
