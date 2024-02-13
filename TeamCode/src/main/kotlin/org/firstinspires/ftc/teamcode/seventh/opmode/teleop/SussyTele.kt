@@ -173,7 +173,7 @@ class SussyTele : LinearOpMode() {
                 drive.update(
                         Pose2d(
                             Vector2d(primary.leftY, -primary.leftX),
-                            Rotation2d(if (it) 0.0 else -primary.rightX.pow(2)),
+                            Rotation2d(if (it) 0.0 else -primary.rightX),
                         ),
                         correcting = false,
                         fieldOriented = false,

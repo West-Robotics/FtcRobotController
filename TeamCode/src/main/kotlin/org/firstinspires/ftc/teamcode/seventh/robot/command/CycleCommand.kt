@@ -36,7 +36,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
                     start = out.curArmAng,
                     end = when (s) {
                         EXTEND, SCORE, SCORE_L, SCORE_R
-                            -> toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120
+                            -> if (h != 0) toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120 else -120.5
                         LOCK, BACKDROP -> -120.5
                         INTAKE, PRELOCK, SPIT -> -127.0
                         else -> -123.0

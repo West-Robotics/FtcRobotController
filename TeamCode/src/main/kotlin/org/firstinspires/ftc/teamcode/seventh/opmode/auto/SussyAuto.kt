@@ -104,7 +104,7 @@ class SussyAuto : LinearOpMode() {
                 .state(AutoStates.RESET_POSE)
                     .onEnter { drive.getPoseEstimate().let {
                         drive.setPoseEstimate(Pose2d(
-                            Vector2d(72.0-9.75-drive.wallDist-6.875, it.position.v),
+                            Vector2d(72.0-9.5-drive.wallDist-4.875, it.position.v),
                             it.heading
                         ))
                     } }
@@ -117,7 +117,7 @@ class SussyAuto : LinearOpMode() {
                     .transitionTimed(0.5)
                 .state(AutoStates.SCORE)
                     .onEnter { state = RobotState.SCORE }
-                    .transitionTimed(0.5)
+                    .transitionTimed(1.0)
                 .state(AutoStates.RETRACT)
                     .onEnter { state = RobotState.BACKDROP; gg.currentIndex++ }
                     .transitionTimed(0.5)
@@ -135,8 +135,7 @@ class SussyAuto : LinearOpMode() {
                 .state(AutoStates.TO_BACKDROP)
                     // .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.RESET_POSE)
                     .transitionTimed(3.0, AutoStates.RESET_POSE)
-                // .state(AutoStates.PARK)
-                //     .onEnter { gg.currentIndex++ }
+                .state(AutoStates.PARK)
                 .build()
         intake.setHeight(1)
         Robot.read(intake, output)
@@ -150,7 +149,7 @@ class SussyAuto : LinearOpMode() {
             telemetry.update()
         }
         val paths = AutoPaths(
-                Globals.Side.RED,
+                Globals.Side.BLUE,
                 Globals.Start.CLOSE,
                 Globals.Lane.LANE_2,
                 Globals.YellowSide.LEFT,
@@ -162,7 +161,7 @@ class SussyAuto : LinearOpMode() {
         drive.setPoseEstimate(paths.initPose)
         gg = GG(
                 kN = 0.8,
-                kA = 0.000005, // was 0.0004
+                kA = 0.000010, // was 0.0004
                 paths.purple,
                 paths.yellow,
                 paths.intake,
@@ -201,19 +200,19 @@ class SussyAuto : LinearOpMode() {
                 autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5 && state == RobotState.PRELOCK
                     -> { state = RobotState.LOCK }
             }
-            // cycle.update(state, height, drive.wallDist)
-            cycle.update(RobotState.LOCK, height, drive.wallDist)
-            // when (autoMachine.state as AutoStates) {
-            //     AutoStates.BACKDROP, AutoStates.EXTEND, AutoStates.SCORE
-            //         -> Robot.write(lift, output, intake)
-            //     else -> Robot.write(drive, lift, output, intake)
-            // }
-            // rip
+            cycle.update(state, height, drive.wallDist)
+            /// cycle.update(RobotState.LOCK, height, drive.wallDist)
             when (autoMachine.state as AutoStates) {
                 AutoStates.BACKDROP, AutoStates.EXTEND, AutoStates.SCORE
-                -> Robot.write(output, intake)
-                else -> Robot.write(drive, output, intake)
+                    -> Robot.write(lift, output, intake)
+                else -> Robot.write(drive, lift, output, intake)
             }
+            // rip
+            // when (autoMachine.state as AutoStates) {
+            //     AutoStates.BACKDROP, AutoStates.EXTEND, AutoStates.SCORE
+            //     -> Robot.write(output, intake)
+            //     else -> Robot.write(drive, output, intake)
+            // }
 
             telemetry.addData("hz", 1000 / Robot.dt)
             // telemetry.addData("current index", gg.currentIndex)
