@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Auto;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,11 +11,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.checkerframework.checker.units.qual.A;
+import org.checkerframework.checker.units.qual.K;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
 public class test extends LinearOpMode{
@@ -52,11 +53,16 @@ public class test extends LinearOpMode{
 
         ElapsedTime timer = new ElapsedTime();
 
-        double Kp = PIDconstants.Kp;
-        double Ki = PIDconstants.Ki;
-        double Kd = PIDconstants.Kd;
+        double Kp = PIDNowConstants.Kp;
+        double Ki = PIDNowConstants.Ki;
+        double Kd = PIDNowConstants.Kd;
 
-        private BHI260IMU imu;
+        double PStraight = PIDNowConstants.PForTurns;
+        double IStraight = PIDNowConstants.IForTurns;
+        double DStraight = PIDNowConstants.DForTurns;
+
+        double Yaw;
+        IMU imu;
         double currentAngle;
         int intakeTicks;
 
@@ -65,6 +71,16 @@ public class test extends LinearOpMode{
         double state;
         double targetAngle;
 
+        double lastAngle = 0;
+        double secondLastAngle = 0;
+        double thirdLastAngle = 0;
+        double fourthLastAngle = 0;
+        double fifthLastAngle = 0;
+        double sixthLastAngle = 0;
+        double seventhLastAngle = 0;
+        double eigthLastAngle = 0;
+        YawPitchRollAngles robotOrientation;
+
         public void runOpMode() throws InterruptedException{
 
             frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -72,7 +88,7 @@ public class test extends LinearOpMode{
             frontRight = hardwareMap.get(DcMotor.class, "frontRight");
             backRight = hardwareMap.get(DcMotor.class, "backRight");
             distanceSensor = hardwareMap.get(DistanceSensor.class,"distSense1");
-            imu = hardwareMap.get(BHI260IMU.class, "imu");
+            imu = hardwareMap.get(IMU.class, "imu");
             lift1 = hardwareMap.get(DcMotor.class,"lift1");
             lift2 = hardwareMap.get(DcMotor.class,"lift2");
             intake = hardwareMap.get(DcMotor.class, "intake");
@@ -88,77 +104,125 @@ public class test extends LinearOpMode{
             drivestart.init(frontLeft,frontRight,backLeft,backRight);
             imuParameters = new IMU.Parameters(
                     new RevHubOrientationOnRobot(
-                            new Orientation(
-                                    AxesReference.INTRINSIC,
-                                    AxesOrder.ZYX,
-                                    AngleUnit.DEGREES,
-                                    90,
-                                    0,
-                                    -90,
-                                    0
-                            )
+                            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.UP
                     )
             );
             imu.initialize(imuParameters);
 
+
             waitForStart();
 
-            runWithEncoder(1,1,0.5,538);
-/*
-            while (opModeIsActive()){
-               state = Math.toRadians(imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.DEGREES).firstAngle);
-               targetAngle = Math.toRadians(-90);
-               double strength = PIDControl(targetAngle,state);
-               righting(strength);
-           }
-           */
+            move(0,0.08);
+            //turnRight(90);
+
+
+
+        }
+        public void move(double straightAngle, double distanceWantedInMeters){
+            dist = distanceSensor.getDistance(DistanceUnit.METER);
+            resetAngles();
+            double leftPower;
+            double rightPower;
+            double erroring = 2;
+            double lasterroring;
+            double angleErroring = 2;
+            double lastAngleErroring ;
+            do {
+                robotOrientation = imu.getRobotYawPitchRollAngles();
+                Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+                dist = distanceSensor.getDistance(DistanceUnit.METER);
+                telemetry.addData("Distance:", dist);
+                double powering= PIDControlForStraight(distanceWantedInMeters,dist);
+                double state = Math.toRadians(Yaw);
+                double targetAng = Math.toRadians(straightAngle);
+                double negTarget = Math.toDegrees(-straightAngle);
+                double pidCorrection = PIDControl(targetAng,state,Kp,Kd,Ki);
+                double negativePIDCorrection = PIDControl(negTarget,state,Kp,Kd,Ki);
+                lastAngleErroring = angleErroring;
+                angleErroring = Math.abs(straightAngle-Yaw);
+                lasterroring = erroring;
+                erroring = Math.abs(distanceWantedInMeters-dist);
+                telemetry.addData("Distance Error", erroring);
+                if (straightAngle-Yaw > straightAngle){
+                    leftPower = powering - pidCorrection;
+                    rightPower = powering + pidCorrection;
+                } else{
+                    leftPower = powering - negativePIDCorrection;
+                    rightPower = powering + negativePIDCorrection;
+                }
+                telemetry.addData("leftpower", leftPower);
+                telemetry.addData("rightpower", rightPower);
+                telemetry.update();
+                frontLeft.setPower(leftPower);
+                backLeft.setPower(leftPower);
+                frontRight.setPower(rightPower);
+                backRight.setPower(rightPower);
+                //sleep(5);
+            } while (opModeIsActive() && ((lasterroring > 0.02 || lastAngleErroring > 2.2) || (erroring > 0.02 || angleErroring > 2.2)));
+            power(0);
+        }
+        public  void turnRight(double targetDegree){
+            robotOrientation = imu.getRobotYawPitchRollAngles();
+            Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+            resetAngles();
+            double lasteror;
+            double erroring = 5;
+            do {
+                secondLastAngle = lastAngle;
+                lastAngle = Yaw;
+                robotOrientation = imu.getRobotYawPitchRollAngles();
+                Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+                state = Math.toRadians(Yaw);
+                double distance = distanceSensor.getDistance(DistanceUnit.CM);
+                telemetry.addData("Current Angle", Yaw);
+                telemetry.addData("Distance:", distance);
+                targetAngle = Math.toRadians(-targetDegree);
+                double strength = PIDControl(targetAngle,state,Kp,Kd,Ki);
+                lasteror = erroring;
+                erroring = Math.abs(-targetDegree-Yaw);
+                telemetry.addData("lasteror",lasteror);
+                telemetry.addData("error for lasteror",erroring);
+                telemetry.update();
+                lefting(strength);
+                sleep(12);
+            }while (opModeIsActive() && (lasteror>0.5 || erroring>0.5));
+            power(0);
+        }
+        public void turnLeft(double targetDegree){
+            robotOrientation = imu.getRobotYawPitchRollAngles();
+            Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+            resetAngles();
+            double lasteror;
+            double error = 5;
+            do {
+                secondLastAngle = lastAngle;
+                lastAngle = Yaw;
+                robotOrientation = imu.getRobotYawPitchRollAngles();
+                Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+                state = Math.toRadians(Yaw);
+                double distance = distanceSensor.getDistance(DistanceUnit.CM);
+                telemetry.addData("Current Angle", Yaw);
+                telemetry.addData("Distance:", distance);
+                telemetry.update();
+                targetAngle = Math.toRadians(targetDegree);
+                double strength = PIDControl(targetAngle,state,PStraight,DStraight,IStraight);
+                lasteror = error;
+                error = Math.abs(targetDegree-Yaw);
+                lefting(strength);
+                sleep(12);
+            } while (opModeIsActive() && (lasteror>0.5 || error>0.5));
+            power(0);
         }
 
+        public void resetAngles(){
+            lastAngle = 0;
+            secondLastAngle = 0;
+        }
         public void pixelate(){
             grabber.setPosition(0.5);
             pivot1.setPosition(0);
             grabber.setPosition(1);
-        }
-
-        public void changeAngle(double targetAng, int OneToGreaterTwoToLess, int negLeftPosRight){
-
-            if (OneToGreaterTwoToLess ==1){
-                do {
-                    state = imu.getRobotOrientation(AxesReference.INTRINSIC,AxesOrder.ZYX,AngleUnit.RADIANS).firstAngle;
-                    double strength = PIDControl(targetAng, state);
-                    if (negLeftPosRight == -1){
-                        lefting(strength);
-                    } else if (negLeftPosRight == 1){
-                        righting(strength);
-                    }
-                } while (opModeIsActive() && targetAng > state);
-            } else if(OneToGreaterTwoToLess ==2){
-                do {
-                    state = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-                    double strength = PIDControl(targetAng, state);
-                    if (negLeftPosRight == -1){
-                        lefting(strength);
-                    } else if(negLeftPosRight == 1){
-                        righting(strength);
-                    }
-                } while (opModeIsActive() && targetAng < state);
-            }
-        }
-
-        public void goToDistance(double targetDist,int OneToGreaterTwoToLess){
-            if (OneToGreaterTwoToLess ==1) {
-                do {
-                    dist = distanceSensor.getDistance(DistanceUnit.CM);
-                    double strength = PIDControlForStraight(targetDist,dist);
-                    power(strength);
-                } while (opModeIsActive() && dist > targetDist);
-            } else if (OneToGreaterTwoToLess ==2) {
-                do {
-                    dist = distanceSensor.getDistance(DistanceUnit.CM);
-                    double strength = PIDControlForStraight(targetDist,dist);
-                    power(strength);
-                } while(opModeIsActive() && dist < targetDist);
-            }
         }
 
         public void releaseIntake(){
@@ -169,17 +233,19 @@ public class test extends LinearOpMode{
             while (opModeIsActive() && intake.isBusy()){
                 idle();
             }
-
+            intake.setPower(0);
         }
 
-        public double PIDControl(double reference, double state){
+        public double PIDControl(double reference, double state,double p, double d, double i){
             double error = angleReset(reference-state);
             telemetry.addData("Error",error);
+            double angle = Math.toDegrees(error);
+            telemetry.addData("Error in Degrees", angle);
             integralSum += error * timer.seconds();
             double derivative = (error - lastError) / (timer.seconds());
             lastError = error;
             timer.reset();
-            double returning = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+            double returning = (error * p) + (derivative * d) + (integralSum * i);
             return returning;
         }
 
@@ -204,28 +270,7 @@ public class test extends LinearOpMode{
             return radians;
         }
 
-        public void moveUntil(DcMotor motor, double distance, double power){
-
-            while (opModeIsActive()){
-                dist = distanceSensor.getDistance(DistanceUnit.CM);
-                if (dist>distance){
-
-                    motor.setPower(power);
-                } else {
-                    motor.setPower(0);
-                }
-                telemetry.addData("distance",dist);
-                telemetry.update();
-            }
-
-        }
-
         public void runWithEncoder(double rightTurns, double leftTurns, double speed, int ticks){
-
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             double LeftTarget = ticks * leftTurns;
             double rightTarget = ticks * rightTurns;
@@ -237,6 +282,11 @@ public class test extends LinearOpMode{
             backLeft.setTargetPosition(leftPos);
             frontRight.setTargetPosition(rightPos);
             backRight.setTargetPosition(rightPos);
+
+            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             power(speed);
 
@@ -259,12 +309,7 @@ public class test extends LinearOpMode{
             frontRight.setPower(strength);
             backRight.setPower(strength);
         }
-        public void righting(double strength){
-            frontLeft.setPower(strength);
-            backLeft.setPower(strength);
-            frontRight.setPower(-strength);
-            backRight.setPower(-strength);
-        }
+
         public void lefting(double strength){
             frontLeft.setPower(-strength);
             backLeft.setPower(-strength);
