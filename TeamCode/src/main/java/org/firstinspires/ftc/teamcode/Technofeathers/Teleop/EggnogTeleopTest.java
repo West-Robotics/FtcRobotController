@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersTestDrive;
@@ -32,14 +34,14 @@ public class EggnogTeleopTest extends OpMode {
 
      */
     public DistanceSensor distSense1;
-
+    //public Telemetry telemetry;
     //private int i = 0;
     //private int j = 0;
     //double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public int intakeOn = 0;
     public int liftTooHigh = 0;
     public int planeLaunched = 0;
-    public byte dylanRan = 0;
+    //public byte dylanRan = 0;
     public byte daveRan = 0;
     public int grabbedPixels = 0;
     public int pivotReadyToDrop = 1;
@@ -51,7 +53,7 @@ public class EggnogTeleopTest extends OpMode {
     public int placeholderH = 1;
     public int placeholderI = 1;
 
-    public Functions functions;
+    public Functions functions = new Functions();
 
 
     public ElapsedTime timer = new ElapsedTime();
@@ -81,19 +83,21 @@ public class EggnogTeleopTest extends OpMode {
         //pivot1.setPosition(1);
 
          */
-        functions.setUp();
+        drive.setupMotors(hardwareMap);
+        functions.setUp(this.hardwareMap,telemetry);
+
     }
 
     @Override
     public void loop() {
         controller1.update();
-        drive.drive(controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
+        drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
 
-        if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y && dylanRan == 0) {
-            drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
-            functions.scoringPosition();
-            dylanRan = 1;
-        }
+       // if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y) {
+          //  drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
+            //functions.scoringPosition();
+            //dylanRan = 1;
+        //}
         /*
         if (lift1CurrentRotation >=4) {
             liftTooHigh = 1;
@@ -117,7 +121,7 @@ public class EggnogTeleopTest extends OpMode {
         }
         else if (controller1.AOnce()){
             functions.intakeStop();
-            dylanRan = 0;
+            //dylanRan = 0;
         }
 
         if (controller1.BOnce()) {
@@ -129,22 +133,21 @@ public class EggnogTeleopTest extends OpMode {
 
         if (controller1.dpadUpOnce()) {
             // grabbing pixels
-            functions.grabberGrab();
+            functions.grabberMove();
         }
 
         if (controller1.dpadDownOnce()) {
             // releasing pixels
-            functions.grabberDrop();
+            functions.grabberMove();
         }
 
         if (controller1.YOnce()) {
-            functions.pivotOut();
-            functions.pivotIn();
+            functions.pivotMove();
             //will run which one is the one available
         }
 
         if (controller1.XOnce()) {
-            functions.stopperDown();
+            functions.pivotMove();
             functions.stopperUp();
         }
 

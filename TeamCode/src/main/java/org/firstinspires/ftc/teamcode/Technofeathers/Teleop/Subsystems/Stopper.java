@@ -9,15 +9,12 @@ public class Stopper {
     public void setUpStopper(HardwareMap hardwareMap) {
         stopper = hardwareMap.get(Servo.class, "stopper");
     }
-    public void down() {
+    public void move() {
         if (!stopperDown) {
             stopper.setPosition(0.9);
             stopperDown = true;
         }
-    }
-
-    public void up() {
-        if (stopperDown) {
+        else{
             stopper.setPosition(0.37);
             stopperDown = false;
         }

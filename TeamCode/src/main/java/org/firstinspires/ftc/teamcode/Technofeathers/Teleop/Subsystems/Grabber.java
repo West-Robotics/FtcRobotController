@@ -17,17 +17,19 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 public class Grabber {
     public Servo grabber;
     public boolean grabbedPixels = false;
-    public void setUpGrabber (HardwareMap hardwareMap){
+
+    public void setUpGrabber(HardwareMap hardwareMap) {
         grabber = hardwareMap.get(Servo.class, "grabber");
     }
-    public void pickUpPixel() {
+
+    public void move() {
         if (!grabbedPixels) {
             grabber.setPosition(0.67);
             grabbedPixels = true;
         }
-    }
-    public void dropPixel() {
-        if (grabbedPixels) {
+        else {
+
+
             grabber.setPosition(1);
             grabbedPixels = false;
         }

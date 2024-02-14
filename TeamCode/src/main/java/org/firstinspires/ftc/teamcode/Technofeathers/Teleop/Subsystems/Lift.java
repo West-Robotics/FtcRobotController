@@ -20,12 +20,12 @@ public class Lift {
     public DcMotor lift2;
     public void setUpLift(HardwareMap hardwareMap) {
         lift1 = hardwareMap.get(DcMotor.class, "lift1");
-        lift1.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift1.setDirection(DcMotorSimple.Direction.REVERSE);
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift1.setZeroPowerBehavior(BRAKE);
 
         lift2 = hardwareMap.get(DcMotor.class, "lift2");
-        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift2.setDirection(DcMotorSimple.Direction.FORWARD);
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift2.setZeroPowerBehavior(BRAKE);
     }

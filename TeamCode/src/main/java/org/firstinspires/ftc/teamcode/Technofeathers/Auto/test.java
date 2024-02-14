@@ -23,6 +23,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class test extends LinearOpMode{
 
         private DistanceSensor distanceSensor;
+        private DistanceSensor rightDistanceSensor;
+        private DistanceSensor leftDistanceSensor;
         double dist;
         Drivestart drivestart = new Drivestart();
 
@@ -88,6 +90,8 @@ public class test extends LinearOpMode{
             frontRight = hardwareMap.get(DcMotor.class, "frontRight");
             backRight = hardwareMap.get(DcMotor.class, "backRight");
             distanceSensor = hardwareMap.get(DistanceSensor.class,"distSense1");
+            leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "distLeft");
+            rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "distRight");
             imu = hardwareMap.get(IMU.class, "imu");
             lift1 = hardwareMap.get(DcMotor.class,"lift1");
             lift2 = hardwareMap.get(DcMotor.class,"lift2");
@@ -113,14 +117,13 @@ public class test extends LinearOpMode{
 
             waitForStart();
 
-            move(0,0.08);
+            move(2,0.1);
             //turnRight(90);
 
 
 
         }
         public void move(double straightAngle, double distanceWantedInMeters){
-            dist = distanceSensor.getDistance(DistanceUnit.METER);
             resetAngles();
             double leftPower;
             double rightPower;
@@ -131,23 +134,24 @@ public class test extends LinearOpMode{
             do {
                 robotOrientation = imu.getRobotYawPitchRollAngles();
                 Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
-                dist = distanceSensor.getDistance(DistanceUnit.METER);
-                telemetry.addData("Distance:", dist);
-                double powering= PIDControlForStraight(distanceWantedInMeters,dist);
                 double state = Math.toRadians(Yaw);
-                double targetAng = Math.toRadians(straightAngle);
-                double negTarget = Math.toDegrees(-straightAngle);
-                double pidCorrection = PIDControl(targetAng,state,Kp,Kd,Ki);
-                double negativePIDCorrection = PIDControl(negTarget,state,Kp,Kd,Ki);
                 lastAngleErroring = angleErroring;
                 angleErroring = Math.abs(straightAngle-Yaw);
+
+                double distance = rightDistanceSensor.getDistance(DistanceUnit.CM);
+                telemetry.addData("Distance:", distance);
+                double powering= PIDControlForStraight(distance,distanceWantedInMeters);
                 lasterroring = erroring;
-                erroring = Math.abs(distanceWantedInMeters-dist);
+                erroring = Math.abs(distance-distanceWantedInMeters);
                 telemetry.addData("Distance Error", erroring);
                 if (straightAngle-Yaw > straightAngle){
+                    double targetAng = Math.toRadians(straightAngle);
+                    double pidCorrection = PIDControl(targetAng,state,Kp,Kd,Ki);
                     leftPower = powering - pidCorrection;
                     rightPower = powering + pidCorrection;
                 } else{
+                    double negTarget = Math.toDegrees(-straightAngle);
+                    double negativePIDCorrection = PIDControl(negTarget,state,Kp,Kd,Ki);
                     leftPower = powering - negativePIDCorrection;
                     rightPower = powering + negativePIDCorrection;
                 }
@@ -215,14 +219,9 @@ public class test extends LinearOpMode{
             power(0);
         }
 
-        public void resetAngles(){
+        public void resetAngles() {
             lastAngle = 0;
             secondLastAngle = 0;
-        }
-        public void pixelate(){
-            grabber.setPosition(0.5);
-            pivot1.setPosition(0);
-            grabber.setPosition(1);
         }
 
         public void releaseIntake(){

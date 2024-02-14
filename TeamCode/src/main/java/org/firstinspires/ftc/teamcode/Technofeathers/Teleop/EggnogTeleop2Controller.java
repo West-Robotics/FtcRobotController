@@ -56,8 +56,8 @@ public class EggnogTeleop2Controller extends OpMode {
         grabber = hardwareMap.get(Servo.class, "grabber");
         lift1 = hardwareMap.get(DcMotor.class,  "lift1");
         lift2 = hardwareMap.get(DcMotor.class, "lift2");
-        lift1.setDirection(DcMotorSimple.Direction.FORWARD);
-        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift1.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift2.setDirection(DcMotorSimple.Direction.FORWARD);
         lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake = hardwareMap.get(DcMotor.class, "intake");

@@ -22,6 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class othertest extends LinearOpMode{
 
     private DistanceSensor distanceSensor;
+    private DistanceSensor rightDistanceSensor;
+    private DistanceSensor leftDistanceSensor;
     double dist;
     Drivestart drivestart = new Drivestart();
 
@@ -74,6 +76,8 @@ public class othertest extends LinearOpMode{
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distSense1");
+        leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "distLeft");
+        rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "distRight");
         imu = hardwareMap.get(IMU.class, "imu");
         lift1 = hardwareMap.get(DcMotor.class,"lift1");
         lift2 = hardwareMap.get(DcMotor.class,"lift2");
@@ -106,8 +110,12 @@ public class othertest extends LinearOpMode{
             Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
             state = Math.toRadians(Yaw);
             double distance = distanceSensor.getDistance(DistanceUnit.CM);
+            double distanceRight = rightDistanceSensor.getDistance(DistanceUnit.CM);
+            double distanceLeft = leftDistanceSensor.getDistance(DistanceUnit.CM);
             telemetry.addData("Current Angle", Yaw);
             telemetry.addData("Distance:", distance);
+            telemetry.addData("Distance Right", distanceRight);
+            telemetry.addData("Distance Left", distanceLeft);
             telemetry.update();
 
         }while (opModeIsActive() );
