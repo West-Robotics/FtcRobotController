@@ -39,10 +39,9 @@ public class EggnogTeleopTest extends OpMode {
     //private int j = 0;
     //double lift1CurrentRotation = lift1.getCurrentPosition()/537.7;
     public int intakeOn = 0;
-    public int liftTooHigh = 0;
     public int planeLaunched = 0;
     //public byte dylanRan = 0;
-    public byte daveRan = 0;
+    //public byte daveRan = 0;
     public int grabbedPixels = 0;
     public int pivotReadyToDrop = 1;
 
@@ -91,8 +90,13 @@ public class EggnogTeleopTest extends OpMode {
     @Override
     public void loop() {
         controller1.update();
-        drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-
+        drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
+        if (functions.liftMaxLimitReached()) {
+            functions.liftStop();
+        }
+        if (functions.liftMinLimitReached()) {
+            functions.liftStop();
+        }
        // if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y) {
           //  drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
             //functions.scoringPosition();
@@ -109,11 +113,19 @@ public class EggnogTeleopTest extends OpMode {
          */
 
         if(controller1.dpadLeftOnce()) {
-            functions.scoringPosition();
+            try {
+                functions.scoringPosition();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         if(controller1.dpadRightOnce()) {
-            functions.pixelDropAndReset();
+            try {
+                functions.pixelDropAndReset();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         if (controller1.AOnce() && intakeOn == 0) {
@@ -153,7 +165,6 @@ public class EggnogTeleopTest extends OpMode {
         }
 
         if (controller1.XOnce()) {
-            functions.pivotMove();
             functions.stopperUp();
         }
 

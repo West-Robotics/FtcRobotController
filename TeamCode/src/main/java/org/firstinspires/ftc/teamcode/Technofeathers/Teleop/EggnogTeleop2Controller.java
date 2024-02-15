@@ -155,18 +155,20 @@ public class EggnogTeleop2Controller extends OpMode {
             lift2.setPower(0);
         }
 
-        if (controller2.right_trigger > 0.9 && planeLaunched == 0) {
+        if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
             airplaneLauncher.setPosition(0.5);
             planeLaunched = 1;
         }
 
-        if(controller2.right_trigger > 0.9 && planeLaunched == 1) {
+        if( controller1.right_trigger > 0.9 && planeLaunched == 1) {
             airplaneLauncher.setPosition(0.9);
             planeLaunched = 0;
         }
-        if(controller2.backOnce()){
+
+        if (controller1.backOnce()){
             pivot1.setPosition(0.25);
         }
+
 
         /*
         i = 0;

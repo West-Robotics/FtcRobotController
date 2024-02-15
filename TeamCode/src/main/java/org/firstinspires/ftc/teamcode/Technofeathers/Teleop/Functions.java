@@ -39,7 +39,7 @@ public class Functions {
     }
 
     //ADVANCED AUTOMATIONS
-    public void scoringPosition() {
+    public void scoringPosition() throws InterruptedException {
         //scoringPositionTimer.reset();
         //telemetry.addData("Time Ran ScoringPosition: ", scoringPositionTimer.seconds());
         /*
@@ -48,24 +48,21 @@ public class Functions {
         }
          */
         grabber.move();
-        if (grabber.getPosition() == 0.67) {
-            lift.goUp();
-        }
+        sleep(500);
+        lift.goUp();
         if (lift.getRotation() > 4) {
             lift.stop();
             pivot1.move();
         }
     }
 
-    public void pixelDropAndReset() {
+    public void pixelDropAndReset() throws InterruptedException {
         //pixelDropAndResetTimer.reset();
         //telemetry.addData("Time Ran PixelDrop + Reset: ", pixelDropAndResetTimer.seconds());
         grabber.move();
-        pivot1.move();
-
-        if (grabber.getPosition() == 1 && pivot1.getPosition() == 1) {
-            lift.goDown();
-        }
+        //pivot1.move();
+        sleep(1000);
+        lift.goDown();
 
         if (lift.getRotation() <= 0.05) {
             lift.stop();
@@ -77,7 +74,7 @@ public class Functions {
         telemetry.addData("Time Ran intakeRunTimer: ", intakeRunTimer.seconds());
         stopper.move();
         telemetry.addData("Stopper Position: ", stopper.getPosition());
-        sleep(500);
+        sleep(750);
         if (0.85 < stopper.getPosition() && stopper.getPosition() < 0.95) {
             intake.rotateForwards();
             telemetry.addData("Stopper Position: ", stopper.getPosition());
@@ -101,6 +98,15 @@ public class Functions {
         }
          */
     }
+
+    public boolean liftMaxLimitReached() {
+        return lift.maxLimitReached();
+    }
+
+    public boolean liftMinLimitReached() {
+        return lift.minLimitReached();
+    }
+
 
     //Manual Controls
     public void launchAirplane() {

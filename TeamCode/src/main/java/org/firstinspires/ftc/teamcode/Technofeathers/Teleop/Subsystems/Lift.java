@@ -47,8 +47,17 @@ public class Lift {
         lift2.setPower(0);
     }
 
-    public boolean limitReached() {
-        if (liftCurrentRotation < 4) {
+    public boolean maxLimitReached() {
+        if (liftCurrentRotation >= 4) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean minLimitReached() {
+        if (liftCurrentRotation <= 0.05) {
             return true;
         }
         else {
