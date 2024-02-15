@@ -123,7 +123,8 @@ public class EggnogTeleopTest extends OpMode {
         if(controller1.dpadRightOnce()) {
             try {
                 functions.pixelDropAndReset();
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -131,13 +132,19 @@ public class EggnogTeleopTest extends OpMode {
         if (controller1.AOnce() && intakeOn == 0) {
             try {
                 functions.intakeRun();
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
             intakeOn = 1;
         }
         else if (controller1.AOnce() && intakeOn == 1){
-            functions.intakeStop();
+            try {
+                functions.intakeStop();
+            }
+            catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             intakeOn = 0;
             //dylanRan = 0;
         }
@@ -146,7 +153,11 @@ public class EggnogTeleopTest extends OpMode {
             functions.intakePushOut();
         }
         else if (controller1.BOnce()){
-            functions.intakeStop();
+            try {
+                functions.intakeStop();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         if (controller1.dpadUpOnce()) {

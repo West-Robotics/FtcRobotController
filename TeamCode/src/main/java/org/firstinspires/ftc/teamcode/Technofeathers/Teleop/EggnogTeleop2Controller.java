@@ -76,8 +76,22 @@ public class EggnogTeleop2Controller extends OpMode {
     public void loop() {
         controller1.update();
         controller2.update();
-        drive.drive(controller1.left_stick_x, controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
+        drive.drive(controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
+        if (-1 <= controller2.left_stick_y && controller2.left_stick_y <= 1) {
+            lift1.setPower(controller2.left_stick_y);
+            lift2.setPower(controller2.left_stick_y);
+        }
+        else if (controller2.left_stick_x < -1){
+            lift1.setPower(-1);
+            lift2.setPower(-1);
+        }
+        else if (1 < controller2.left_stick_x) {
+            lift1.setPower(1);
+            lift2.setPower(1);
+        }
 
+        lift1.setPower(1/Math.max(controller2.left_stick_y, 1));
+        lift2.setPower(controller2.left_stick_y);
         if (controller1.left_stick_x == 0 && controller1.left_stick_y == 0 && controller1.right_stick_x == 0) {
             drive.drive(0,0,0);
         }
@@ -144,6 +158,7 @@ public class EggnogTeleop2Controller extends OpMode {
         }
 
         //lift
+        /*
         if (controller2.leftBumper() && liftTooHigh == 0) {
             lift1.setPower(1);
             lift2.setPower(1);
@@ -155,12 +170,14 @@ public class EggnogTeleop2Controller extends OpMode {
             lift2.setPower(0);
         }
 
+         */
+
         if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
             airplaneLauncher.setPosition(0.5);
             planeLaunched = 1;
         }
 
-        if( controller1.right_trigger > 0.9 && planeLaunched == 1) {
+        if(controller1.right_trigger > 0.9 && planeLaunched == 1) {
             airplaneLauncher.setPosition(0.9);
             planeLaunched = 0;
         }

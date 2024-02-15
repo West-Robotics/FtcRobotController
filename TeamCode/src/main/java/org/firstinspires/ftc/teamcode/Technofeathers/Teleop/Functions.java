@@ -70,26 +70,40 @@ public class Functions {
     }
 
     public void intakeRun() throws InterruptedException {
-        //intakeRunTimer.reset();
-        telemetry.addData("Time Ran intakeRunTimer: ", intakeRunTimer.seconds());
-        stopper.move();
-        telemetry.addData("Stopper Position: ", stopper.getPosition());
-        sleep(750);
-        if (0.85 < stopper.getPosition() && stopper.getPosition() < 0.95) {
-            intake.rotateForwards();
-            telemetry.addData("Stopper Position: ", stopper.getPosition());
+        lift.goUp();
+        sleep(500);
+        if (!pivot1.pivotReadyToDrop) {
+            pivot1.move();
         }
+        lift.goDown();
+        if (!stopper.stopperDown) {
+            stopper.move();
+        }
+        sleep(750);
+        intake.rotateForwards();
     }
 
     public void intakePushOut() {
         intake.rotateBackwards();
     }
 
-    public void intakeStop() {
+    public void intakeStop() throws InterruptedException {
         //intakeStopTimer.reset();
         telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
-        stopper.move();
+        if (!stopper.stopperDown) {
+            stopper.move();
+        }
         intake.off();
+        lift.goUp();
+        wait(250);
+        if (pivot1.pivotReadyToDrop) {
+            pivot1.move();
+        }
+        if (grabber.grabbedPixels) {
+            grabber.move();
+        }
+        wait(500);
+        lift.goDown();
         /*
         if (intakeStopTimer.seconds() >= 5) {
             dylanRan = 0;
