@@ -57,7 +57,7 @@ class GVFTestWave : LinearOpMode() {
                     decelDist(24.0)
                     heading(toRadians(0.0)) }}
         }
-        val gg = GG(0.4, 0.0, path)
+        val gg = GG(0.4, 0.0, 1.0, path)
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {

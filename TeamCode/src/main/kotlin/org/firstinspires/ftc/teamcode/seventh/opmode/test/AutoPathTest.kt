@@ -64,7 +64,7 @@ class AutoPathTest : LinearOpMode() {
                 constraints {
                     decelDist(18.0)
                     heading(toRadians(0.0)) }}}
-        val gg = GG(0.6, 0.000008, yellow, purple, collect, score)
+        val gg = GG(0.6, 0.000008, 1.0, yellow, purple, collect, score)
         drive.setPoseEstimate(Pose2d(yellow.paths[0].startPose.position, Rotation2d(toRadians(90.0))))
         val gamepad = GamepadEx(gamepad1)
 

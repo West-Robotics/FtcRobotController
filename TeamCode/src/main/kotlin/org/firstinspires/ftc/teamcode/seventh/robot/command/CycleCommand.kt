@@ -33,7 +33,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
             robotState = s
             if (!(s == LOCK && robotState == BACKDROP) && !(s == BACKDROP && robotState == LOCK)) {
                 armMP = AsymTrapezoidMP(
-                    start = out.curArmAng,
+                    start = out.outState.arm,
                     end = when (s) {
                         EXTEND, SCORE, SCORE_L, SCORE_R
                             -> if (h != 0) toDegrees(asin(extension * sqrt(3.0) / (2 * 9.25))) - 120 else -120.5

@@ -38,7 +38,7 @@ class GVFTestCurve : LinearOpMode() {
                 }
             }
         }
-        val gg = GG(0.5, 0.0, path)
+        val gg = GG(0.5, 0.0, 1.0, path)
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {

@@ -32,8 +32,8 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
             p = 0.55,
             d = 0.0,
             f = { _: Double -> 0.0 },
-            minPowerToMove = 0.2,
-            deadzone = 0.04,
+            minPowerToMove = 0.1,
+            deadzone = 0.01,
             maxMagnitude = 1.0,
             continuous = true,
     )
@@ -66,8 +66,8 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
             input.position.unit*Utils.correctWithMinPower(
                 u0 = input.position.mag,
                 // magic regression for measured minimum powers
-                uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.3,
-                deadzone = 0.05,
+                uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
+                deadzone = 0.01,
                 max = 1.0
             ),
             if (pid) {

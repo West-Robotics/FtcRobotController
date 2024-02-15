@@ -24,43 +24,54 @@ class AutoPaths(
 ) {
     // === BASE DEFINITIONS ===
     // position is middle of bot
-    val botOffset = 11.5
+    val botOffset = 9.5
+    val sideMult = if (side == Side.RED) 1 else -1
     val initPose = when {
         side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(12.0+4.0, -72.0+botOffset), Rotation2d(toRadians(90.0)))// was 3.5 offset
         side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(12.0+4.0, 72.0-botOffset), Rotation2d(toRadians(-90.0)))
+        side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-36.0-4.0, -72.0+botOffset), Rotation2d(toRadians(90.0)))
+        side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-36.0-4.0, 72.0-botOffset), Rotation2d(toRadians(-90.0)))
         else -> Pose2d()
     }
     val propPose = when {
-                prop == PropPosition.LEFT && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(8.0, -36.0), Rotation2d(toRadians(0.0)))
-                prop == PropPosition.MIDDLE && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(20.0, -33.0), Rotation2d(toRadians(0.0)))
-                prop == PropPosition.RIGHT && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(30.0, -34.0), Rotation2d(toRadians(0.0)))
-                prop == PropPosition.LEFT && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(30.0, 34.0), Rotation2d(toRadians(0.0)))
-                prop == PropPosition.MIDDLE && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(20.0, 33.0), Rotation2d(toRadians(0.0)))
-                prop == PropPosition.RIGHT && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(8.0, 36.0), Rotation2d(toRadians(0.0)))
-                else -> Pose2d()
+        prop == PropPosition.LEFT && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(10.0, -36.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.MIDDLE && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(20.0, -32.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.RIGHT && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(30.0, -34.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.LEFT && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(30.0, 34.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.MIDDLE && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(20.0, 32.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.RIGHT && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(10.0, 36.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.LEFT && side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-55.0, -14.0), Rotation2d(toRadians(90.0)))
+        prop == PropPosition.MIDDLE && side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-48.0, -14.0), Rotation2d(toRadians(90.0)))
+        prop == PropPosition.RIGHT && side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-30.0, -36.0), Rotation2d(toRadians(180.0)))
+        prop == PropPosition.LEFT && side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(30.0, 36.0), Rotation2d(toRadians(180.0)))
+        prop == PropPosition.MIDDLE && side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-48.0, -14.0), Rotation2d(toRadians(-90.0)))
+        prop == PropPosition.RIGHT && side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-55.0, -14.0), Rotation2d(toRadians(-90.0)))
+        else -> Pose2d()
     }
     val yellowPose = when {
-        side == Side.RED && prop == PropPosition.LEFT -> Pose2d(Vector2d(51.0, -31.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(51.0, -37.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && prop == PropPosition.RIGHT -> Pose2d(Vector2d(51.0, -41.5), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(51.0, 41.5), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(51.0, 37.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.RIGHT -> Pose2d(Vector2d(51.0, 31.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, -32.5), Rotation2d(toRadians(0.0)))
+        side == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, -37.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, -41.5), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, 41.5), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, 37.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, 32.5), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     } + if (yellowSide == YellowSide.RIGHT) Pose2d(Vector2d(0.0, -3.0), Rotation2d()) else Pose2d()
     val backdropPose = when {
-        side == Side.RED -> Pose2d(Vector2d(53.0,-38.0+0.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE -> Pose2d(Vector2d(53.0,38.0-0.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED -> Pose2d(Vector2d(49.0,-36.0+0.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE -> Pose2d(Vector2d(49.0,36.0-0.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val stackPose = when {
-        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+19.7, -36.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+19.7, 36.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+13.0, -36.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+13.0, 36.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && stack == Stack.FAR -> Pose2d(Vector2d(-72.0+13.0, -12.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.FAR -> Pose2d(Vector2d(-72.0+13.0, 12.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val parkPose = when {
-        side == Side.RED && park == Park.INNER -> Pose2d(Vector2d(45.0, -8.0))
-        side == Side.BLUE && park == Park.INNER -> Pose2d(Vector2d(45.0, 8.0))
+        side == Side.RED && park == Park.INNER -> Pose2d(Vector2d(45.0, -10.0))
+        side == Side.BLUE && park == Park.INNER -> Pose2d(Vector2d(45.0, 10.0))
         else -> Pose2d()
     }
 
@@ -72,7 +83,7 @@ class AutoPaths(
                 start(initPose.position + Vector2d(7.0, 0.0))
                 end(propPose.position)
                 constraints {
-                    decelDist(16.0)
+                    decelDist(12.0)
                     heading(propPose.heading.polarAngle)
                 }
             }
@@ -86,7 +97,7 @@ class AutoPaths(
                     pos(propPose.position); ang(toRadians(180.0)); v(15.0)
                 }
                 constraints {
-                    decelDist(16.0)
+                    decelDist(12.0)
                     heading(propPose.heading.polarAngle)
                 }
             }
@@ -100,42 +111,131 @@ class AutoPaths(
                     pos(propPose.position); ang(toRadians(180.0)); v(15.0)
                 }
                 constraints {
-                    decelDist(16.0)
+                    decelDist(12.0)
                     heading(propPose.heading.polarAngle)
                 }
             }
         }
     }
-    val yellow = path {
+    val plusOne = path {
         line {
-            label("purple to yellow")
-            start(propPose.position)
-            end(yellowPose.position)
+            label("purple to stack (far side)")
+            start(purple.paths[0].endPose.position)
+            end(stackPose.position + Vector2d(0.0, if (yellowSide == YellowSide.LEFT) 2.0 else -2.0))
             constraints {
-                decelDist(32.0)
-                heading(toRadians(0.0))
+                decelDist(16.0)
+                heading(stackPose.heading.polarAngle)
+            }
+        }
+    }
+    val yellow = path {
+        if (start == Start.CLOSE) {
+            line {
+                label("purple to yellow")
+                start(propPose.position)
+                end(yellowPose.position)
+                constraints {
+                    decelDist(16.0)
+                    heading(toRadians(0.0))
+                }
+            }
+        } else {
+            line {
+                label("stack to backdrop join")
+                start(stackPose.position)
+                end(backdropJoin.position)
+                constraints { heading(toRadians(0.0)) }
+            }
+            hermite {
+                label("join to backdrop")
+                start {
+                    pos(backdropJoin.position)
+                    ang(toRadians(0.0))
+                    v(40.0)
+                }
+                end {
+                    pos(yellowPose.position)
+                    ang(toRadians(60.0))
+                    v(40.0)
+                }
+                constraints {
+                    decelDist(18.0)
+                    heading(toRadians(0.0))
+                }
             }
         }
     }
     val score = path {
-        line {
-            label("stacks to backdrop")
-            start(stackPose.position)
-            end(backdropPose.position)
-            constraints {
-                decelDist(32.0)
-                heading(toRadians(0.0))
+        if (lane == Lane.LANE_2) {
+            line {
+                label("stacks to backdrop")
+                start(stackPose.position)
+                end(backdropPose.position)
+                constraints {
+                    decelDist(18.0)
+                    heading(toRadians(0.0))
+                }
+            }
+        } else if (lane == Lane.LANE_3 && side == Side.BLUE) {
+            line {
+                label("stack to backdrop join")
+                start(stackPose.position)
+                end(backdropJoin.position)
+                constraints { heading(toRadians(0.0)) }
+            }
+            hermite {
+                label("join to backdrop")
+                start {
+                    pos(backdropJoin.position)
+                    ang(toRadians(0.0))
+                    v(40.0)
+                }
+                end {
+                    pos(backdropPose.position)
+                    ang(toRadians(60.0))
+                    v(40.0)
+                }
+                constraints {
+                    decelDist(18.0)
+                    heading(toRadians(0.0))
+                }
             }
         }
     }
     val intake = path {
-        line {
-            label("backdrop to join")
-            start(backdropPose.position)
-            end(stackPose.position)
-            constraints {
-                decelDist(32.0)
-                heading(toRadians(0.0))
+        if (lane == Lane.LANE_2) {
+            line {
+                label("backdrop to join")
+                start(backdropPose.position)
+                end(stackPose.position)
+                constraints {
+                    decelDist(32.0)
+                    heading(toRadians(0.0))
+                }
+            }
+        } else if (lane == Lane.LANE_3 && side == Side.BLUE) {
+            hermite {
+                label("backdrop to join")
+                start {
+                    pos(backdropPose.position)
+                    ang(toRadians(-120.0))
+                    v(40.0)
+                }
+                end {
+                    pos(backdropJoin.position)
+                    ang(toRadians(180.0))
+                    v(40.0)
+                }
+                constraints { heading(toRadians(0.0)) }
+            }
+            line {
+                label("backdrop join to stack")
+                start(backdropJoin.position)
+                end(stackPose.position)
+                constraints {
+                    decelDist(32.0)
+                    heading(toRadians(0.0))
+                }
             }
         }
     }
@@ -145,7 +245,7 @@ class AutoPaths(
             start(backdropPose.position)
             end(parkPose.position)
             constraints {
-                decelDist(16.0)
+                decelDist(12.0)
                 heading(toRadians(0.0))
             }
         }
@@ -249,53 +349,5 @@ class AutoPaths(
     //         heading(toRadians(0.0))
     //     }
     // }
-    // hermite {
-    //     label("backdrop to join")
-    //     start {
-    //         pos(backdropPose.position)
-    //         ang(toRadians(180.0))
-    //         v(40.0)
-    //     }
-    //     end {
-    //         pos(backdropJoin.position)
-    //         ang(toRadians(180.0))
-    //         v(40.0)
-    //     }
-    //     constraints { heading(toRadians(0.0)) }
-    // }
-    // line {
-    //     label("backdrop join to audience join")
-    //     start(backdropJoin.position)
-    //     end(audienceJoin.position)
-    //     constraints { heading(toRadians(0.0)) }
-    // }
-    // hermite {
-    //     label("audience join to stack")
-    //     start {
-    //         pos(audienceJoin.position)
-    //         ang(180.0)
-    //         v(40.0)
-    //     }
-    //     end {
-    //         pos(stackPose.position)
-    //         ang(180.0)
-    //         v(40.0)
-    //     }
-    //     constraints {
-    //         decelDist(12.0)
-    //         heading(toRadians(0.0))
-    //     }
-    // }
     // for far side white +1
-    val plusOne = path {
-        line {
-            label("purple to stack (far side)")
-            start(purple.paths[0].endPose.position)
-            end(stackPose.position)
-            constraints {
-                decelDist(12.0)
-                heading(stackPose.heading.polarAngle)
-            }
-        }
-    }
 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static java.lang.Math.toRadians;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -23,6 +25,7 @@ public class LocalizationTest extends LinearOpMode {
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.startIMUThread(this);
+        drive.setPoseEstimate(new Pose2d(16.0, 62.5, toRadians(-90)));
         waitForStart();
         double loopTime = 0.0;
         while (!isStopRequested()) {

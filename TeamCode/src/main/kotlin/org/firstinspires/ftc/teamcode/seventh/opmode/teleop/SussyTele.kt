@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
 import kotlin.math.pow
+import kotlin.math.sign
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
@@ -173,7 +174,9 @@ class SussyTele : LinearOpMode() {
                 drive.update(
                         Pose2d(
                             Vector2d(primary.leftY, -primary.leftX),
-                            Rotation2d(if (it) 0.0 else -primary.rightX),
+                            Rotation2d(if (it) 0.0 else (-primary.rightX).let {
+                                input -> input.sign*input.pow(2)
+                            }),
                         ),
                         correcting = false,
                         fieldOriented = false,

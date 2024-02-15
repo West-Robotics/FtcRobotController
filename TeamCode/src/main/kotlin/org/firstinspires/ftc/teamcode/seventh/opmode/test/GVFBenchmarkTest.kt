@@ -11,6 +11,7 @@ import com.scrapmetal.quackerama.control.gvf.GG
 import com.scrapmetal.quackerama.control.path.path
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
+import java.lang.Math.toDegrees
 import java.lang.Math.toRadians
 import kotlin.time.DurationUnit
 
@@ -19,11 +20,9 @@ class GVFBenchmarkTest : LinearOpMode() {
     override fun runOpMode() {
         Robot.hardwareMap = hardwareMap
         val drive = DriveSubsystem(hardwareMap)
-        val line = path {
-            line {
-                label("line")
+        val line = path { line { label("line")
                 start(0.0, 0.0)
-                end(40.0, 0.0)
+                end(80.0, 0.0)
                 constraints {
                     decelDist(12.0)
                     heading(toRadians(0.0)) }}}
@@ -35,25 +34,37 @@ class GVFBenchmarkTest : LinearOpMode() {
                 constraints {
                     decelDist(12.0)
                     heading(toRadians(0.0)) }}}
-        val gg = GG(0.6, 0.0004, line)
+        val gg = GG(0.9, 0.007, 1.0, line)
         val gamepad = GamepadEx(gamepad1)
 
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         for (hub in allHubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
         }
-
-        waitForStart()
-        while (opModeIsActive() && !isStopRequested) {
+        drive.startIMUThread(this)
+        while (opModeInInit()) {
+            telemetry.addData("dt", Robot.dt)
+            telemetry.addData("x", drive.getPoseEstimate().position.u)
+            telemetry.addData("y", drive.getPoseEstimate().position.v)
+            telemetry.addData("current index", gg.currentIndex)
+            telemetry.addData("x", gg.update(drive.getPoseEstimate().position, drive.getVelocity().position).position.u)
+            telemetry.addData("y", gg.update(drive.getPoseEstimate().position, drive.getVelocity().position).position.v)
+            telemetry.update()
+        }
+        while (opModeIsActive()) {
             for (hub in allHubs) {
                 hub.clearBulkCache()
             }
+            Robot.dtUpdate()
             Robot.read(drive)
             gamepad.readButtons()
-            drive.update(input = gg.update(drive.getPoseEstimate().position, drive.getVelocity().position),
-                         correcting = false,
-                         fieldOriented = true,
-                         dt = Robot.dt)
+            drive.update(
+                input = gg.update(drive.getPoseEstimate().position, drive.getVelocity().position),
+                correcting = false,
+                fieldOriented = true,
+                dt = Robot.dt,
+                pid = true,
+            )
             if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                 gg.currentIndex++
             } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
@@ -63,7 +74,11 @@ class GVFBenchmarkTest : LinearOpMode() {
             telemetry.addData("dt", Robot.dt)
             telemetry.addData("x", drive.getPoseEstimate().position.u)
             telemetry.addData("y", drive.getPoseEstimate().position.v)
+            telemetry.addData("heading", toDegrees(drive.getPoseEstimate().heading.polarAngle))
             telemetry.addData("current index", gg.currentIndex)
+            telemetry.addData("x power", gg.update(drive.getPoseEstimate().position, drive.getVelocity().position).position.u)
+            telemetry.addData("y power", gg.update(drive.getPoseEstimate().position, drive.getVelocity().position).position.v)
+            telemetry.addData("turn power", toDegrees(gg.update(drive.getPoseEstimate().position, drive.getVelocity().position).heading.polarAngle))
             telemetry.update()
         }
     }

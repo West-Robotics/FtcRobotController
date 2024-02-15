@@ -37,7 +37,7 @@ class Vision(hardwareMap: HardwareMap) {
     init {
         camera.openCameraDeviceAsync( object : OpenCvCamera.AsyncCameraOpenListener {
             override fun onOpened() {
-                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             override fun onError(errorCode: Int) {}

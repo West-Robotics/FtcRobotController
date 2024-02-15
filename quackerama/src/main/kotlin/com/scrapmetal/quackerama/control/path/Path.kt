@@ -131,6 +131,7 @@ class Path(val paths: MutableList<PathSegment>) {
 
     fun current(): PathSegment = paths[currentIndex]
     fun last(): Boolean = currentIndex == paths.size-1
+    fun first(): Boolean = currentIndex == 0
 }
 class Foo {
     val p: Path = path {
