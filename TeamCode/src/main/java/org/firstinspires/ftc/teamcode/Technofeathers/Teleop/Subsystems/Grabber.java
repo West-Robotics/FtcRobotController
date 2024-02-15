@@ -28,10 +28,12 @@ public class Grabber {
             grabbedPixels = true;
         }
         else {
-
-
             grabber.setPosition(1);
             grabbedPixels = false;
         }
     }
+    public double getPosition() {
+        return grabber.getPosition();
+    }
+
 }

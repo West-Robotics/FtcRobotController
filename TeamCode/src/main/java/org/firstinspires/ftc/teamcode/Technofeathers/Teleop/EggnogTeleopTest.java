@@ -116,11 +116,17 @@ public class EggnogTeleopTest extends OpMode {
             functions.pixelDropAndReset();
         }
 
-        if (controller1.AOnce()) {
-            functions.intakeRun();
+        if (controller1.AOnce() && intakeOn == 0) {
+            try {
+                functions.intakeRun();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            intakeOn = 1;
         }
-        else if (controller1.AOnce()){
+        else if (controller1.AOnce() && intakeOn == 1){
             functions.intakeStop();
+            intakeOn = 0;
             //dylanRan = 0;
         }
 

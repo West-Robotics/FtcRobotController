@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 //import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -33,49 +35,52 @@ public class Functions {
         lift.setUpLift(hardwareMap);
         pivot1.setUpPivot(hardwareMap, telemetry);
         stopper.setUpStopper(hardwareMap);
+        this.telemetry = telemetry;
     }
 
     //ADVANCED AUTOMATIONS
     public void scoringPosition() {
-        scoringPositionTimer.reset();
+        //scoringPositionTimer.reset();
+        //telemetry.addData("Time Ran ScoringPosition: ", scoringPositionTimer.seconds());
         /*
         if (0 < controller1.left_stick_y) {
             drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
         }
          */
-        while (scoringPositionTimer.seconds() < 0.5) {
-            grabber.move();
-        }
-        while (0.5 < scoringPositionTimer.seconds() && scoringPositionTimer.seconds() < 1.4 && !lift.limitReached()) {
+        grabber.move();
+        if (grabber.getPosition() == 0.67) {
             lift.goUp();
         }
-        while (1.4 < scoringPositionTimer.seconds() && scoringPositionTimer.seconds() < 2) {
+        if (lift.getRotation() > 4) {
+            lift.stop();
             pivot1.move();
         }
     }
 
     public void pixelDropAndReset() {
-        pixelDropAndResetTimer.reset();
-        while (pixelDropAndResetTimer.seconds() < 0.7) {
-            grabber.move();
-        }
+        //pixelDropAndResetTimer.reset();
+        //telemetry.addData("Time Ran PixelDrop + Reset: ", pixelDropAndResetTimer.seconds());
+        grabber.move();
+        pivot1.move();
 
-        while (0.7 < pixelDropAndResetTimer.seconds() && pixelDropAndResetTimer.seconds() < 0.8) {
+        if (grabber.getPosition() == 1 && pivot1.getPosition() == 1) {
             lift.goDown();
         }
 
-        while (0.87 < pixelDropAndResetTimer.seconds() && pixelDropAndResetTimer.seconds() < 1.5) {
-            pivot1.move();
+        if (lift.getRotation() <= 0.05) {
+            lift.stop();
         }
     }
 
-    public void intakeRun() {
-        intakeRunTimer.reset();
-        while (intakeRunTimer.seconds() < 0.5) {
-            stopper.move();
-        }
-        while (1 < intakeRunTimer.seconds() && intakeRunTimer.seconds() < 1.4) {
+    public void intakeRun() throws InterruptedException {
+        //intakeRunTimer.reset();
+        telemetry.addData("Time Ran intakeRunTimer: ", intakeRunTimer.seconds());
+        stopper.move();
+        telemetry.addData("Stopper Position: ", stopper.getPosition());
+        sleep(500);
+        if (0.85 < stopper.getPosition() && stopper.getPosition() < 0.95) {
             intake.rotateForwards();
+            telemetry.addData("Stopper Position: ", stopper.getPosition());
         }
     }
 
@@ -84,7 +89,8 @@ public class Functions {
     }
 
     public void intakeStop() {
-        intakeStopTimer.reset();
+        //intakeStopTimer.reset();
+        telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
         stopper.move();
         intake.off();
         /*

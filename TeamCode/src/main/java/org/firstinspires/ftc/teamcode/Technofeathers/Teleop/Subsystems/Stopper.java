@@ -19,4 +19,7 @@ public class Stopper {
             stopperDown = false;
         }
     }
+    public double getPosition() {
+        return stopper.getPosition();
+    }
 }

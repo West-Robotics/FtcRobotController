@@ -38,4 +38,7 @@ public class Pivot {
             telemetry.addLine("pivot in");
         }
     }
+    public double getPosition() {
+        return pivot1.getPosition();
+    }
 }
