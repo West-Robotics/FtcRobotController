@@ -113,18 +113,26 @@ public class test extends LinearOpMode{
                     )
             );
             imu.initialize(imuParameters);
-
-
+            double currentVoltage = 12.5;
+            setPIDValues(12.5/currentVoltage);
             waitForStart();
 
-            move(2,0.1);
+            turnRight(90);
             //turnRight(90);
 
 
 
         }
-        public void move(double straightAngle, double distanceWantedInMeters){
+        
+        public void setPIDValues(double voltage){
+            Kp = Kp * voltage;
+            Ki = Ki * voltage;
+            Kd = Kd * voltage;
+        }
+        public void move(double straightAngle, double distanceWantedInMeters, boolean right){
             resetAngles();
+            double distance;
+            double powering;
             double leftPower;
             double rightPower;
             double erroring = 2;
@@ -137,10 +145,13 @@ public class test extends LinearOpMode{
                 double state = Math.toRadians(Yaw);
                 lastAngleErroring = angleErroring;
                 angleErroring = Math.abs(straightAngle-Yaw);
-
-                double distance = rightDistanceSensor.getDistance(DistanceUnit.CM);
+                if (right) {
+                    distance = leftDistanceSensor.getDistance(DistanceUnit.CM);
+                } else {
+                    distance = rightDistanceSensor.getDistance(DistanceUnit.CM);
+                }
                 telemetry.addData("Distance:", distance);
-                double powering= PIDControlForStraight(distance,distanceWantedInMeters);
+                powering= PIDControlForStraight(distance,distanceWantedInMeters);
                 lasterroring = erroring;
                 erroring = Math.abs(distance-distanceWantedInMeters);
                 telemetry.addData("Distance Error", erroring);

@@ -105,7 +105,7 @@ public class EggnogTeleopTest extends OpMode {
         /*
         if (lift1CurrentRotation >=4) {
             liftTooHigh = 1;
-        }
+        }nm,
         else {
             liftTooHigh = 0;
         }
