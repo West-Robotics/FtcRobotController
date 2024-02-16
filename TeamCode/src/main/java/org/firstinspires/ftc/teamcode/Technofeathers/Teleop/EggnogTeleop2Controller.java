@@ -46,6 +46,7 @@ public class EggnogTeleop2Controller extends OpMode {
     public int placeholderI = 1;
 
     public ElapsedTime timer = new ElapsedTime();
+    public Functions functions = new Functions();
 
     @Override
     public void init() {
@@ -89,9 +90,8 @@ public class EggnogTeleop2Controller extends OpMode {
             lift1.setPower(1);
             lift2.setPower(1);
         }
+        telemetry.addData("Controller Left Stick X Power: ", controller2.left_stick_x);
 
-        lift1.setPower(1/Math.max(controller2.left_stick_y, 1));
-        lift2.setPower(controller2.left_stick_y);
         if (controller1.left_stick_x == 0 && controller1.left_stick_y == 0 && controller1.right_stick_x == 0) {
             drive.drive(0,0,0);
         }
@@ -137,12 +137,12 @@ public class EggnogTeleop2Controller extends OpMode {
         }
 
         if (controller2.YOnce() && pivotReadyToDrop == 0) {
-            pivot1.setPosition(0);
-            pivotReadyToDrop = 1;
-        } else if (controller2.YOnce() && pivotReadyToDrop == 1) {
+            functions.pivotMove();
+        } /*else if (controller2.YOnce() && pivotReadyToDrop == 1) {
             pivot1.setPosition(1);
             pivotReadyToDrop = 0;
         }
+        */
 /*
         if (controller2.startOnce() && controller2.B()) {
 

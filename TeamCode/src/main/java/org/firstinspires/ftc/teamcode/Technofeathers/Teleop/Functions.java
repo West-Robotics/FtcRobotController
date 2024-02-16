@@ -48,12 +48,15 @@ public class Functions {
         }
          */
         grabber.move();
+        telemetry.addLine("Grabber moved");
         sleep(500);
         lift.goUp();
-        if (lift.getRotation() > 4) {
-            lift.stop();
-            pivot1.move();
-        }
+        telemetry.addLine("Lift going up");
+        sleep(4000);
+        lift.stop();
+        telemetry.addLine("Lift stopped, pivot will move");
+        pivot1.move();
+        telemetry.addLine("Scoring position achieved");
     }
 
     public void pixelDropAndReset() throws InterruptedException {
@@ -63,24 +66,25 @@ public class Functions {
         //pivot1.move();
         sleep(1000);
         lift.goDown();
-
-        if (lift.getRotation() <= 0.05) {
-            lift.stop();
-        }
+        sleep(1000);
+        lift.stop();
     }
 
     public void intakeRun() throws InterruptedException {
         lift.goUp();
-        sleep(500);
+        sleep(4000);
+        telemetry.addLine("lift Going Up");
         if (!pivot1.pivotReadyToDrop) {
             pivot1.move();
+            telemetry.addLine("Pivot Out");
         }
-        lift.goDown();
-        if (!stopper.stopperDown) {
-            stopper.move();
-        }
-        sleep(750);
+        lift.stop();
+        //will change to lift.go down later
+        telemetry.addLine("lift Going Down");
+        stopper.move();
+        sleep(1000);
         intake.rotateForwards();
+        telemetry.addLine("Intake Started");
     }
 
     public void intakePushOut() {
@@ -89,21 +93,21 @@ public class Functions {
 
     public void intakeStop() throws InterruptedException {
         //intakeStopTimer.reset();
-        telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
-        if (!stopper.stopperDown) {
+        //telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
+        if (stopper.stopperDown) {
             stopper.move();
         }
         intake.off();
-        lift.goUp();
-        wait(250);
+        while (!lift.maxLimitReached()) {
+            lift.goUp();
+        }
+        sleep(4000);
         if (pivot1.pivotReadyToDrop) {
             pivot1.move();
         }
         if (grabber.grabbedPixels) {
             grabber.move();
         }
-        wait(500);
-        lift.goDown();
         /*
         if (intakeStopTimer.seconds() >= 5) {
             dylanRan = 0;
@@ -119,6 +123,10 @@ public class Functions {
 
     public boolean liftMinLimitReached() {
         return lift.minLimitReached();
+    }
+
+    public double liftRotation() {
+        return lift.getLiftCurrentRotation();
     }
 
 

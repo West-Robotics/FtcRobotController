@@ -91,11 +91,14 @@ public class EggnogTeleopTest extends OpMode {
     public void loop() {
         controller1.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
+        telemetry.addData("Lift Current Rotation: ", functions.liftRotation());
         if (functions.liftMaxLimitReached()) {
             functions.liftStop();
+            telemetry.addLine("Lift Max Limit Reached");
         }
         if (functions.liftMinLimitReached()) {
             functions.liftStop();
+            telemetry.addLine("Lift Min Limit Reached");
         }
        // if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y) {
           //  drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
@@ -115,6 +118,7 @@ public class EggnogTeleopTest extends OpMode {
         if(controller1.dpadLeftOnce()) {
             try {
                 functions.scoringPosition();
+                telemetry.addLine("Scoring Position achieved");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

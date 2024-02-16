@@ -21,25 +21,30 @@ public class Lift {
     public double liftCurrentRotation;
     public void setUpLift(HardwareMap hardwareMap) {
         lift1 = hardwareMap.get(DcMotor.class, "lift1");
-        lift1.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift1.setDirection(DcMotorSimple.Direction.FORWARD);
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift1.setZeroPowerBehavior(BRAKE);
 
         lift2 = hardwareMap.get(DcMotor.class, "lift2");
-        lift2.setDirection(DcMotorSimple.Direction.FORWARD);
+        lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift2.setZeroPowerBehavior(BRAKE);
 
-        liftCurrentRotation = lift1.getCurrentPosition()/537.7;
+        liftCurrentRotation = -lift1.getCurrentPosition()/537.7;
     }
     public void goUp() {
-        lift1.setPower(1);
-        lift2.setPower(1);
+        lift1.setPower(0.25);
+        lift2.setPower(0.25);
+    }
+    public double getLiftCurrentRotation() {
+        return -lift1.getCurrentPosition()/537.7;
     }
 
     public void goDown() {
-        lift1.setPower(-1);
-        lift2.setPower(-1);
+        lift1.setPower(-0.25);
+        lift2.setPower(-0.25);
     }
 
     public void stop() {
@@ -48,7 +53,7 @@ public class Lift {
     }
 
     public boolean maxLimitReached() {
-        if (liftCurrentRotation >= 4) {
+        if (-lift1.getCurrentPosition()/537.7 >= 4) {
             return true;
         }
         else {
@@ -57,7 +62,7 @@ public class Lift {
     }
 
     public boolean minLimitReached() {
-        if (liftCurrentRotation <= 0.05) {
+        if (-lift1.getCurrentPosition()/537.7 <= 0.05) {
             return true;
         }
         else {
