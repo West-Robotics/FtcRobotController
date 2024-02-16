@@ -37,12 +37,12 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     // maybe add jam detection?
     override fun read() {}
 
-    fun update(s: RobotState) {
+    fun update(s: RobotState, p: Double = 0.0) {
         when (s) {
             RobotState.INTAKE -> Pair(1.0, rollerHeight)
             RobotState.LOCK -> Pair(0.0, rollerHeight)
             RobotState.PRELOCK -> Pair(0.0, rollerHeight)
-            RobotState.SPIT -> Pair(-1.0, 1)
+            RobotState.SPIT -> Pair(p, 1)
             else -> Pair(power, rollerHeight)
         }.let {
             power = it.first

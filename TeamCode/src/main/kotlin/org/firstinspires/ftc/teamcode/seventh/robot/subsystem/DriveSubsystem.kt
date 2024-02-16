@@ -45,7 +45,7 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         wallLeft = distLeft.getRawVoltage()
         wallRight = distRight.getRawVoltage()
         // if left voltage is way off, just ignore it
-        wallDist = if ((wallLeft - wallRight).absoluteValue < 0.2) {
+        wallDist = if ((wallLeft - wallRight).absoluteValue < 0.1) {
             ( (5.20673/wallLeft + 0.0355149) + (5.18763/wallRight + 0.0107079) ) / 2
         } else {
             (5.18763/wallRight + 0.0107079)

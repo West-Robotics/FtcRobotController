@@ -13,16 +13,18 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.scrapmetal.quackerama.hardware.QuackMotor
 import com.scrapmetal.quackerama.hardware.QuackQuadrature
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-@TeleOp(name = "LiftTest")
-class LiftTest : LinearOpMode() {
+@TeleOp(name = "CycleTest")
+class CycleTest : LinearOpMode() {
     override fun runOpMode() {
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
@@ -37,42 +39,28 @@ class LiftTest : LinearOpMode() {
         val gamepad = GamepadEx(gamepad1)
         val lift = LiftSubsystem(hardwareMap)
         val output = OutputSubsystem(hardwareMap)
+        val intake = IntakeSubsystem(hardwareMap)
+        val cycle = CycleCommand(intake, lift, output)
         var height = 0
 
-        Robot.read(output)
-        output.update(RobotState.BACKDROP, -120.5)
-        Robot.write(output)
-        waitForStart();
+        Robot.read(intake, lift, output)
+        cycle.update(RobotState.BACKDROP, height, 0.0)
+        Robot.write(intake, lift, output)
+        waitForStart()
 
-        val timeSource = TimeSource.Monotonic
         while (opModeIsActive() && !isStopRequested) {
             CONTROL_HUB.clearBulkCache()
-            val t1b = timeSource.markNow()
             gamepad.readButtons()
             Robot.dtUpdate()
             when {
                 gamepad.wasJustPressed(GamepadKeys.Button.DPAD_UP) -> height++
                 gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) -> height--
             }
-            val t1e = timeSource.markNow()
-            val t2b = timeSource.markNow()
             Robot.read(lift)
-            val t2e = timeSource.markNow()
-            val t3b = timeSource.markNow()
-            lift.update(Globals.LIFT_HEIGHTS[height], Robot.dt)
-            val t3e = timeSource.markNow()
-            val t4b = timeSource.markNow()
+            cycle.update(RobotState.BACKDROP, height, 0.0)
             Robot.write(lift)
-            val t4e = timeSource.markNow()
             telemetry.addData("target", lift.state.commandedExtension)
             telemetry.addData("pos", lift.state.extension)
-            // telemetry.addData("power", lift.state.power)
-            // telemetry.addData("current", lift.state.current)
-            // telemetry.addData("hz", 1000/ Robot.dt)
-            // telemetry.addData("t1", (t1e-t1b).toDouble(DurationUnit.MILLISECONDS))
-            // telemetry.addData("t2", (t2e-t2b).toDouble(DurationUnit.MILLISECONDS))
-            // telemetry.addData("t3", (t3e-t3b).toDouble(DurationUnit.MILLISECONDS))
-            // telemetry.addData("t4", (t4e-t4b).toDouble(DurationUnit.MILLISECONDS))
             telemetry.update();
         }
     }

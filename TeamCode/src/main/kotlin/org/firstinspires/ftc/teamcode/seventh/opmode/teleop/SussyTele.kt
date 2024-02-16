@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
+import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.time.DurationUnit
@@ -65,7 +66,7 @@ class SussyTele : LinearOpMode() {
             }
         }
         // this has the potential to slow down looptimes
-        // telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         val drive = DriveSubsystem(hardwareMap)
         val intake = IntakeSubsystem(hardwareMap)
         val lift = LiftSubsystem(hardwareMap)
@@ -105,11 +106,11 @@ class SussyTele : LinearOpMode() {
                     .onExit { lastState = RobotState.SPIT }
                 .state(RobotState.ALIGN)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.LOCK)
-                    .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.BACKDROP)
+                    .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) && height > 0 && height != 6 }, RobotState.BACKDROP)
                     .onExit { lastState = RobotState.ALIGN }
                 .state(RobotState.BACKDROP)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) }, RobotState.LOCK)
-                    .transition({ lift.onTarget() && lastState == RobotState.ALIGN }, RobotState.EXTEND)
+                    .transition({ cycle.liftOnTarget() && lastState == RobotState.ALIGN }, RobotState.EXTEND)
                     .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.EXTEND)
                     .onExit { lastState = RobotState.BACKDROP }
                 .state(RobotState.EXTEND)
@@ -152,7 +153,6 @@ class SussyTele : LinearOpMode() {
             CONTROL_HUB.clearBulkCache()
             primary.readButtons()
             secondary.readButtons()
-            cycleMachine.update()
             Robot.dtUpdate()
 
             Robot.read(drive)
@@ -187,15 +187,15 @@ class SussyTele : LinearOpMode() {
             Robot.write(drive)
 
             Robot.read(hang, intake, output, lift)
-            val joystickDown = secondary.leftY > -0.7
-            val joystickUp = secondary.leftY > 0.7
+            val joystickDown = secondary.leftY > -0.6
+            val joystickUp = secondary.leftY > 0.6
             when {
-                secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) && height + 3 < 5 -> height += 3
+                // secondary.wasJustPressed(GamepadKeys.Button.DPAD_UP) && height + 3 < 5 -> height += 3
                 secondary.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) &&
                     (cycleMachine.state == RobotState.BACKDROP ||
                     cycleMachine.state == RobotState.LOCK) -> height = 0
-                joystickDown && !lastJoystickDown && height > 1 -> height--
-                joystickUp && !lastJoystickUp && height < 4 -> height++
+                joystickDown && !lastJoystickDown -> if (height > 1 && height != 6) height-- else if (height == 1) height = 6
+                joystickUp && !lastJoystickUp -> if (height < 4) height++ else if (height == 6) height = 1
                 secondary.wasJustPressed(GamepadKeys.Button.X) -> intake.lower()
                 secondary.wasJustPressed(GamepadKeys.Button.Y) -> intake.raise()
                 // subdivisions?
@@ -212,11 +212,13 @@ class SussyTele : LinearOpMode() {
             } else {
                 hang.update(HangSubsystem.HangState.STOP)
             }
+            cycleMachine.update()
             cycle.update(
                     cycleMachine.state as RobotState,
                     height,
                     drive.wallDist
             )
+            intake.update(cycle.robotState, -(secondary.rightY.pow(2)))
             Robot.write(lift, output, intake, hang)
             telemetry.addData("cycle state", cycleMachine.state as RobotState)
             telemetry.addData("hz ", 1000 / Robot.dt)

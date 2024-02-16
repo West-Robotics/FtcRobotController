@@ -57,8 +57,8 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
 
     override fun read() {
         if (robotState == RobotState.INTAKE && !Globals.AUTO) {
-            leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 14.0
-            rightFilled = colorRight.getDistance(DistanceUnit.MM) < 14.0
+            leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 16.0
+            rightFilled = colorRight.getDistance(DistanceUnit.MM) < 16.0
         }
         curArmAngLeft = armEncLeft.getRawVoltage()
         curArmAngRight = 3.3 - armEncRight.getRawVoltage()
