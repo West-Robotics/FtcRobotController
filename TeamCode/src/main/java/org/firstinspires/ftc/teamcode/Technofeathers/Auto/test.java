@@ -117,13 +117,14 @@ public class test extends LinearOpMode{
             setPIDValues(12.5/currentVoltage);
             waitForStart();
 
-            turnRight(90);
+            runWithEncoder(2,2,0.5,538);
+
+            //turnRight(90);
             //turnRight(90);
 
 
 
         }
-        
         public void setPIDValues(double voltage){
             Kp = Kp * voltage;
             Ki = Ki * voltage;
