@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DroneSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.HangSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
@@ -72,6 +73,7 @@ class SussyTele : LinearOpMode() {
         val lift = LiftSubsystem(hardwareMap)
         val output = OutputSubsystem(hardwareMap)
         val hang = HangSubsystem(hardwareMap)
+        val drone = DroneSubsystem(hardwareMap)
 
         val primary = GamepadEx(gamepad1)
         val secondary = GamepadEx(gamepad2)
@@ -125,7 +127,7 @@ class SussyTele : LinearOpMode() {
                 .state(RobotState.SCORE_L)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.BACKDROP)
                     .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.SCORE)
-                    .transition({ primary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9 }, RobotState.SCORE_R)
+                    .transition({ primary.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.9 }, RobotState.SCORE)
                     .onExit { lastState = RobotState.SCORE_L }
                 .state(RobotState.SCORE)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.BACKDROP)
@@ -134,15 +136,16 @@ class SussyTele : LinearOpMode() {
                     .onExit { lastState = RobotState.SCORE }
                 .state(RobotState.SCORE_R)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.BACKDROP)
-                    .transition({ primary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9 }, RobotState.SCORE_L)
+                    .transition({ primary.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.9 }, RobotState.SCORE)
                     .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.SCORE)
                     .onExit { lastState = RobotState.SCORE_R }
                 .build()
 
         cycleMachine.start()
-        Robot.read(intake, lift, output, hang)
+        Robot.read(intake, lift, output, hang, drone)
         cycle.update(cycleMachine.state as RobotState, height, 0.0)
-        Robot.write(intake, lift, output, hang)
+        drone.update(DroneSubsystem.DroneState.LODED)
+        Robot.write(intake, lift, output, hang, drone)
         drive.setPoseEstimate(Globals.pose)
         waitForStart()
 
@@ -201,6 +204,7 @@ class SussyTele : LinearOpMode() {
                 // subdivisions?
                 secondary.wasJustPressed(GamepadKeys.Button.BACK) && gamepad2.guide -> output.pivotOffset -= 22.5
                 secondary.wasJustPressed(GamepadKeys.Button.START) && gamepad2.guide -> output.pivotOffset += 22.5
+                secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && gamepad2.guide -> drone.update(DroneSubsystem.DroneState.DIPER)
             }
             lastJoystickDown = joystickDown
             lastJoystickUp = joystickUp
@@ -216,7 +220,8 @@ class SussyTele : LinearOpMode() {
             cycle.update(
                     cycleMachine.state as RobotState,
                     height,
-                    drive.wallDist
+                    drive.wallDist,
+                    secondary.isDown(GamepadKeys.Button.LEFT_BUMPER) && !gamepad2.guide
             )
             intake.update(cycle.robotState, -(secondary.rightY.pow(2)))
             Robot.write(lift, output, intake, hang)

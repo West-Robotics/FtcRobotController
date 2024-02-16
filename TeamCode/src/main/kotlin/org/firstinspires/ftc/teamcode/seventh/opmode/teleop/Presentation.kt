@@ -17,16 +17,11 @@
 // import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 // import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 // import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
-// import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
 // import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.HangSubsystem
 // import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 // import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 // import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 // import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
-// import kotlin.math.pow
-// import kotlin.math.sign
-// import kotlin.time.DurationUnit
-// import kotlin.time.TimeSource
 //
 // @TeleOp(name = "PRESENTATION")
 // class Presentation : LinearOpMode() {
@@ -36,8 +31,9 @@
 //         LOCK,
 //         REVERSE,
 //         WIGGLE_INTAKE,
-//         QUICK_ON_THE_DRAW,
-//         EXTENDOINGTON
+//         // begin hang
+//         QUICK_ON_THE_DRAW, // fast push out and score
+//         EXTENDOINGTON, // extend lift to max, lower, lower hang, sine, lock
 //     }
 //     enum class IndividualStates {
 //
