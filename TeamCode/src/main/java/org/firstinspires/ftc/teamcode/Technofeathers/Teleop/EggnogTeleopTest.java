@@ -102,7 +102,7 @@ public class EggnogTeleopTest extends OpMode {
         controller1.update();
         controller2.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
-        functions.liftSetPower(controller2.left_stick_y);
+        functions.liftSetPower(controller2.left_stick_y/2);
         telemetry.addData("Lift Current Rotation: ", functions.liftRotation());
         telemetry.addData("DpadRightRunning ", functions.dpadRightRunning);
         /*

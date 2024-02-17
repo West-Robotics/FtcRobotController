@@ -114,6 +114,7 @@ public class Functions {
             stopper.move();
         }
         sleep(750);
+        
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
         intakeOnRunning = false;
