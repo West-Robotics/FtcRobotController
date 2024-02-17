@@ -96,23 +96,23 @@ public class TechnoNearBlue extends LinearOpMode{
         double rightDist = rightDistanceSensor.getDistance(DistanceUnit.CM);
         sleep(5);
         if (leftDist< 65){
-            move(0,0.05,2,true);
-            move(0,0.1,2,true);
+            move(0,0.08,2,true);
+            move(0,0.12,2,true);
             turnLeft(90);
             move(90,0.05,2,true);
 
 
         } else if(rightDist<75){
             move(0,0.04,1,true);
-            move(0,0.09,1,true);
+            move(0,0.1,1,true);
 
             turnLeft(90);
             move(90,0.05,2,true);
 
 
         } else {
-            runWithEncoder(3,2.5,0.5,538);
-            move(-90,0.09,1,true);
+            runWithEncoder(2,3,0.5,538);
+            move(-90,0.09,3,false);
             turnLeft(180);
             move(90,0.05,2,true);
 

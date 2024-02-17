@@ -127,7 +127,7 @@ public class test extends LinearOpMode{
 
 
 
-            move(0,0.38,2,true);
+            runWithEncoder(4,1.5,0.5,538);
 
 
 
@@ -147,8 +147,8 @@ public class test extends LinearOpMode{
             pivot1.setPosition(1);
             sleep(750);
             while (opModeIsActive() && !touch.isPressed()){
-                lift1.setPower(-0.5);
-                lift2.setPower(-0.5);
+                lift1.setPower(-0.25);
+                lift2.setPower(-0.25);
             }
             lift1.setPower(0);
             lift2.setPower(0);
@@ -321,6 +321,8 @@ public class test extends LinearOpMode{
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            sleep(10);
 
             double LeftTarget = ticks * leftTurns;
             double rightTarget = ticks * rightTurns;

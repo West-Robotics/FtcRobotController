@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
-public class TechnoNearRed extends LinearOpMode{
+public class TechnoFarBlue extends LinearOpMode{
     private DistanceSensor distanceSensor;
     private DistanceSensor rightDistanceSensor;
     private DistanceSensor leftDistanceSensor;
@@ -99,19 +99,12 @@ public class TechnoNearRed extends LinearOpMode{
 
         if (rightDistanceSensor.getDistance(DistanceUnit.CM) <65){
             move(1,0.04,1,true);
-            move(1,0.08,1,true);
-            turnRight(90);
-            move(-90,0.05,2,true);
+            turnRight(30);
         } else if (leftDistanceSensor.getDistance(DistanceUnit.CM)<75){
             move(1,0.04,2,true);
-            move(1,0.09,2,true);
-            turnRight(90);
-            move(-90,0.05,2,true);
 
-        } else {
-            runWithEncoder(3,2,0.5,538);
-
-            move(-90,0.08,3,false);
+        } else { 
+            runWithEncoder(4,1.5,0.5,538);
 
         }
 
@@ -350,3 +343,4 @@ public class TechnoNearRed extends LinearOpMode{
     }
 
 }
+
