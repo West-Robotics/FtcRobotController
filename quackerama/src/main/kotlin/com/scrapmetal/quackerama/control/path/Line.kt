@@ -50,10 +50,10 @@ class Line(
                 else -> it
             }
         }
-        println("startPose $startPose")
-        println("endPose $endPose")
-        println("closest T $t")
-        println("error ${invoke(t) - p}")
+        // println("startPose $startPose")
+        // println("endPose $endPose")
+        // println("closest T $t")
+        // println("error ${invoke(t) - p}")
         return GVFState(tau, invoke(t) - p, t)
     }
 }

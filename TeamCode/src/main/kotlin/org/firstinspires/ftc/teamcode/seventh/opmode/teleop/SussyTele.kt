@@ -144,9 +144,9 @@ class SussyTele : LinearOpMode() {
         cycleMachine.start()
         Robot.read(intake, lift, output, hang, drone)
         cycle.update(cycleMachine.state as RobotState, height, 0.0)
-        drone.update(DroneSubsystem.DroneState.LODED)
+        drone.update(DroneSubsystem.DroneState.EQUILI)
         Robot.write(intake, lift, output, hang, drone)
-        drive.setPoseEstimate(Globals.pose)
+        // drive.setPoseEstimate(Globals.pose)
         waitForStart()
 
         drive.startIMUThread(this)
@@ -204,7 +204,8 @@ class SussyTele : LinearOpMode() {
                 // subdivisions?
                 secondary.wasJustPressed(GamepadKeys.Button.BACK) && gamepad2.guide -> output.pivotOffset -= 22.5
                 secondary.wasJustPressed(GamepadKeys.Button.START) && gamepad2.guide -> output.pivotOffset += 22.5
-                secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && gamepad2.guide -> drone.update(DroneSubsystem.DroneState.DIPER)
+                secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && gamepad2.guide && drone.position == 0.12 -> drone.update(DroneSubsystem.DroneState.LODED)
+                secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && gamepad2.guide && drone.position == 0.15 -> drone.update(DroneSubsystem.DroneState.DIPER)
             }
             lastJoystickDown = joystickDown
             lastJoystickUp = joystickUp
@@ -224,7 +225,7 @@ class SussyTele : LinearOpMode() {
                     secondary.isDown(GamepadKeys.Button.LEFT_BUMPER) && !gamepad2.guide
             )
             intake.update(cycle.robotState, -(secondary.rightY.pow(2)))
-            Robot.write(lift, output, intake, hang)
+            Robot.write(lift, output, intake, hang, drone)
             telemetry.addData("cycle state", cycleMachine.state as RobotState)
             telemetry.addData("hz ", 1000 / Robot.dt)
             telemetry.addData("lift height", height)

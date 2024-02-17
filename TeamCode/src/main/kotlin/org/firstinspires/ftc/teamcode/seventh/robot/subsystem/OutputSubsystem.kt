@@ -33,6 +33,8 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     var curArmAng = 0.0
         private set
 
+    val tilt = if (Globals.AUTO) 100.0 else 105.0
+
     private val armLeft = QuackServo(hardwareMap, "armLeft", QuackServo.ModelPWM.AXON_MAX)
     private val armRight = QuackServo(hardwareMap, "armRight", QuackServo.ModelPWM.AXON_MAX)
     private val armEncLeft = QuackAnalog(hardwareMap, "armEncLeft")
@@ -74,10 +76,10 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
             RobotState.SPIT     -> OutputState(armAng, 62.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
             RobotState.ALIGN    -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
             RobotState.BACKDROP -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.EXTEND   -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.SCORE    -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SCORE_L  -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_OPEN, FINGER_CLOSE)
-            RobotState.SCORE_R  -> OutputState(armAng, armAng+105.0+pivotOffset, FINGER_CLOSE, FINGER_OPEN)
+            RobotState.EXTEND   -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
+            RobotState.SCORE    -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_OPEN, FINGER_OPEN)
+            RobotState.SCORE_L  -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_OPEN, FINGER_CLOSE)
+            RobotState.SCORE_R  -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_CLOSE, FINGER_OPEN)
         }
     }
 

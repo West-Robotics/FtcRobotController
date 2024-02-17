@@ -7,17 +7,17 @@ import com.scrapmetal.quackerama.control.Pose2d
 object Globals {
     @JvmField var pose: Pose2d = Pose2d()
     @JvmField var LEFT_REGION_X = 20.0
-    @JvmField var LEFT_REGION_Y = 380.0
+    @JvmField var LEFT_REGION_Y = 400.0
     @JvmField var LEFT_REGION_WIDTH = 200.0
     @JvmField var LEFT_REGION_HEIGHT = 100.0
 
     @JvmField var MIDDLE_REGION_X = 400.0
-    @JvmField var MIDDLE_REGION_Y = 380.0
+    @JvmField var MIDDLE_REGION_Y = 400.0
     @JvmField var MIDDLE_REGION_WIDTH = 450.0
     @JvmField var MIDDLE_REGION_HEIGHT = 100.0
 
     @JvmField var RIGHT_REGION_X = 1000.0
-    @JvmField var RIGHT_REGION_Y = 380.0
+    @JvmField var RIGHT_REGION_Y = 400.0
     @JvmField var RIGHT_REGION_WIDTH = 200.0
     @JvmField var RIGHT_REGION_HEIGHT = 100.0
 
@@ -27,11 +27,9 @@ object Globals {
     // 4.398 in spool circum / 8192 ppr
     @JvmField var LIFT_DISTANCE_PER_PULSE = 4.398 / 8192
     @JvmField var LIFT_MAX = 30.0
-    @JvmField var LIFT_MIN = -2.0
+    var LIFT_MIN = -2.0
     // each height is spaced 2.6 inches apart
-    @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.2) +
-                                 DoubleArray(5) { 2.6*it + 13.5 } +
-                                 11.5
+    @JvmField var LIFT_HEIGHTS = doubleArrayOf(-0.2) + DoubleArray(5) { 2.6*it + 13.5 } + 11.5
     // 0.76 -> 0.72 -> 0.33
     // -0.04, -0.39
     @JvmField var FINGER_OPEN = 0.23
@@ -65,7 +63,7 @@ object Globals {
     }
     enum class Park {
         INNER,
-        N4P,
+        NONE,
         OUTER,
     }
 }

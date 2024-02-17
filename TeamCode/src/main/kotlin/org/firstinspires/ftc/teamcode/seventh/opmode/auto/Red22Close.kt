@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.seventh.opmode.auto
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -14,24 +11,21 @@ import com.scrapmetal.quackerama.control.gvf.GG
 import com.sfdev.assembly.state.StateMachineBuilder
 import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.LIFT_HEIGHTS
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
-import org.firstinspires.ftc.teamcode.seventh.robot.vision.GetPropPositionPipeline
 import org.firstinspires.ftc.teamcode.seventh.robot.vision.Vision
 import java.lang.Math.toDegrees
-import kotlin.time.TimeSource
 
 @Autonomous(name =
 """
-BLUE 2+0 CLOSE
+RED 2+2 CLOSE
 """
 )
-class Blue20Close : LinearOpMode() {
+class Red22Close : LinearOpMode() {
     enum class AutoStates {
         TO_PURPLE,
         DROP_PURPLE,
@@ -40,11 +34,14 @@ class Blue20Close : LinearOpMode() {
         DROP_YELLOW,
         RETRACT,
         LOCK,
+        TO_STACKS,
+        INTAKE_STACKS,
+        TO_BACKDROP,
         PARK,
     }
     override fun runOpMode() {
         Globals.AUTO = true
-        Globals.side = Globals.Side.BLUE
+        Globals.side = Globals.Side.RED
         Globals.start = Globals.Start.CLOSE
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
@@ -64,6 +61,7 @@ class Blue20Close : LinearOpMode() {
 
         var state = RobotState.LOCK
         var height = 0
+        var stackCount = 5
         val timer = ElapsedTime()
 
         lateinit var gg: GG
@@ -86,14 +84,23 @@ class Blue20Close : LinearOpMode() {
                     .transitionTimed(0.2)
                     .onExit { drive.update(Pose2d(), correcting = false, fieldOriented = true, dt = Robot.dt, pid = true)}
                 .state(AutoStates.DROP_YELLOW)
-                    .onEnter { timer.reset(); height = 1; state = RobotState.BACKDROP }
+                    .onEnter { timer.reset(); height = if (stackCount == 5) 1 else 2; state = RobotState.BACKDROP }
                     .transitionTimed(1.8)
                 .state(AutoStates.RETRACT)
-                    .onEnter { state = RobotState.BACKDROP; gg.currentIndex++ }
+                    .onEnter { state = RobotState.BACKDROP; gg.maxVel = 0.5; gg.currentIndex++ }
                     .transitionTimed(0.5)
                 .state(AutoStates.LOCK)
                     .onEnter { height = 0; state = RobotState.LOCK }
-                    .transition({ true }, AutoStates.PARK)
+                    .transition({ stackCount == 5 }, AutoStates.TO_STACKS)
+                    .transition({ stackCount == 3 }, AutoStates.PARK )
+                .state(AutoStates.TO_STACKS)
+                    .transitionTimed(5.0)
+                .state(AutoStates.INTAKE_STACKS)
+                    .onEnter { timer.reset() }
+                    .transitionTimed(2.0)
+                .state(AutoStates.TO_BACKDROP)
+                    .onEnter { timer.reset() }
+                    .transitionTimed(5.0, AutoStates.RESET_POSE)
                 .state(AutoStates.PARK)
                 .build()
         intake.setHeight(1)
@@ -101,7 +108,6 @@ class Blue20Close : LinearOpMode() {
         cycle.update(state, height, 0.0)
         Robot.write(intake, output)
 
-        telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         vision.enableProp()
         drive.startIMUThread(this)
         while (opModeInInit()) {
@@ -109,11 +115,11 @@ class Blue20Close : LinearOpMode() {
             telemetry.update()
         }
         val paths = AutoPaths(
-                Globals.Side.BLUE,
+                Globals.Side.RED,
                 Globals.Start.CLOSE,
-                Globals.Lane.LANE_2,
+                Globals.Lane.LANE_3,
                 Globals.YellowSide.LEFT,
-                Globals.Stack.CLOSE,
+                Globals.Stack.FAR,
                 Globals.Park.INNER,
                 vision.getPropPosition(),
         )
@@ -125,6 +131,8 @@ class Blue20Close : LinearOpMode() {
                 maxVel = 0.8,
                 paths.purple,
                 paths.yellow,
+                paths.intake,
+                paths.score,
                 paths.parkPath,
         )
         autoMachine.start()
@@ -147,7 +155,7 @@ class Blue20Close : LinearOpMode() {
 
             if (autoMachine.state as AutoStates == AutoStates.DROP_YELLOW) {
                 when {
-                    timer.seconds() > 0.7 && state == RobotState.BACKDROP
+                    timer.seconds() > 1.0 && state == RobotState.BACKDROP
                     -> { state = RobotState.EXTEND }
                     timer.seconds() > 1.0 && timer.seconds() < 1.3 && state == RobotState.EXTEND
                     -> { height = 6 }
@@ -156,6 +164,17 @@ class Blue20Close : LinearOpMode() {
                     timer.seconds() > 1.7 && state == RobotState.SCORE
                     -> { height = 1 }
                 }
+            }
+            when {
+                autoMachine.state as AutoStates == AutoStates.TO_STACKS &&
+                        drive.getPoseEstimate().position.u < -48.0
+                -> { state = RobotState.INTAKE }
+                autoMachine.state as AutoStates == AutoStates.INTAKE_STACKS && timer.seconds() > 0.5
+                -> { intake.setHeight(4); stackCount -= 2}
+                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5 && state == RobotState.INTAKE
+                -> { state = RobotState.PRELOCK; timer.reset() }
+                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5 && state == RobotState.PRELOCK
+                -> { state = RobotState.LOCK }
             }
             cycle.update(state, height, drive.wallDist)
             if (
@@ -167,19 +186,13 @@ class Blue20Close : LinearOpMode() {
                 Robot.write(drive, lift, output, intake)
             }
 
+
             telemetry.addData("hz", 1000 / Robot.dt)
             telemetry.addData("error", gg.error(drive.getPoseEstimate().position))
             telemetry.addData("onTarget", gg.onTarget(drive.getPoseEstimate().position))
             telemetry.addData("x", drive.getPoseEstimate().position.u)
             telemetry.addData("y", drive.getPoseEstimate().position.v)
             telemetry.addData("heading error", toDegrees(input.heading.polarAngle - drive.getPoseEstimate().heading.polarAngle))
-            // telemetry.addData("extension", lift.state.extension)
-            // telemetry.addData("commandedExtension", lift.state.commandedExtension)
-            // telemetry.addData("power", lift.state.power)
-            // telemetry.addData("robot state", autoMachine.state as AutoStates)
-            // telemetry.addData("auto state", state)
-            // telemetry.addData("height", height)
-            // telemetry.addData("LIFT_HEIGHT", LIFT_HEIGHTS[height])
             telemetry.update()
         }
         Globals.pose = drive.getPoseEstimate()

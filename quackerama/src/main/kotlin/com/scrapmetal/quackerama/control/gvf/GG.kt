@@ -7,7 +7,7 @@ import com.scrapmetal.quackerama.control.path.Path
 
 // TODO: include info like curvature so other controller can handle centripetal, GVF just handles m_d
 data class GVFState(val tau: Vector2d, val error: Vector2d, val closestT: Double)
-class GG(val kN: Double, val kD: Double = 0.0, val maxVel: Double = 1.0, vararg val paths: Path) {
+class GG(var kN: Double, val kD: Double = 0.0, var maxVel: Double = 0.8, vararg val paths: Path) {
     var currentIndex = 0
     /**
      * Run every loop to receive desired positional velocities and heading direction
@@ -20,13 +20,13 @@ class GG(val kN: Double, val kD: Double = 0.0, val maxVel: Double = 1.0, vararg 
         val distanceToBeg = p.distanceTo(paths[currentIndex].current().startPose.position)
         return if (paths[currentIndex].last() && distanceToEnd < paths[currentIndex].current().constraints.decelDistance) {
             // println("decel thing" + v*kA*v.mag.pow(2)/(2*distanceToEnd))
-            Pose2d((paths[currentIndex].current().endPose.position - p).unit * 0.8
+            Pose2d((paths[currentIndex].current().endPose.position - p).unit * maxVel
                     * distanceToEnd / paths[currentIndex].current().constraints.decelDistance
                     - v * kD,
                     // - v*kA*v.mag.pow(2)/(2*distanceToEnd),
                     Rotation2d(paths[currentIndex].current().constraints.heading))
         } else {
-            Pose2d((state.tau + state.error * kN).unit * 0.8,
+            Pose2d((state.tau + state.error * kN).unit * maxVel,
                     Rotation2d(paths[currentIndex].current().constraints.heading))
             // else if (paths[currentIndex].first() && distanceToBeg < paths[currentIndex].current().constraints.decelDistance) {       }
             //   Pose2d((paths[currentIndex].current().startPose.position-p).unit*0.8                                               }

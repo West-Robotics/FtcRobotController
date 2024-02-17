@@ -49,16 +49,16 @@ class GetPropPositionPipeline : OpenCvPipeline() {
 
         // find which area has the most saturation: should be where big fat cube is
         maxOf(leftSum.`val`[1], middleSum.`val`[1], rightSum.`val`[1]).let {
-            if (Globals.side == Globals.Side.RED) {
+            if ((Globals.side == Globals.Side.RED && Globals.start == Globals.Start.CLOSE) || (Globals.side == Globals.Side.BLUE && Globals.start == Globals.Start.FAR)) {
                 when {
-                    it == middleSum.`val`[1] && it > 1000000.0 -> {
+                    it == middleSum.`val`[1] && it > 1200000.0 -> {
                         position = PropPosition.MIDDLE
                         Imgproc.rectangle(input, middle_pointA, middle_pointB, GREEN, 8)
                         Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
                         Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
                         position = PropPosition.MIDDLE
                     }
-                    it == rightSum.`val`[1] && it > 1000000.0 -> {
+                    it == rightSum.`val`[1] && it > 1200000.0 -> {
                         position = PropPosition.RIGHT
                         Imgproc.rectangle(input, right_pointA, right_pointB, GREEN, 8)
                         Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
@@ -73,16 +73,16 @@ class GetPropPositionPipeline : OpenCvPipeline() {
                         position = PropPosition.LEFT
                     }
                 }
-            } else if (Globals.side == Globals.Side.BLUE) {
+            } else if ((Globals.side == Globals.Side.BLUE && Globals.start == Globals.Start.CLOSE) || (Globals.side == Globals.Side.RED && Globals.start == Globals.Start.FAR)) {
                 when {
-                    it == middleSum.`val`[1] && it > 1000000.0 -> {
+                    it == middleSum.`val`[1] && it > 1200000.0 -> {
                         position = PropPosition.MIDDLE
                         Imgproc.rectangle(input, middle_pointA, middle_pointB, GREEN, 8)
                         Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
                         Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
                         position = PropPosition.MIDDLE
                     }
-                    it == leftSum.`val`[1] && it > 1000000.0 -> {
+                    it == leftSum.`val`[1] && it > 1200000.0 -> {
                         position = PropPosition.LEFT
                         Imgproc.rectangle(input, left_pointA, left_pointB, GREEN, 8)
                         Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
@@ -98,7 +98,7 @@ class GetPropPositionPipeline : OpenCvPipeline() {
                     }
                 }
             }
-            println("max sat $it")
+            // println("max sat $it")
         }
 
         hsv.release()

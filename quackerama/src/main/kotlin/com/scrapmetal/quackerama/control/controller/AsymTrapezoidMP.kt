@@ -37,9 +37,10 @@ class AsymTrapezoidMP(
         tDecel = if (decel != 0.0) -v_max/decel else 0.0
         val accelRatioedDistance = (1.0-(accel/(accel+(-decel))))*(end-start).absoluteValue
         tCruise = if (v_max != 0.0) {
-            (((end-start).absoluteValue - (0.5*accel*tAccel.pow(2)
-                    - 0.5*decel*tDecel.pow(2)))
-                    / v_max)
+            (
+                ( (end-start).absoluteValue - ( 0.5*accel*tAccel.pow(2) - 0.5*decel*tDecel.pow(2) ) )
+                / v_max
+            )
         } else {
             0.0
         }
@@ -63,7 +64,7 @@ class AsymTrapezoidMP(
             t < tB -> 0.0
             t <= tTotal -> decel
             tTotal < t -> 0.0
-            else -> throw IllegalArgumentException("Received $t tA: $tA tB: $tB tTotal: $tTotal tCruise: $tCruise tDecel: $tDecel")
+            else -> throw IllegalArgumentException("Received $t tA: $tA tB: $tB tTotal: $tTotal tCruise: $tCruise tDecel: $tDecel start: $start end: $end tAccel: $tAccel term 1: ${(end-start).absoluteValue} term 2: ${0.5*accel*tAccel.pow(2)} term 3: ${0.5*decel*tDecel.pow(2)}")
         }
         val v = when {
             t <= tA -> a*t

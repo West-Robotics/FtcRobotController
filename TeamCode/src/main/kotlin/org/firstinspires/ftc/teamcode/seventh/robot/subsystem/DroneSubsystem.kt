@@ -12,6 +12,7 @@ class DroneSubsystem(hardwareMap: HardwareMap) : Subsystem {
     enum class DroneState {
         LODED,
         DIPER,
+        EQUILI,
     }
     var position = 0.0
         private set
@@ -29,6 +30,7 @@ class DroneSubsystem(hardwareMap: HardwareMap) : Subsystem {
         position = when (s) {
             DroneState.DIPER -> 0.0
             DroneState.LODED -> 0.15
+            DroneState.EQUILI -> 0.12
         }
     }
 

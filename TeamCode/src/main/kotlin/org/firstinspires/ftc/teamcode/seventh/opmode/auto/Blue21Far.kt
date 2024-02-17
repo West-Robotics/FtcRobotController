@@ -27,7 +27,7 @@ import kotlin.time.TimeSource
 
 @Autonomous(name =
 """
-BLUE 2+0 FAR
+BLUE 2+1 FAR
 """
 )
 class Blue21Far : LinearOpMode() {
@@ -37,9 +37,7 @@ class Blue21Far : LinearOpMode() {
         PLUS_ONE,
         TO_YELLOW,
         RESET_POSE,
-        BACKDROP,
-        EXTEND,
-        SCORE,
+        DROP_YELLOW,
         RETRACT,
         LOCK,
         PARK,
@@ -47,6 +45,7 @@ class Blue21Far : LinearOpMode() {
     override fun runOpMode() {
         Globals.AUTO = true
         Globals.side = Globals.Side.BLUE
+        Globals.start = Globals.Start.FAR
         Robot.hardwareMap = hardwareMap
         val allHubs = hardwareMap.getAll(LynxModule::class.java)
         var CONTROL_HUB: LynxModule = allHubs[0]
@@ -70,19 +69,15 @@ class Blue21Far : LinearOpMode() {
         lateinit var gg: GG
         val autoMachine = StateMachineBuilder()
                 .state(AutoStates.TO_PURPLE)
-                .transition { gg.onTarget(drive.getPoseEstimate().position) }
-                .transitionTimed(3.0)
+                .transitionTimed(1.5)
                 .state(AutoStates.DROP_PURPLE)
                 .onEnter { intake.setHeight(5) }
-                .transitionTimed(0.5)
+                .transitionTimed(0.2)
                 .onExit { gg.currentIndex++ }
                 .state(AutoStates.PLUS_ONE)
-                .onEnter { timer.reset() }
                 .transitionTimed(3.0)
-                .onExit { gg.currentIndex++ }
                 .state(AutoStates.TO_YELLOW)
-                .transition( { gg.onTarget(drive.getPoseEstimate().position) }, AutoStates.RESET_POSE)
-                .transitionTimed(3.0)
+                .transitionTimed(4.0)
                 .state(AutoStates.RESET_POSE)
                 .onEnter { drive.getPoseEstimate().let {
                     drive.setPoseEstimate(Pose2d(
@@ -90,23 +85,16 @@ class Blue21Far : LinearOpMode() {
                             it.heading
                     ))
                 } }
-                .transitionTimed(1.0)
-                .state(AutoStates.BACKDROP)
-                .onEnter { height = 1; state = RobotState.BACKDROP; timer.reset() }
-                .transitionTimed(1.0)
-                .state(AutoStates.EXTEND)
-                .onEnter { state = RobotState.EXTEND }
-                .transitionTimed(0.5)
-                .state(AutoStates.SCORE)
-                .onEnter { state = RobotState.SCORE }
-                .transitionTimed(1.0)
+                .transitionTimed(0.2)
+                .state(AutoStates.DROP_YELLOW)
+                .onEnter { timer.reset(); height = 1; state = RobotState.BACKDROP }
+                .transitionTimed(1.8)
                 .state(AutoStates.RETRACT)
                 .onEnter { state = RobotState.BACKDROP; gg.currentIndex++ }
                 .transitionTimed(0.5)
                 .state(AutoStates.LOCK)
                 .onEnter { height = 0; state = RobotState.LOCK }
                 .transition({ true }, AutoStates.PARK)
-                .onExit { gg.currentIndex++; timer.reset() }
                 .state(AutoStates.PARK)
                 .build()
         intake.setHeight(1)
@@ -122,10 +110,10 @@ class Blue21Far : LinearOpMode() {
         }
         val paths = AutoPaths(
                 Globals.Side.BLUE,
-                Globals.Start.FAR,
-                Globals.Lane.LANE_3,
+                Globals.Start.CLOSE,
+                Globals.Lane.LANE_2,
                 Globals.YellowSide.LEFT,
-                Globals.Stack.FAR,
+                Globals.Stack.CLOSE,
                 Globals.Park.INNER,
                 vision.getPropPosition(),
         )
@@ -134,7 +122,7 @@ class Blue21Far : LinearOpMode() {
         gg = GG(
                 kN = 0.5,
                 kD = 0.004,
-                maxVel = 0.8,
+                maxVel = 0.6,
                 paths.purple,
                 paths.plusOne,
                 paths.yellow,
@@ -158,26 +146,34 @@ class Blue21Far : LinearOpMode() {
                     pid = true,
             )
 
+            if (autoMachine.state as AutoStates == AutoStates.DROP_YELLOW) {
+                when {
+                    timer.seconds() > 1.0 && state == RobotState.BACKDROP
+                    -> { state = RobotState.EXTEND }
+                    timer.seconds() > 1.0 && timer.seconds() < 1.3 && state == RobotState.EXTEND
+                    -> { height = 6 }
+                    timer.seconds() > 1.3 && state == RobotState.EXTEND
+                    -> { state = RobotState.SCORE }
+                    timer.seconds() > 1.7 && state == RobotState.SCORE
+                    -> { height = 1 }
+                }
+            }
+            cycle.update(state, height, drive.wallDist)
             if (autoMachine.state as AutoStates == AutoStates.PLUS_ONE) {
                 when {
                     timer.seconds() > 0.5
                     -> { state = RobotState.INTAKE }
-                    timer.seconds() > 2.0 && state == RobotState.INTAKE
+                    timer.seconds() > 2.5 && state == RobotState.INTAKE
                     -> { state = RobotState.PRELOCK }
-                    timer.seconds() > 2.5 && state == RobotState.PRELOCK
+                    timer.seconds() > 3.0 && state == RobotState.PRELOCK
                     -> { state = RobotState.LOCK }
                 }
             }
-            cycle.update(state, height, drive.wallDist)
             if (
-                    autoMachine.state as AutoStates in listOf(
-                            AutoStates.BACKDROP,
-                            AutoStates.EXTEND,
-                            AutoStates.SCORE
-                    ) &&
+                    autoMachine.state as AutoStates == AutoStates.DROP_YELLOW &&
                     timer.seconds() > 0.2
             ) {
-                Robot.write(lift, output, intake)
+                Robot.write(lift, output)
             } else {
                 Robot.write(drive, lift, output, intake)
             }
