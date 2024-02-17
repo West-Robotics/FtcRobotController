@@ -87,8 +87,8 @@ public class TechnoNearBlue extends LinearOpMode{
                 )
         );
         imu.initialize(imuParameters);
-        double currentVoltage = 13.25;
-        setPIDValues((12.75/currentVoltage));
+        double currentVoltage = 13;
+        setPIDValues((12.5/currentVoltage));
         waitForStart();
         if (isStopRequested()) return;
 
@@ -177,7 +177,7 @@ public class TechnoNearBlue extends LinearOpMode{
             erroring = Math.abs(distanceWantedInMeters - distance);
             telemetry.addData("Distance Error", erroring);
 
-            double targetAng = Math.toRadians(-straightAngle);
+            double targetAng = Math.toRadians(straightAngle);
             double pidCorrection = PIDControl(targetAng,state,PforMove,DforMove,IforMove);
             leftPower = powering - pidCorrection;
             rightPower = powering + pidCorrection;
