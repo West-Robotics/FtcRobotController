@@ -36,7 +36,7 @@ public class Functions {
         distSense1.setUpDistSense1(hardwareMap);
         distSense2.setUpDistSense2(hardwareMap);
         distSense3.setUpDistSense3(hardwareMap);
-        touchSense1.setUpTouchSense1(hardwareMap);
+        touchSense1.setUpTouchSense1(hardwareMap, telemetry);
         grabber.setUpGrabber(hardwareMap);
         intake.setUpIntake(hardwareMap);
         lift.setUpLift(hardwareMap);
@@ -85,6 +85,9 @@ public class Functions {
         sleep(500);
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
+    }
+    public boolean getHowMuchPressed() {
+        return touchSense1.getA();
     }
 
     public void intakePushOut() {

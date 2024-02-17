@@ -47,8 +47,8 @@ public class Lift {
     }
 
     public void goDown() {
-        lift1.setPower(-0.25);
-        lift2.setPower(-0.25);
+        lift1.setPower(-1);
+        lift2.setPower(-1);
     }
 
     public void stop() {
@@ -73,7 +73,9 @@ public class Lift {
             return false;
         }
     }
-    public double getRotation() {
+    /*public double getRotation() {
         return liftCurrentRotation;
     }
+
+     */
 }
