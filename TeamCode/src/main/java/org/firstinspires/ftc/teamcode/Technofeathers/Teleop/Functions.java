@@ -75,20 +75,18 @@ public class Functions {
     public void pixelDropAndReset() throws InterruptedException {
         //pixelDropAndResetTimer.reset();
         //telemetry.addData("Time Ran PixelDrop + Reset: ", pixelDropAndResetTimer.seconds());
-        if (!higherLevel) {
-            if (grabber.grabbedPixels) {
-                grabber.move();
-            }
-            if (pivot1.pivotReadyToDrop) {
-                pivot1.move();
-            }
-            sleep(750);
-            lift.goDown();
-            //sleep(500);
-            //TODO: test if this works when distance sensor is pressed
-            //can go down for longer if touch sensor works
-            //lift.stop();
+        if (grabber.grabbedPixels) {
+            grabber.move();
         }
+        if (pivot1.pivotReadyToDrop) {
+            pivot1.move();
+        }
+        sleep(750);
+        lift.goDown();
+        //sleep(500);
+        //TODO: test if this works when distance sensor is pressed
+        //can go down for longer if touch sensor works
+        //lift.stop();
     }
 
     public void intakeRun() throws InterruptedException {
