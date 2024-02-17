@@ -10,17 +10,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.A;
-import org.checkerframework.checker.units.qual.K;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
-public class TechnoNearRed extends LinearOpMode{
+public class TechnoNearBlue extends LinearOpMode{
     private DistanceSensor distanceSensor;
     private DistanceSensor rightDistanceSensor;
     private DistanceSensor leftDistanceSensor;
@@ -97,27 +92,33 @@ public class TechnoNearRed extends LinearOpMode{
         waitForStart();
         if (isStopRequested()) return;
 
-        if (rightDistanceSensor.getDistance(DistanceUnit.CM) <75){
-            move(1,0.05,1);
-            turnRight(90);
-            move(-90,0.55,2);
+        double leftDist = leftDistanceSensor.getDistance(DistanceUnit.CM);
+        double rightDist = rightDistanceSensor.getDistance(DistanceUnit.CM);
+        sleep(5);
+        if (leftDist< 65){
+            move(0,0.05,2);
+            turnLeft(90);
+            move(90,0.55,2);
             releaseIntake();
-            move(-90,0.05,2);
-        } else if (leftDistanceSensor.getDistance(DistanceUnit.CM)<115){
-            move(1,0.04,2);
-            turnRight(180);
+            move(90,0.05,2);
+
+        } else if(rightDist<75){
+            move(0,0.04,1);
+            turnLeft(180);
             releaseIntake();
-            turnRight(0);
-            move(1,0.09,2);
-            turnRight(90);
-            move(-90,0.05,2);
+            turnLeft(0);
+            move(0,0.09,1);
+            turnLeft(90);
+            move(90,0.05,2);
+
 
         } else {
             runWithEncoder(2.5,2.5,0.5,538);
-            turnRight(90);
+            turnLeft(90);
             move(90,1.2,2);
             releaseIntake();
-            move(-90,0.05,2);
+            move(90,0.05,2);
+
         }
 
     }
@@ -283,7 +284,6 @@ public class TechnoNearRed extends LinearOpMode{
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
         double LeftTarget = ticks * leftTurns;
         double rightTarget = ticks * rightTurns;

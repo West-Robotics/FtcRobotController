@@ -15,4 +15,10 @@ public class PIDNowConstants {
 
     public static double DForTurns = 0.16;
 
+    public static double PforStraigth = 1.2;
+    public static double IforStraight = 0.0;
+    public static double DforStraight = 0.09;
+
+
+
 }

@@ -63,6 +63,11 @@ public class test extends LinearOpMode{
         double IStraight = PIDNowConstants.IForTurns;
         double DStraight = PIDNowConstants.DForTurns;
 
+        double PforMove = PIDNowConstants.PforStraigth;
+        double IforMove = PIDNowConstants.IforStraight;
+        double DforMove = PIDNowConstants.DforStraight;
+
+
         double Yaw;
         IMU imu;
         double currentAngle;
@@ -99,9 +104,8 @@ public class test extends LinearOpMode{
             stopper = hardwareMap.get(Servo.class,"stopper");
             pivot1 = hardwareMap.get(Servo.class, "pivot1");
             grabber = hardwareMap.get(Servo.class, "grabber");
-            intake.setDirection(DcMotorSimple.Direction.REVERSE);
             intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             lift1.setDirection(DcMotorSimple.Direction.FORWARD);
             lift2.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -113,24 +117,28 @@ public class test extends LinearOpMode{
                     )
             );
             imu.initialize(imuParameters);
-            double currentVoltage = 12.5;
-            setPIDValues(12.5/currentVoltage);
+            double currentVoltage = 13.25;
+            setPIDValues(12.75/currentVoltage);
             waitForStart();
 
-            runWithEncoder(2,2,0.5,538);
 
-            //turnRight(90);
-            //turnRight(90);
+            move(0,0.1,2);
 
-
+            
 
         }
         public void setPIDValues(double voltage){
             Kp = Kp * voltage;
             Ki = Ki * voltage;
             Kd = Kd * voltage;
+            PStraight = PStraight * voltage;
+            IStraight = IStraight * voltage;
+            DStraight = DStraight * voltage;
+            PforMove = PforMove * voltage;
+            IforMove = IforMove * voltage;
+            DforMove = DforMove * voltage;
         }
-        public void move(double straightAngle, double distanceWantedInMeters, boolean right){
+        public void move(double straightAngle, double distanceWantedInMeters, int oneRightTwoLeftThreeBack){
             resetAngles();
             double distance;
             double powering;
@@ -146,27 +154,24 @@ public class test extends LinearOpMode{
                 double state = Math.toRadians(Yaw);
                 lastAngleErroring = angleErroring;
                 angleErroring = Math.abs(straightAngle-Yaw);
-                if (right) {
-                    distance = leftDistanceSensor.getDistance(DistanceUnit.CM);
+                if (oneRightTwoLeftThreeBack == 1) {
+                    distance = rightDistanceSensor.getDistance(DistanceUnit.METER);
+                } else if(oneRightTwoLeftThreeBack ==2) {
+                    distance = leftDistanceSensor.getDistance(DistanceUnit.METER);
                 } else {
-                    distance = rightDistanceSensor.getDistance(DistanceUnit.CM);
+                    distance = distanceSensor.getDistance(DistanceUnit.METER);
                 }
                 telemetry.addData("Distance:", distance);
-                powering= PIDControlForStraight(distance,distanceWantedInMeters);
+                powering= PIDControlForStraight(distanceWantedInMeters,distance);
                 lasterroring = erroring;
-                erroring = Math.abs(distance-distanceWantedInMeters);
+                erroring = Math.abs(distanceWantedInMeters - distance);
                 telemetry.addData("Distance Error", erroring);
-                if (straightAngle-Yaw > straightAngle){
-                    double targetAng = Math.toRadians(straightAngle);
-                    double pidCorrection = PIDControl(targetAng,state,Kp,Kd,Ki);
-                    leftPower = powering - pidCorrection;
-                    rightPower = powering + pidCorrection;
-                } else{
-                    double negTarget = Math.toDegrees(-straightAngle);
-                    double negativePIDCorrection = PIDControl(negTarget,state,Kp,Kd,Ki);
-                    leftPower = powering - negativePIDCorrection;
-                    rightPower = powering + negativePIDCorrection;
-                }
+
+                double targetAng = Math.toRadians(straightAngle);
+                double pidCorrection = PIDControl(targetAng,state,PforMove,DforMove,IforMove);
+                leftPower = powering - pidCorrection;
+                rightPower = powering + pidCorrection;
+
                 telemetry.addData("leftpower", leftPower);
                 telemetry.addData("rightpower", rightPower);
                 telemetry.update();
@@ -174,7 +179,7 @@ public class test extends LinearOpMode{
                 backLeft.setPower(leftPower);
                 frontRight.setPower(rightPower);
                 backRight.setPower(rightPower);
-                //sleep(5);
+                sleep(6);
             } while (opModeIsActive() && ((lasterroring > 0.02 || lastAngleErroring > 2.2) || (erroring > 0.02 || angleErroring > 2.2)));
             power(0);
         }
@@ -194,7 +199,7 @@ public class test extends LinearOpMode{
                 telemetry.addData("Current Angle", Yaw);
                 telemetry.addData("Distance:", distance);
                 targetAngle = Math.toRadians(-targetDegree);
-                double strength = PIDControl(targetAngle,state,Kp,Kd,Ki);
+                double strength = PIDControl(targetAngle,state,PStraight,DStraight,IStraight);
                 lasteror = erroring;
                 erroring = Math.abs(-targetDegree-Yaw);
                 telemetry.addData("lasteror",lasteror);
@@ -237,13 +242,10 @@ public class test extends LinearOpMode{
         }
 
         public void releaseIntake(){
-            intakeTicks+=1680;
-            intake.setTargetPosition(intakeTicks);
-            intake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            intake.setPower(0.5);
-            while (opModeIsActive() && intake.isBusy()){
-                idle();
-            }
+            telemetry.addData("intake", intakeTicks);
+            telemetry.update();
+            intake.setPower(-0.3);
+            sleep(2000);
             intake.setPower(0);
         }
 
@@ -267,7 +269,7 @@ public class test extends LinearOpMode{
             lastError2 = error2;
             timer.reset();
             telemetry.addData("Error2", error2);
-            double returning2 = (error2 * Kp) + (derivative * Kd) + (integralSum2 * Ki);
+            double returning2 = (error2 * PforMove) + (derivative * DforMove) + (integralSum2 * IforMove);
             return  returning2;
         }
 
