@@ -77,8 +77,6 @@ public class EggnogTeleop1Controller extends OpMode {
     public void loop() {
         controller1.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-
-
         /*
         if (lift1CurrentRotation >=4) {
             liftTooHigh = 1;

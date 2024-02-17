@@ -136,7 +136,7 @@ public class EggnogTeleop2Controller extends OpMode {
             grabbedPixels = 0;
         }
 
-        if (controller2.YOnce() && pivotReadyToDrop == 0) {
+        if (controller2.YOnce()) {
             functions.pivotMove();
         } /*else if (controller2.YOnce() && pivotReadyToDrop == 1) {
             pivot1.setPosition(1);

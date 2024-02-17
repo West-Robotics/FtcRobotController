@@ -34,9 +34,13 @@ public class Lift {
 
         liftCurrentRotation = -lift1.getCurrentPosition()/537.7;
     }
+    public void resetEncoders() {
+        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+    }
     public void goUp() {
-        lift1.setPower(0.25);
-        lift2.setPower(0.25);
+        lift1.setPower(1);
+        lift2.setPower(1);
     }
     public double getLiftCurrentRotation() {
         return -lift1.getCurrentPosition()/537.7;

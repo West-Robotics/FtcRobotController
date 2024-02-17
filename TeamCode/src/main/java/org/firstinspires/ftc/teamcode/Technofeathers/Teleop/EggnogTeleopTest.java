@@ -92,13 +92,16 @@ public class EggnogTeleopTest extends OpMode {
         controller1.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
         telemetry.addData("Lift Current Rotation: ", functions.liftRotation());
-        if (functions.liftMaxLimitReached()) {
-            functions.liftStop();
-            telemetry.addLine("Lift Max Limit Reached");
-        }
+        /*
         if (functions.liftMinLimitReached()) {
             functions.liftStop();
             telemetry.addLine("Lift Min Limit Reached");
+        }
+
+         */
+        if (functions.touchSense1Pressed()) {
+            functions.liftStop();
+            functions.liftResetEncoders();
         }
        // if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y) {
           //  drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
@@ -184,10 +187,10 @@ public class EggnogTeleopTest extends OpMode {
         }
 
         //lift
-        if (controller1.leftBumper()/* && liftTooHigh == 0*/) {
+        if (controller1.leftBumper() && !functions.liftMaxLimitReached()) {
             functions.liftGoUp();
         }
-        else if (controller1.rightBumper()) {
+        else if (controller1.rightBumper() && !functions.touchSense1Pressed()) {
             functions.liftGoDown();
         }
         else {
@@ -200,9 +203,6 @@ public class EggnogTeleopTest extends OpMode {
         if(controller1.right_trigger > 0.9 && planeLaunched == 1) {
             //airplaneLauncher.setPosition(0.9);
             //planeLaunched = 0;
-        }
-        if(controller1.backOnce()){
-            //pivot1.setPosition(0.25);
         }
         telemetry.update();
 

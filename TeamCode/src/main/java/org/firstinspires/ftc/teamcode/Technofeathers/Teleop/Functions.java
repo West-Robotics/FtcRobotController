@@ -17,11 +17,15 @@ public class Functions {
     public Telemetry telemetry;
     public AirplaneLauncher airplaneLauncher = new AirplaneLauncher();
     public DistSense1 distSense1 = new DistSense1();
+    public DistSense2 distSense2 = new DistSense2();
+    public DistSense3 distSense3 = new DistSense3();
+    public TouchSense1 touchSense1 = new TouchSense1();
     public Grabber grabber = new Grabber();
     public Intake intake = new Intake();
     public Lift lift = new Lift();
     public Pivot pivot1 = new Pivot();
     public Stopper stopper = new Stopper();
+
 
     ElapsedTime scoringPositionTimer = new ElapsedTime();
     ElapsedTime pixelDropAndResetTimer = new ElapsedTime();
@@ -30,6 +34,9 @@ public class Functions {
     public void setUp(HardwareMap hardwareMap, Telemetry telemetry) {
         airplaneLauncher.setUpAirplaneLauncher(hardwareMap);
         distSense1.setUpDistSense1(hardwareMap);
+        distSense2.setUpDistSense2(hardwareMap);
+        distSense3.setUpDistSense3(hardwareMap);
+        touchSense1.setUpTouchSense1(hardwareMap);
         grabber.setUpGrabber(hardwareMap);
         intake.setUpIntake(hardwareMap);
         lift.setUpLift(hardwareMap);
@@ -49,10 +56,10 @@ public class Functions {
          */
         grabber.move();
         telemetry.addLine("Grabber moved");
-        sleep(500);
+        sleep(750);
         lift.goUp();
         telemetry.addLine("Lift going up");
-        sleep(4000);
+        sleep(500);
         lift.stop();
         telemetry.addLine("Lift stopped, pivot will move");
         pivot1.move();
@@ -64,25 +71,18 @@ public class Functions {
         //telemetry.addData("Time Ran PixelDrop + Reset: ", pixelDropAndResetTimer.seconds());
         grabber.move();
         //pivot1.move();
-        sleep(1000);
+        sleep(1500);
         lift.goDown();
-        sleep(1000);
+        sleep(500);
         lift.stop();
     }
 
     public void intakeRun() throws InterruptedException {
         lift.goUp();
-        sleep(4000);
+        sleep(500);
         telemetry.addLine("lift Going Up");
-        if (!pivot1.pivotReadyToDrop) {
-            pivot1.move();
-            telemetry.addLine("Pivot Out");
-        }
-        lift.stop();
-        //will change to lift.go down later
-        telemetry.addLine("lift Going Down");
         stopper.move();
-        sleep(1000);
+        sleep(500);
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
     }
@@ -97,17 +97,13 @@ public class Functions {
         if (stopper.stopperDown) {
             stopper.move();
         }
-        intake.off();
-        while (!lift.maxLimitReached()) {
-            lift.goUp();
-        }
-        sleep(4000);
-        if (pivot1.pivotReadyToDrop) {
-            pivot1.move();
-        }
         if (grabber.grabbedPixels) {
             grabber.move();
         }
+        intake.off();
+        lift.goDown();
+        sleep(500);
+        lift.stop();
         /*
         if (intakeStopTimer.seconds() >= 5) {
             dylanRan = 0;
@@ -116,6 +112,32 @@ public class Functions {
         }
          */
     }
+
+    public boolean touchSense1Pressed() {
+        return touchSense1.pressedDown();
+    }
+
+    public void liftResetEncoders() {
+        lift.resetEncoders();
+    }
+
+    public void faceBackdrop() {
+
+    }
+    /*
+    public double theTurnToAlignToBackdrop() {
+        distSense2.getDistance();
+        distSense3.getDistance();
+        //clockwise imposition of distSense1 distSense2 and distSense3
+        if (distSense3.getDistance() < distSense2.getDistance()) {
+            return (1 - (distSense3.getDistance()/distSense2.getDistance()));
+        }
+        else if (distSense2.getDistance() < distSense3.getDistance()) {
+            return ((distSense3.getDistance()/distSense2.getDistance()) - 1);
+        }
+    }
+
+     */
 
     public boolean liftMaxLimitReached() {
         return lift.maxLimitReached();
