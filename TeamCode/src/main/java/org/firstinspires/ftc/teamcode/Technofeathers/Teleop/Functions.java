@@ -99,6 +99,7 @@ public class Functions {
 
     public void intakeRun() throws InterruptedException {
         intakeOnRunning = true;
+        /*
         lift.goUp();
         sleep(500);
         telemetry.addLine("lift Going Up");
@@ -107,6 +108,8 @@ public class Functions {
             stopper.move();
         }
         sleep(1000);
+
+         */
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
         intakeOnRunning = false;
@@ -117,6 +120,7 @@ public class Functions {
         //intakeStopTimer.reset();
         //telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
         intake.off();
+        /*
         if (stopper.stopperDown) {
             stopper.move();
         }
@@ -125,9 +129,10 @@ public class Functions {
         }
         sleep(750);
         lift.goDown();
-        /*
+
         sleep(500);
         lift.stop();
+
          */
         intakeOffRunning = false;
         /*

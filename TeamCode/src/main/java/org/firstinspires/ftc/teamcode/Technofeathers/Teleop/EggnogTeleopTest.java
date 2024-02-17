@@ -199,7 +199,7 @@ public class EggnogTeleopTest extends OpMode {
             functions.grabberMove();
         }
 
-        if (controller2.dpadDownOnce()) {
+        if (controller1.dpadDownOnce()) {
             // releasing pixels
             functions.grabberMove();
         }
@@ -213,7 +213,7 @@ public class EggnogTeleopTest extends OpMode {
             functions.stopperUp();
         }
 
-        if (controller2.right_trigger > 0.9 && planeLaunched == 0) {
+        if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
             functions.launchAirplane();
         }
         if (controller2.right_trigger > 0.9 && planeLaunched == 1) {
