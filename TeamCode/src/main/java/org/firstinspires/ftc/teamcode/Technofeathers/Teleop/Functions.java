@@ -110,6 +110,10 @@ public class Functions {
         sleep(1000);
 
          */
+        if (!stopper.stopperDown) {
+            stopper.move();
+        }
+        sleep(750);
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
         intakeOnRunning = false;
@@ -120,6 +124,9 @@ public class Functions {
         //intakeStopTimer.reset();
         //telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
         intake.off();
+        if (stopper.stopperDown) {
+            stopper.move();
+        }
         /*
         if (stopper.stopperDown) {
             stopper.move();

@@ -116,7 +116,7 @@ public class EggnogTeleopTest extends OpMode {
         if (functions.touchSense1Pressed() && functions.getLiftStatus() == -1) {
             functions.liftStop();
         }
-
+        /*
         if (controller2.leftBumper()) {
             functions.liftGoUp();
             telemetry.addLine("Lift go up");
@@ -127,6 +127,8 @@ public class EggnogTeleopTest extends OpMode {
         else {
             functions.liftStop();
         }
+
+         */
 
 
         telemetry.addData("Lift Status: ", functions.getLiftStatus());
@@ -210,7 +212,7 @@ public class EggnogTeleopTest extends OpMode {
         }
 
         if (controller2.XOnce()) {
-            functions.stopperUp();
+            functions.stopperMove();
         }
 
         if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
