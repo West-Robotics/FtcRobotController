@@ -151,7 +151,7 @@ public class test extends LinearOpMode{
                 lift2.setPower(-0.5);
             }
             lift1.setPower(0);
-            lift2.setPower(0); 
+            lift2.setPower(0);
         }
         public void setPIDValues(double voltage){
             Kp = Kp * voltage;

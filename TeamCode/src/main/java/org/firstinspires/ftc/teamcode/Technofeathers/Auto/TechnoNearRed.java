@@ -98,16 +98,12 @@ public class TechnoNearRed extends LinearOpMode{
         if (isStopRequested()) return;
 
         if (rightDistanceSensor.getDistance(DistanceUnit.CM) <75){
+            move(1,0.04,1,true);
             move(1,0.08,1,true);
             turnRight(90);
-            move(-90,0.55,2,true);
-            releaseIntake();
             move(-90,0.05,2,true);
         } else if (leftDistanceSensor.getDistance(DistanceUnit.CM)<115){
             move(1,0.04,2,true);
-            turnRight(180);
-            releaseIntake();
-            turnRight(0);
             move(1,0.09,2,true);
             turnRight(90);
             move(-90,0.05,2,true);
