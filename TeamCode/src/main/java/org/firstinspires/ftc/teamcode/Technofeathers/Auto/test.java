@@ -117,7 +117,7 @@ public class test extends LinearOpMode{
                     )
             );
             imu.initialize(imuParameters);
-            double currentVoltage = 12.95;
+            double currentVoltage = 12.85;
             setPIDValues((12.75/currentVoltage));
             waitForStart();
 
