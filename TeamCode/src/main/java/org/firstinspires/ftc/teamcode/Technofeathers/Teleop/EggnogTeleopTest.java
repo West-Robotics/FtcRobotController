@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Technofeathers.Teleop;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.INCH;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,6 +25,7 @@ public class EggnogTeleopTest extends OpMode {
     //bigger kp = slowing down later
     public TechnofeathersTestDrive drive;
     public Controller controller1;
+    public Controller controller2;
     /*
     public Servo pivot1;
     public Servo grabber;
@@ -61,6 +64,7 @@ public class EggnogTeleopTest extends OpMode {
     public void init() {
         drive = new TechnofeathersTestDrive();
         controller1 = new Controller(gamepad1);
+        controller2 = new Controller(gamepad2);
         /*
         pivot1 = hardwareMap.get(Servo.class,  "pivot1");
         grabber = hardwareMap.get(Servo.class, "grabber");
@@ -90,9 +94,9 @@ public class EggnogTeleopTest extends OpMode {
     @Override
     public void loop() {
         controller1.update();
+        controller2.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
         telemetry.addData("Lift Current Rotation: ", functions.liftRotation());
-        telemetry.addData("Touch Sensor how much pressed", functions.getHowMuchPressed());
         /*
         if (functions.liftMinLimitReached()) {
             functions.liftStop();
@@ -101,23 +105,25 @@ public class EggnogTeleopTest extends OpMode {
 
          */
         //lift
-
-        if (functions.touchSense1Pressed() && controller1.rightBumper()) {
+        if (functions.touchSense1Pressed() && functions.getLiftStatus() == -1) {
+            functions.liftStop();
             functions.liftResetEncoders();
         }
 
-        if (controller1.leftBumper() && !functions.liftMaxLimitReached()) {
+        if (controller2.leftBumper() && !functions.liftMaxLimitReached()) {
             functions.liftGoUp();
             telemetry.addLine("Lift go up");
         }
-        else if (controller1.rightBumper() && !functions.touchSense1Pressed()) {
+        else if (controller2.rightBumper()/* && !functions.touchSense1Pressed()*/) {
+            //TODO: must test later to see if this works without !functions.touchSense1Pressed
             functions.liftGoDown();
         }
         else {
             functions.liftStop();
         }
-       // if (distSense1.getDistance(INCH) <= 10 && 0 < controller1.left_stick_y) {
-          //  drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
+        telemetry.addData("Lift Status: ", functions.getLiftStatus());
+       // if (distSense1.getDistance(INCH) <= 10 && 0 < controller2.left_stick_y) {
+          //  drive.drive(controller2.left_stick_x/2, controller2.left_stick_y/2, controller2.right_stick_x/2);
             //functions.scoringPosition();
             //dylanRan = 1;
         //}
@@ -131,7 +137,7 @@ public class EggnogTeleopTest extends OpMode {
 
          */
 
-        if(controller1.dpadLeftOnce()) {
+        if (controller2.dpadLeftOnce()) {
             try {
                 functions.scoringPosition();
                 telemetry.addLine("Scoring Position achieved");
@@ -140,7 +146,7 @@ public class EggnogTeleopTest extends OpMode {
             }
         }
 
-        if(controller1.dpadRightOnce()) {
+        if (controller2.dpadRightOnce()) {
             try {
                 functions.pixelDropAndReset();
             }
@@ -149,7 +155,7 @@ public class EggnogTeleopTest extends OpMode {
             }
         }
 
-        if (controller1.AOnce() && intakeOn == 0) {
+        if (controller2.AOnce() && intakeOn == 0) {
             try {
                 functions.intakeRun();
             }
@@ -158,7 +164,7 @@ public class EggnogTeleopTest extends OpMode {
             }
             intakeOn = 1;
         }
-        else if (controller1.AOnce() && intakeOn == 1){
+        else if (controller2.AOnce() && intakeOn == 1){
             try {
                 functions.intakeStop();
             }
@@ -169,10 +175,10 @@ public class EggnogTeleopTest extends OpMode {
             //dylanRan = 0;
         }
 
-        if (controller1.BOnce()) {
+        if (controller2.BOnce()) {
             functions.intakePushOut();
         }
-        else if (controller1.BOnce()){
+        else if (controller2.BOnce()){
             try {
                 functions.intakeStop();
             } catch (InterruptedException e) {
@@ -180,36 +186,43 @@ public class EggnogTeleopTest extends OpMode {
             }
         }
 
-        if (controller1.dpadUpOnce()) {
+        if (controller2.dpadUpOnce()) {
             // grabbing pixels
             functions.grabberMove();
         }
 
-        if (controller1.dpadDownOnce()) {
+        if (controller2.dpadDownOnce()) {
             // releasing pixels
             functions.grabberMove();
         }
 
-        if (controller1.YOnce()) {
+        if (controller2.YOnce()) {
             functions.pivotMove();
             //will run which one is the one available
         }
 
-        if (controller1.XOnce()) {
+        if (controller2.XOnce()) {
             functions.stopperUp();
         }
 
-
-
-        if (controller1.right_trigger > 0.9 && planeLaunched == 0) {
+        if (controller2.right_trigger > 0.9 && planeLaunched == 0) {
             functions.launchAirplane();
         }
-        if(controller1.right_trigger > 0.9 && planeLaunched == 1) {
+        if (controller2.right_trigger > 0.9 && planeLaunched == 1) {
             //airplaneLauncher.setPosition(0.9);
             //planeLaunched = 0;
         }
-        telemetry.update();
 
+        if (controller2.left_trigger > 0.9) {
+            drive.drive(0,0,-functions.backdropParallelAngle() * 2 / Math.PI);
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            drive.drive(0,0,0);
+        }
+        telemetry.update();
     }
     /*
     private void ScoringPosition() {

@@ -24,7 +24,4 @@ public class TouchSense1 {
             return false;
         }
     }
-    public boolean getA() {
-        return touchSense1.isPressed();
-    }
 }

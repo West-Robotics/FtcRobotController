@@ -26,6 +26,8 @@ public class Functions {
     public Pivot pivot1 = new Pivot();
     public Stopper stopper = new Stopper();
 
+    //public boolean higherLevel = false;
+
 
     ElapsedTime scoringPositionTimer = new ElapsedTime();
     ElapsedTime pixelDropAndResetTimer = new ElapsedTime();
@@ -54,59 +56,70 @@ public class Functions {
             drive.drive(controller1.left_stick_x/2, controller1.left_stick_y/2, controller1.right_stick_x/2);
         }
          */
-        grabber.move();
-        telemetry.addLine("Grabber moved");
+        if (!grabber.grabbedPixels) {
+            grabber.move();
+            telemetry.addLine("Grabber moved");
+        }
         sleep(750);
         lift.goUp();
         telemetry.addLine("Lift going up");
         sleep(500);
         lift.stop();
         telemetry.addLine("Lift stopped, pivot will move");
-        pivot1.move();
+        if (!pivot1.pivotReadyToDrop) {
+            pivot1.move();
+        }
         telemetry.addLine("Scoring position achieved");
     }
 
     public void pixelDropAndReset() throws InterruptedException {
         //pixelDropAndResetTimer.reset();
         //telemetry.addData("Time Ran PixelDrop + Reset: ", pixelDropAndResetTimer.seconds());
-        grabber.move();
-        //pivot1.move();
-        sleep(1500);
-        lift.goDown();
-        sleep(500);
-        lift.stop();
+        if (!higherLevel) {
+            if (grabber.grabbedPixels) {
+                grabber.move();
+            }
+            if (pivot1.pivotReadyToDrop) {
+                pivot1.move();
+            }
+            sleep(750);
+            lift.goDown();
+            //sleep(500);
+            //TODO: test if this works when distance sensor is pressed
+            //can go down for longer if touch sensor works
+            //lift.stop();
+        }
     }
 
     public void intakeRun() throws InterruptedException {
         lift.goUp();
         sleep(500);
         telemetry.addLine("lift Going Up");
-        stopper.move();
+        lift.stop();
+        if (!stopper.stopperDown) {
+            stopper.move();
+        }
         sleep(500);
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
-    }
-    public boolean getHowMuchPressed() {
-        return touchSense1.getA();
-    }
-
-    public void intakePushOut() {
-        intake.rotateBackwards();
     }
 
     public void intakeStop() throws InterruptedException {
         //intakeStopTimer.reset();
         //telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
+        intake.off();
         if (stopper.stopperDown) {
             stopper.move();
         }
         if (grabber.grabbedPixels) {
             grabber.move();
         }
-        intake.off();
         lift.goDown();
         sleep(500);
         lift.stop();
+        if (!grabber.grabbedPixels) {
+            grabber.move();
+        }
         /*
         if (intakeStopTimer.seconds() >= 5) {
             dylanRan = 0;
@@ -116,12 +129,25 @@ public class Functions {
          */
     }
 
+    public double backdropParallelAngle() {
+        distSense2.getDistance();
+        distSense3.getDistance();
+        return Math.asin((distSense3.getDistance() - distSense2.getDistance())/12.25);
+    }
+
+    public void intakePushOut() {
+        intake.rotateBackwards();
+    }
+
     public boolean touchSense1Pressed() {
         return touchSense1.pressedDown();
     }
 
     public void liftResetEncoders() {
         lift.resetEncoders();
+    }
+    public byte getLiftStatus() {
+        return lift.getStatus();
     }
 
     public void faceBackdrop() {

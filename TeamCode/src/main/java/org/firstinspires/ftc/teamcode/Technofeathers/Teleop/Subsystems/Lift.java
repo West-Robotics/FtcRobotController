@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 public class Lift {
     public DcMotor lift1;
     public DcMotor lift2;
+    public byte liftStatus = 0;
     public double liftCurrentRotation;
     public void setUpLift(HardwareMap hardwareMap) {
         lift1 = hardwareMap.get(DcMotor.class, "lift1");
@@ -41,6 +42,7 @@ public class Lift {
     public void goUp() {
         lift1.setPower(1);
         lift2.setPower(1);
+        liftStatus = 1;
     }
     public double getLiftCurrentRotation() {
         return -lift1.getCurrentPosition()/537.7;
@@ -49,13 +51,18 @@ public class Lift {
     public void goDown() {
         lift1.setPower(-1);
         lift2.setPower(-1);
+        liftStatus = -1;
     }
 
     public void stop() {
         lift1.setPower(0);
         lift2.setPower(0);
+        liftStatus = 0;
     }
 
+    public byte getStatus() {
+        return liftStatus;
+    }
     public boolean maxLimitReached() {
         if (-lift1.getCurrentPosition()/537.7 >= 4) {
             return true;

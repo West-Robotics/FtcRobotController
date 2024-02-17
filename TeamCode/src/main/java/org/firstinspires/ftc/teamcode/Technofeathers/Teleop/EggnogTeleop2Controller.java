@@ -131,7 +131,7 @@ public class EggnogTeleop2Controller extends OpMode {
             grabbedPixels = 1;
         }
 
-        if (controller2.dpadDownOnce() && grabbedPixels == 1) {
+        if (controller1.dpadDownOnce() && grabbedPixels == 1) {
             // releasing pixels
             grabber.setPosition(1);
             grabbedPixels = 0;
