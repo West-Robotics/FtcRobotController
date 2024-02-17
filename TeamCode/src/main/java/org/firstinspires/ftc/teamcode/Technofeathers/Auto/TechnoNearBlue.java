@@ -97,26 +97,23 @@ public class TechnoNearBlue extends LinearOpMode{
         sleep(5);
         if (leftDist< 65){
             move(0,0.05,2,true);
+            move(0,0.1,2,true);
             turnLeft(90);
-            move(90,0.55,2,true);
-            releaseIntake();
             move(90,0.05,2,true);
+
 
         } else if(rightDist<75){
             move(0,0.04,1,true);
-            turnLeft(180);
-            releaseIntake();
-            turnLeft(0);
             move(0,0.09,1,true);
+
             turnLeft(90);
             move(90,0.05,2,true);
 
 
         } else {
-            runWithEncoder(2.5,2.5,0.5,538);
-            turnLeft(90);
-            move(90,1.2,2,true);
-            releaseIntake();
+            runWithEncoder(3,2.5,0.5,538);
+            move(-90,0.09,1,true);
+            turnLeft(180);
             move(90,0.05,2,true);
 
         }
@@ -180,7 +177,7 @@ public class TechnoNearBlue extends LinearOpMode{
             erroring = Math.abs(distanceWantedInMeters - distance);
             telemetry.addData("Distance Error", erroring);
 
-            double targetAng = Math.toRadians(straightAngle);
+            double targetAng = Math.toRadians(-straightAngle);
             double pidCorrection = PIDControl(targetAng,state,PforMove,DforMove,IforMove);
             leftPower = powering - pidCorrection;
             rightPower = powering + pidCorrection;
@@ -192,7 +189,7 @@ public class TechnoNearBlue extends LinearOpMode{
             backLeft.setPower(leftPower);
             frontRight.setPower(rightPower);
             backRight.setPower(rightPower);
-            sleep(6);
+            //sleep(6);
         } while (opModeIsActive() && ((lasterroring > 0.02 || lastAngleErroring > 2.2) || (erroring > 0.02 || angleErroring > 2.2)));
         power(0);
     }
@@ -302,6 +299,8 @@ public class TechnoNearBlue extends LinearOpMode{
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        sleep(5);
 
         double LeftTarget = ticks * leftTurns;
         double rightTarget = ticks * rightTurns;

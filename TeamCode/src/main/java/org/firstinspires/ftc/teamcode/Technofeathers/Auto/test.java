@@ -121,13 +121,13 @@ public class test extends LinearOpMode{
                     )
             );
             imu.initialize(imuParameters);
-            double currentVoltage = 12.75;
-            setPIDValues((12.75/currentVoltage));
+            double currentVoltage = 14;
+            setPIDValues((12.5/currentVoltage));
             waitForStart();
 
 
 
-            move(0,0.05,2,true);
+            move(0,0.38,2,true);
 
 
 
@@ -199,7 +199,7 @@ public class test extends LinearOpMode{
                 erroring = Math.abs(distanceWantedInMeters - distance);
                 telemetry.addData("Distance Error", erroring);
 
-                double targetAng = Math.toRadians(straightAngle);
+                double targetAng = Math.toRadians(-straightAngle);
                 double pidCorrection = PIDControl(targetAng,state,PforMove,DforMove,IforMove);
                 leftPower = powering - pidCorrection;
                 rightPower = powering + pidCorrection;
@@ -211,7 +211,7 @@ public class test extends LinearOpMode{
                 backLeft.setPower(leftPower);
                 frontRight.setPower(rightPower);
                 backRight.setPower(rightPower);
-                sleep(6);
+                //sleep(6);
             } while (opModeIsActive() && ((lasterroring > 0.02 || lastAngleErroring > 2.2) || (erroring > 0.02 || angleErroring > 2.2)));
             power(0);
         }
