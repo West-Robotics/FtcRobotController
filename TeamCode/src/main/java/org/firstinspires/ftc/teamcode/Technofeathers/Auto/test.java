@@ -121,8 +121,8 @@ public class test extends LinearOpMode{
             setPIDValues((12.75/currentVoltage));
             waitForStart();
 
-
-            move(0,0.05,2);
+            turnRight(90);
+            //move(0,0.05,2);
 
 
 
