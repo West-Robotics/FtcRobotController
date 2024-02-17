@@ -54,6 +54,12 @@ public class EggnogTeleopTest extends OpMode {
     public int placeholderG = 1;
     public int placeholderH = 1;
     public int placeholderI = 1;
+    public boolean dpadRightRunning = false;
+    public boolean dpadLeftRunning = false;
+    public boolean intakeOnRunning = false;
+    public boolean intakeOffRunning = false;
+
+
 
     public Functions functions = new Functions();
 
@@ -96,7 +102,9 @@ public class EggnogTeleopTest extends OpMode {
         controller1.update();
         controller2.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
+        functions.liftSetPower(controller2.left_stick_y);
         telemetry.addData("Lift Current Rotation: ", functions.liftRotation());
+        telemetry.addData("DpadRightRunning ", functions.dpadRightRunning);
         /*
         if (functions.liftMinLimitReached()) {
             functions.liftStop();
@@ -107,20 +115,20 @@ public class EggnogTeleopTest extends OpMode {
         //lift
         if (functions.touchSense1Pressed() && functions.getLiftStatus() == -1) {
             functions.liftStop();
-            functions.liftResetEncoders();
         }
 
-        if (controller2.leftBumper() && !functions.liftMaxLimitReached()) {
+        if (controller2.leftBumper()) {
             functions.liftGoUp();
             telemetry.addLine("Lift go up");
         }
-        else if (controller2.rightBumper()/* && !functions.touchSense1Pressed()*/) {
-            //TODO: must test later to see if this works without !functions.touchSense1Pressed
+        else if (controller2.rightBumper() && !functions.touchSense1Pressed()) {
             functions.liftGoDown();
         }
         else {
             functions.liftStop();
         }
+
+
         telemetry.addData("Lift Status: ", functions.getLiftStatus());
        // if (distSense1.getDistance(INCH) <= 10 && 0 < controller2.left_stick_y) {
           //  drive.drive(controller2.left_stick_x/2, controller2.left_stick_y/2, controller2.right_stick_x/2);

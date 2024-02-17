@@ -25,6 +25,11 @@ public class Functions {
     public Lift lift = new Lift();
     public Pivot pivot1 = new Pivot();
     public Stopper stopper = new Stopper();
+    public boolean dpadRightRunning = false;
+    public boolean dpadLeftRunning = false;
+    public boolean intakeOnRunning = false;
+    public boolean intakeOffRunning = false;
+
 
     //public boolean higherLevel = false;
 
@@ -73,6 +78,7 @@ public class Functions {
     }
 
     public void pixelDropAndReset() throws InterruptedException {
+        dpadRightRunning = true;
         //pixelDropAndResetTimer.reset();
         //telemetry.addData("Time Ran PixelDrop + Reset: ", pixelDropAndResetTimer.seconds());
         if (grabber.grabbedPixels) {
@@ -83,6 +89,8 @@ public class Functions {
         }
         sleep(750);
         lift.goDown();
+        sleep(100);
+        dpadRightRunning = false;
         //sleep(500);
         //TODO: test if this works when distance sensor is pressed
         //can go down for longer if touch sensor works
@@ -90,6 +98,7 @@ public class Functions {
     }
 
     public void intakeRun() throws InterruptedException {
+        intakeOnRunning = true;
         lift.goUp();
         sleep(500);
         telemetry.addLine("lift Going Up");
@@ -97,12 +106,14 @@ public class Functions {
         if (!stopper.stopperDown) {
             stopper.move();
         }
-        sleep(500);
+        sleep(1000);
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
+        intakeOnRunning = false;
     }
 
     public void intakeStop() throws InterruptedException {
+        intakeOffRunning = true;
         //intakeStopTimer.reset();
         //telemetry.addData("Time Ran intakeStop: ", intakeStopTimer.seconds());
         intake.off();
@@ -112,12 +123,13 @@ public class Functions {
         if (grabber.grabbedPixels) {
             grabber.move();
         }
+        sleep(750);
         lift.goDown();
+        /*
         sleep(500);
         lift.stop();
-        if (!grabber.grabbedPixels) {
-            grabber.move();
-        }
+         */
+        intakeOffRunning = false;
         /*
         if (intakeStopTimer.seconds() >= 5) {
             dylanRan = 0;
@@ -125,6 +137,9 @@ public class Functions {
             telemetry.addLine("Dylan will be run as soon as robot detects something within range");
         }
          */
+    }
+    public void liftSetPower(Double power) {
+        lift.setPower(power);
     }
 
     public double backdropParallelAngle() {
@@ -146,6 +161,22 @@ public class Functions {
     }
     public byte getLiftStatus() {
         return lift.getStatus();
+    }
+
+    public boolean getDpadRightStatus() {
+        return dpadRightRunning;
+    }
+
+    public boolean getDpadLeftStatus() {
+        return dpadLeftRunning;
+    }
+
+    public boolean getIntakeOnStatus() {
+        return intakeOnRunning;
+    }
+
+    public boolean getIntakeOffStatus() {
+        return intakeOffRunning;
     }
 
     public void faceBackdrop() {

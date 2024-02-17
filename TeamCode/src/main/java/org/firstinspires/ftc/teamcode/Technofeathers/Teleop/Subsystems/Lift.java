@@ -39,6 +39,10 @@ public class Lift {
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
     }
+    public void setPower(double power) {
+        lift1.setPower(power);
+        lift2.setPower(power);
+    }
     public void goUp() {
         lift1.setPower(1);
         lift2.setPower(1);
