@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.checkerframework.checker.units.qual.A;
 import org.checkerframework.checker.units.qual.K;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 
 @Autonomous
 public class test extends LinearOpMode{
@@ -41,6 +43,7 @@ public class test extends LinearOpMode{
         Servo pivot1;
         Servo grabber;
 
+        TouchSensor touch;
 
         int leftPos;
         int rightPos;
@@ -90,6 +93,7 @@ public class test extends LinearOpMode{
 
         public void runOpMode() throws InterruptedException{
 
+            touch = hardwareMap.get(TouchSensor.class, "touchSense1");
             frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
             backLeft = hardwareMap.get(DcMotor.class, "backLeft");
             frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -117,15 +121,37 @@ public class test extends LinearOpMode{
                     )
             );
             imu.initialize(imuParameters);
-            double currentVoltage = 12.85;
+            double currentVoltage = 12.75;
             setPIDValues((12.75/currentVoltage));
             waitForStart();
+
 
 
             move(0,0.05,2,true);
 
 
 
+        }
+        public void scoringPosition(){
+            grabber.setPosition(0.67);
+            sleep(750);
+            lift1.setPower(1);
+            lift2.setPower(1);
+            sleep(500);
+            lift1.setPower(0);
+            lift2.setPower(0);
+            pivot1.setPosition(0);
+            sleep(750);
+            grabber.setPosition(1);
+            sleep(500);
+            pivot1.setPosition(1);
+            sleep(750);
+            while (opModeIsActive() && !touch.isPressed()){
+                lift1.setPower(-0.5);
+                lift2.setPower(-0.5);
+            }
+            lift1.setPower(0);
+            lift2.setPower(0); 
         }
         public void setPIDValues(double voltage){
             Kp = Kp * voltage;
@@ -174,7 +200,7 @@ public class test extends LinearOpMode{
                 telemetry.addData("Distance Error", erroring);
 
                 double targetAng = Math.toRadians(straightAngle);
-                double pidCorrection = PIDControl(targetAng,state,PStraight,DStraight,IStraight);
+                double pidCorrection = PIDControl(targetAng,state,PforMove,DforMove,IforMove);
                 leftPower = powering - pidCorrection;
                 rightPower = powering + pidCorrection;
 

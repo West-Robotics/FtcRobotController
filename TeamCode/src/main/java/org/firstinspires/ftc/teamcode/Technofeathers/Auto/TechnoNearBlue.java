@@ -96,31 +96,43 @@ public class TechnoNearBlue extends LinearOpMode{
         double rightDist = rightDistanceSensor.getDistance(DistanceUnit.CM);
         sleep(5);
         if (leftDist< 65){
-            move(0,0.05,2);
+            move(0,0.05,2,true);
             turnLeft(90);
-            move(90,0.55,2);
+            move(90,0.55,2,true);
             releaseIntake();
-            move(90,0.05,2);
+            move(90,0.05,2,true);
 
         } else if(rightDist<75){
-            move(0,0.04,1);
+            move(0,0.04,1,true);
             turnLeft(180);
             releaseIntake();
             turnLeft(0);
-            move(0,0.09,1);
+            move(0,0.09,1,true);
             turnLeft(90);
-            move(90,0.05,2);
+            move(90,0.05,2,true);
 
 
         } else {
             runWithEncoder(2.5,2.5,0.5,538);
             turnLeft(90);
-            move(90,1.2,2);
+            move(90,1.2,2,true);
             releaseIntake();
-            move(90,0.05,2);
+            move(90,0.05,2,true);
 
         }
 
+    }
+    public void scoringPosition(){
+        grabber.setPosition(0.67);
+        sleep(750);
+        lift1.setPower(1);
+        lift2.setPower(1);
+        sleep(500);
+        lift1.setPower(0);
+        lift2.setPower(0);
+        pivot1.setPosition(0);
+        sleep(750);
+        grabber.setPosition(1);
     }
     public void setPIDValues(double voltage){
         Kp = Kp * voltage;
@@ -133,7 +145,7 @@ public class TechnoNearBlue extends LinearOpMode{
         IforMove = IforMove * voltage;
         DforMove = DforMove * voltage;
     }
-    public void move(double straightAngle, double distanceWantedInMeters, int oneRightTwoLeftThreeBack){
+    public void move(double straightAngle, double distanceWantedInMeters, int oneRightTwoLeftThreeBack, boolean forward){
         resetAngles();
         double distance;
         double powering;
@@ -157,7 +169,13 @@ public class TechnoNearBlue extends LinearOpMode{
                 distance = distanceSensor.getDistance(DistanceUnit.METER);
             }
             telemetry.addData("Distance:", distance);
-            powering= PIDControlForStraight(distanceWantedInMeters,distance);
+            if (forward){
+                powering= PIDControlForStraight(distanceWantedInMeters,distance) * -1;
+
+            } else {
+                powering= PIDControlForStraight(distanceWantedInMeters,distance);
+
+            }
             lasterroring = erroring;
             erroring = Math.abs(distanceWantedInMeters - distance);
             telemetry.addData("Distance Error", erroring);
