@@ -70,6 +70,7 @@ public class EggnogTeleop2Controller extends OpMode {
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
+        functions.setUp(this.hardwareMap, telemetry);
         //pivot1.setPosition(1);
     }
 
@@ -78,15 +79,15 @@ public class EggnogTeleop2Controller extends OpMode {
         controller1.update();
         controller2.update();
         drive.drive(controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
-        if (-1 <= controller2.left_stick_y && controller2.left_stick_y <= 1) {
-            lift1.setPower(controller2.left_stick_y);
-            lift2.setPower(controller2.left_stick_y);
+        if (-1 <= -controller2.left_stick_y && -controller2.left_stick_y <= 1) {
+            lift1.setPower(-controller2.left_stick_y);
+            lift2.setPower(-controller2.left_stick_y);
         }
-        else if (controller2.left_stick_x < -1){
+        else if (-controller2.left_stick_x < -1){
             lift1.setPower(-1);
             lift2.setPower(-1);
         }
-        else if (1 < controller2.left_stick_x) {
+        else if (1 < -controller2.left_stick_x) {
             lift1.setPower(1);
             lift2.setPower(1);
         }
