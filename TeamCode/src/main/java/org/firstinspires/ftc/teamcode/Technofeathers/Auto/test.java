@@ -121,8 +121,8 @@ public class test extends LinearOpMode{
             setPIDValues((12.75/currentVoltage));
             waitForStart();
 
-            turnRight(90);
-            //move(0,0.05,2);
+
+            move(0,0.05,2,true);
 
 
 
@@ -138,7 +138,7 @@ public class test extends LinearOpMode{
             IforMove = IforMove * voltage;
             DforMove = DforMove * voltage;
         }
-        public void move(double straightAngle, double distanceWantedInMeters, int oneRightTwoLeftThreeBack){
+        public void move(double straightAngle, double distanceWantedInMeters, int oneRightTwoLeftThreeBack, boolean forward){
             resetAngles();
             double distance;
             double powering;
@@ -162,13 +162,19 @@ public class test extends LinearOpMode{
                     distance = distanceSensor.getDistance(DistanceUnit.METER);
                 }
                 telemetry.addData("Distance:", distance);
-                powering= PIDControlForStraight(distanceWantedInMeters,distance);
+                if (forward){
+                    powering= PIDControlForStraight(distanceWantedInMeters,distance) * -1;
+
+                } else {
+                    powering= PIDControlForStraight(distanceWantedInMeters,distance);
+
+                }
                 lasterroring = erroring;
                 erroring = Math.abs(distanceWantedInMeters - distance);
                 telemetry.addData("Distance Error", erroring);
 
                 double targetAng = Math.toRadians(straightAngle);
-                double pidCorrection = PIDControl(targetAng,state,PforMove,DforMove,IforMove);
+                double pidCorrection = PIDControl(targetAng,state,PStraight,DStraight,IStraight);
                 leftPower = powering - pidCorrection;
                 rightPower = powering + pidCorrection;
 
@@ -269,7 +275,7 @@ public class test extends LinearOpMode{
             lastError2 = error2;
             timer.reset();
             telemetry.addData("Error2", error2);
-            double returning2 = (error2 * PforMove) + (derivative * DforMove) + (integralSum2 * IforMove);
+            double returning2 = (error2 * Kp) + (derivative * Kd) + (integralSum2 * Ki);
             return  returning2;
         }
 
@@ -284,6 +290,11 @@ public class test extends LinearOpMode{
         }
 
         public void runWithEncoder(double rightTurns, double leftTurns, double speed, int ticks){
+
+            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             double LeftTarget = ticks * leftTurns;
             double rightTarget = ticks * rightTurns;

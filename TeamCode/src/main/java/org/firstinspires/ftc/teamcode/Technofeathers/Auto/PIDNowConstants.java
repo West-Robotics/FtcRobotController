@@ -3,7 +3,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class PIDNowConstants {
 
-    public static double Kp = 2.4;
+    public static double Kp = 2.2;
 
     public static double Ki = 0.0;
 

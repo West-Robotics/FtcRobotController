@@ -76,8 +76,8 @@ public class othertest extends LinearOpMode{
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         distanceSensor = hardwareMap.get(DistanceSensor.class,"distSense1");
-        leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "distLeft");
-        rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "distRight");
+        leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "distSense2");
+        rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "distSense3");
         imu = hardwareMap.get(IMU.class, "imu");
         lift1 = hardwareMap.get(DcMotor.class,"lift1");
         lift2 = hardwareMap.get(DcMotor.class,"lift2");
