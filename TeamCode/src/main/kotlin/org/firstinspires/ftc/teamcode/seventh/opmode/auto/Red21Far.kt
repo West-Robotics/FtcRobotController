@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.arcrobotics.ftclib.gamepad.GamepadEx
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
@@ -25,6 +26,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.vision.Vision
 import java.lang.Math.toDegrees
 import kotlin.time.TimeSource
 
+@Disabled
 @Autonomous(name =
 """
 RED 2+0 FAR

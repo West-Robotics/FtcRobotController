@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.seventh.opmode.auto
 
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants
 import com.qualcomm.robotcore.util.ElapsedTime
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
 import org.firstinspires.ftc.teamcode.seventh.robot.vision.Vision
 import java.lang.Math.toDegrees
 
+@Disabled
 @Autonomous(name =
 """
 BLUE 2+4 CLOSE

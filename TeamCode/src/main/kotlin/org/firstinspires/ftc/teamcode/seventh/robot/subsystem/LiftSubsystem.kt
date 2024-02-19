@@ -8,6 +8,7 @@ import com.scrapmetal.quackerama.control.controller.PDF
 import com.scrapmetal.quackerama.hardware.QuackMotor
 import com.scrapmetal.quackerama.hardware.QuackQuadrature
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit
+import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.LIFT_HEIGHTS
@@ -24,6 +25,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     ) val state = LiftState()
     private val liftPDF = PDF(Globals.LIFT_P, Globals.LIFT_D)
     var voltage = 13.3
+    var reground = false
 
     private val liftLeft = QuackMotor(hardwareMap, "liftLeft")
     private val liftRight = QuackMotor(hardwareMap, "liftRight")
@@ -50,7 +52,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         if (
             !state.grounded &&
             state.extension < 0.35 &&
-            state.commandedExtension == LIFT_HEIGHTS[0]
+            reground
         ) {
             state.current = liftLeft.getCurrent(CurrentUnit.AMPS) +
                             liftRight.getCurrent(CurrentUnit.AMPS)
@@ -58,9 +60,10 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
         // voltage = Robot.voltage
     }
 
-    fun update(ce: Double, dt: Double) {
+    fun update(ce: Double, dt: Double, reground: Boolean = false) {
+        this.reground = reground
         state.commandedExtension = ce
-        if (state.commandedExtension != LIFT_HEIGHTS[0]) {
+        if (!reground) {
             state.grounded = false
         }
         state.power = liftPDF.update(state.extension, state.commandedExtension, dt)
@@ -72,7 +75,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
             state.current > 0.5 &&
             // state.current > state.lastCurrent &&
             state.extension < 0.35 &&
-            state.commandedExtension == LIFT_HEIGHTS[0] &&
+            reground &&
             !state.grounded
                 -> {
                 enc.reset()

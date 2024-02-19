@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.LIFT_HEIGHTS
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DroneSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
@@ -59,6 +60,7 @@ class Red20Close : LinearOpMode() {
         val intake = IntakeSubsystem(hardwareMap)
         val lift = LiftSubsystem(hardwareMap)
         val output = OutputSubsystem(hardwareMap)
+        val drone = DroneSubsystem(hardwareMap)
         val vision = Vision(hardwareMap)
         val cycle = CycleCommand(intake, lift, output)
 
@@ -99,7 +101,8 @@ class Red20Close : LinearOpMode() {
         intake.setHeight(1)
         Robot.read(intake, output)
         cycle.update(state, height, 0.0)
-        Robot.write(intake, output)
+        drone.update(DroneSubsystem.DroneState.LODED)
+        Robot.write(intake, output, drone)
 
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         vision.enableProp()
@@ -162,9 +165,9 @@ class Red20Close : LinearOpMode() {
                     autoMachine.state as AutoStates == AutoStates.DROP_YELLOW &&
                     timer.seconds() > 0.2
             ) {
-                Robot.write(lift, output)
+                Robot.write(lift, output, drone)
             } else {
-                Robot.write(drive, lift, output, intake)
+                Robot.write(drive, lift, output, intake, drone)
             }
 
             telemetry.addData("hz", 1000 / Robot.dt)
@@ -173,6 +176,13 @@ class Red20Close : LinearOpMode() {
             telemetry.addData("x", drive.getPoseEstimate().position.u)
             telemetry.addData("y", drive.getPoseEstimate().position.v)
             telemetry.addData("heading error", toDegrees(input.heading.polarAngle - drive.getPoseEstimate().heading.polarAngle))
+            // telemetry.addData("extension", lift.state.extension)
+            // telemetry.addData("commandedExtension", lift.state.commandedExtension)
+            // telemetry.addData("power", lift.state.power)
+            // telemetry.addData("robot state", autoMachine.state as AutoStates)
+            // telemetry.addData("auto state", state)
+            // telemetry.addData("height", height)
+            // telemetry.addData("LIFT_HEIGHT", LIFT_HEIGHTS[height])
             telemetry.update()
         }
         Globals.pose = drive.getPoseEstimate()

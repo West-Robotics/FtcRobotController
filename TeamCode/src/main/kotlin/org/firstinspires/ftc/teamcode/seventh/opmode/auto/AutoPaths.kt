@@ -50,10 +50,10 @@ class AutoPaths(
     }
     val yellowPose = when {
         side == Side.RED && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, -30.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, -37.5), Rotation2d(toRadians(0.0)))
+        side == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, -36.5), Rotation2d(toRadians(0.0)))
         side == Side.RED && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, -43.25), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, 44.75), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, 38.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, 43.5), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, 37.2), Rotation2d(toRadians(0.0)))
         side == Side.BLUE && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, 32.5), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     } + if (yellowSide == YellowSide.RIGHT) Pose2d(Vector2d(0.0, -3.0), Rotation2d()) else Pose2d()
@@ -63,15 +63,22 @@ class AutoPaths(
         else -> Pose2d()
     }
     val stackPose = when {
-        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+13.0, -36.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+13.0, 36.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && stack == Stack.FAR -> Pose2d(Vector2d(-72.0+13.0, -14.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.FAR -> Pose2d(Vector2d(-72.0+13.0, 14.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+12.0, -36.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+12.0, 36.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && stack == Stack.FAR && prop == PropPosition.LEFT -> Pose2d(Vector2d(-72.0+10.5, -18.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && stack == Stack.FAR && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(-72.0+11.5, -18.0), Rotation2d(toRadians(0.0)))
+        side == Side.RED && stack == Stack.FAR && prop == PropPosition.RIGHT -> Pose2d(Vector2d(-72.0+12.0, -15.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.FAR && prop == PropPosition.RIGHT -> Pose2d(Vector2d(-72.0+10.5, 15.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.FAR && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(-72.0+11.5, 15.0), Rotation2d(toRadians(0.0)))
+        side == Side.BLUE && stack == Stack.FAR && prop == PropPosition.LEFT -> Pose2d(Vector2d(-72.0+12.0, 14.0), Rotation2d(toRadians(0.0)))
+        // side == Side.BLUE && stack == Stack.FAR -> Pose2d(Vector2d(-72.0+10.5, 18.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val parkPose = when {
         side == Side.RED && park == Park.INNER -> Pose2d(Vector2d(45.0, -10.0))
         side == Side.BLUE && park == Park.INNER -> Pose2d(Vector2d(45.0, 10.0))
+        // side == Side.RED && park == Park.OUTER -> Pose2d(Vector2d(45.0, -10.0))
+        // side == Side.BLUE && park == Park.OUTER -> Pose2d(Vector2d(45.0, 10.0))
         park == Park.NONE -> backdropPose
         else -> Pose2d()
     }

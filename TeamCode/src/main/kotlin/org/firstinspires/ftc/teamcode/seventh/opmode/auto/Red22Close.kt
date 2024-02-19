@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DroneSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
@@ -37,6 +38,8 @@ class Red22Close : LinearOpMode() {
         TO_STACKS,
         INTAKE_STACKS,
         TO_BACKDROP,
+        RESET_POSE_AGAIN,
+        DROP_WHITE,
         PARK,
     }
     override fun runOpMode() {
@@ -56,6 +59,7 @@ class Red22Close : LinearOpMode() {
         val intake = IntakeSubsystem(hardwareMap)
         val lift = LiftSubsystem(hardwareMap)
         val output = OutputSubsystem(hardwareMap)
+        val drone = DroneSubsystem(hardwareMap)
         val vision = Vision(hardwareMap)
         val cycle = CycleCommand(intake, lift, output)
 
@@ -67,46 +71,59 @@ class Red22Close : LinearOpMode() {
         lateinit var gg: GG
         val autoMachine = StateMachineBuilder()
                 .state(AutoStates.TO_PURPLE)
-                    .transitionTimed(1.5)
+                .transitionTimed(1.5)
                 .state(AutoStates.DROP_PURPLE)
-                    .onEnter { intake.setHeight(5) }
-                    .transitionTimed(0.2)
-                    .onExit { gg.currentIndex++ }
+                .onEnter { intake.setHeight(5) }
+                .transitionTimed(0.2)
+                .onExit { gg.currentIndex++ }
                 .state(AutoStates.TO_YELLOW)
-                    .transitionTimed(1.2)
+                .transitionTimed(1.2)
                 .state(AutoStates.RESET_POSE)
-                    .onEnter { drive.getPoseEstimate().let {
-                        drive.setPoseEstimate(Pose2d(
-                                Vector2d(72.0-9.5-drive.wallDist-9.0, it.position.v),
-                                it.heading
-                        ))
-                    } }
-                    .transitionTimed(0.2)
-                    .onExit { drive.update(Pose2d(), correcting = false, fieldOriented = true, dt = Robot.dt, pid = true)}
+                .onEnter { drive.getPoseEstimate().let {
+                    drive.setPoseEstimate(Pose2d(
+                            Vector2d(72.0-9.5-drive.wallDist-9.0, it.position.v),
+                            it.heading
+                    ))
+                } }
+                .transitionTimed(0.3)
+                // .onExit { drive.update(Pose2d(), correcting = false, fieldOriented = true, dt = Robot.dt, pid = false)}
                 .state(AutoStates.DROP_YELLOW)
-                    .onEnter { timer.reset(); height = if (stackCount == 5) 1 else 2; state = RobotState.BACKDROP }
-                    .transitionTimed(1.8)
+                .onEnter { timer.reset(); height = 1; state = RobotState.BACKDROP }
+                .transitionTimed(1.8)
                 .state(AutoStates.RETRACT)
-                    .onEnter { state = RobotState.BACKDROP; gg.maxVel = 0.5; gg.currentIndex++ }
-                    .transitionTimed(0.5)
+                .onEnter { state = RobotState.BACKDROP; gg.maxVel = 0.5; gg.kN = 0.3; gg.currentIndex++ }
+                .transitionTimed(0.5)
                 .state(AutoStates.LOCK)
-                    .onEnter { height = 0; state = RobotState.LOCK }
-                    .transition({ stackCount == 5 }, AutoStates.TO_STACKS)
-                    .transition({ stackCount == 3 }, AutoStates.PARK )
+                .onEnter { height = 0; state = RobotState.LOCK }
+                .transition({ stackCount == 5 }, AutoStates.TO_STACKS)
+                .transition({ stackCount == 3 }, AutoStates.PARK )
                 .state(AutoStates.TO_STACKS)
-                    .transitionTimed(5.0)
+                .transitionTimed(5.0)
                 .state(AutoStates.INTAKE_STACKS)
-                    .onEnter { timer.reset() }
-                    .transitionTimed(2.0)
+                .onEnter { timer.reset() }
+                .transitionTimed(1.0)
                 .state(AutoStates.TO_BACKDROP)
-                    .onEnter { timer.reset() }
-                    .transitionTimed(5.0, AutoStates.RESET_POSE)
+                .onEnter { gg.currentIndex++; timer.reset() }
+                .transitionTimed(4.6)
+                .state(AutoStates.RESET_POSE_AGAIN)
+                .onEnter { drive.getPoseEstimate().let {
+                    drive.setPoseEstimate(Pose2d(
+                            Vector2d(72.0-9.5-drive.wallDist-9.0, it.position.v),
+                            it.heading
+                    ))
+                } }
+                .transitionTimed(0.3)
+                // .onExit { drive.update(Pose2d(), correcting = false, fieldOriented = true, dt = Robot.dt, pid = false)}
+                .state(AutoStates.DROP_WHITE)
+                .onEnter { timer.reset(); height = 2; state = RobotState.BACKDROP }
+                .transitionTimed(1.3, AutoStates.RETRACT)
                 .state(AutoStates.PARK)
                 .build()
         intake.setHeight(1)
-        Robot.read(intake, output)
+        drone.update(DroneSubsystem.DroneState.LODED)
+        Robot.read(intake, output, drone)
         cycle.update(state, height, 0.0)
-        Robot.write(intake, output)
+        Robot.write(intake, output, drone)
 
         vision.enableProp()
         drive.startIMUThread(this)
@@ -155,14 +172,22 @@ class Red22Close : LinearOpMode() {
 
             if (autoMachine.state as AutoStates == AutoStates.DROP_YELLOW) {
                 when {
-                    timer.seconds() > 1.0 && state == RobotState.BACKDROP
+                    timer.seconds() > 0.7 && state == RobotState.BACKDROP
                     -> { state = RobotState.EXTEND }
-                    timer.seconds() > 1.0 && timer.seconds() < 1.3 && state == RobotState.EXTEND
+                    timer.seconds() > 0.9 && timer.seconds() < 1.2 && state == RobotState.EXTEND
                     -> { height = 6 }
-                    timer.seconds() > 1.3 && state == RobotState.EXTEND
+                    timer.seconds() > 1.2 && state == RobotState.EXTEND
                     -> { state = RobotState.SCORE }
-                    timer.seconds() > 1.7 && state == RobotState.SCORE
+                    timer.seconds() > 1.6 && state == RobotState.SCORE
                     -> { height = 1 }
+                }
+            }
+            if (autoMachine.state as AutoStates == AutoStates.DROP_WHITE) {
+                when {
+                    timer.seconds() > 0.7 && state == RobotState.BACKDROP
+                    -> { state = RobotState.EXTEND }
+                    timer.seconds() > 1.0 && state == RobotState.EXTEND
+                    -> { state = RobotState.SCORE }
                 }
             }
             when {
@@ -171,15 +196,15 @@ class Red22Close : LinearOpMode() {
                 -> { state = RobotState.INTAKE }
                 autoMachine.state as AutoStates == AutoStates.INTAKE_STACKS && timer.seconds() > 0.5
                 -> { intake.setHeight(4); stackCount -= 2}
-                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5 && state == RobotState.INTAKE
-                -> { state = RobotState.PRELOCK; timer.reset() }
-                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 0.5 && state == RobotState.PRELOCK
+                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 2.0 && state == RobotState.INTAKE
+                -> { state = RobotState.PRELOCK }
+                autoMachine.state as AutoStates == AutoStates.TO_BACKDROP && timer.seconds() > 2.5 && state == RobotState.PRELOCK
                 -> { state = RobotState.LOCK }
             }
             cycle.update(state, height, drive.wallDist)
             if (
-                    autoMachine.state as AutoStates == AutoStates.DROP_YELLOW &&
-                    timer.seconds() > 0.2
+                    (autoMachine.state as AutoStates == AutoStates.DROP_YELLOW || autoMachine.state as AutoStates == AutoStates.DROP_WHITE) &&
+                    timer.seconds() > 0.4
             ) {
                 Robot.write(lift, output)
             } else {

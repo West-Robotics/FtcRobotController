@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.command.CycleCommand
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DriveSubsystem
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.DroneSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.IntakeSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.LiftSubsystem
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
@@ -58,6 +59,7 @@ class Blue24Close : LinearOpMode() {
         val intake = IntakeSubsystem(hardwareMap)
         val lift = LiftSubsystem(hardwareMap)
         val output = OutputSubsystem(hardwareMap)
+        val drone = DroneSubsystem(hardwareMap)
         val vision = Vision(hardwareMap)
         val cycle = CycleCommand(intake, lift, output)
 
@@ -118,9 +120,10 @@ class Blue24Close : LinearOpMode() {
                 .state(AutoStates.PARK)
                 .build()
         intake.setHeight(1)
-        Robot.read(intake, output)
+        drone.update(DroneSubsystem.DroneState.LODED)
+        Robot.read(intake, output, drone)
         cycle.update(state, height, 0.0)
-        Robot.write(intake, output)
+        Robot.write(intake, output, drone)
 
         vision.enableProp()
         drive.startIMUThread(this)

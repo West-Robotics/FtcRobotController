@@ -17,13 +17,15 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out: OutputSubsystem) {
+    companion object {
+        public val TRUE_LIFT_HEIGHTS = doubleArrayOf(-0.2) + DoubleArray(5) { 2.6*it + 14.5 } + 10.9
+    }
     var robotState = LOCK
     var lastState = robotState
     var height = 0
-    val TRUE_LIFT_HEIGHTS = doubleArrayOf(-0.2) + DoubleArray(5) { 2.6*it + 14.5 } + 10.9
     private var armMP = AsymTrapezoidMP(-120.5, -120.5, 0.0, 0.0, 0.0)
     private var armTimer = ElapsedTime()
-    private var liftMP = AsymTrapezoidMP(LIFT_HEIGHTS[0], LIFT_HEIGHTS[0], 0.0, 0.0, 0.0)
+    private var liftMP = AsymTrapezoidMP(TRUE_LIFT_HEIGHTS[0], TRUE_LIFT_HEIGHTS[0], 0.0, 0.0, 0.0)
     private var liftTimer = ElapsedTime()
 
     // okay so to be clear all this does is update the states (and also other computations, hm maybe
@@ -45,36 +47,37 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
                         else -> -123.0
                     },
                     accel = 6000.0,
-                    decel = -1000.0, // old: -1400.0
+                    decel = -950.0, // old: -1400.0
                     v_max = 500.0
                 )
                 armTimer = ElapsedTime()
             }
-            if (h != height) {
-                liftMP = AsymTrapezoidMP(
-                        start = lift.state.extension,
-                        end = when (s) {
-                            INTAKE, LOCK, PRELOCK, SPIT, ALIGN -> TRUE_LIFT_HEIGHTS[0]
-                            BACKDROP, EXTEND, SCORE, SCORE_L, SCORE_R
-                            -> TRUE_LIFT_HEIGHTS[h] +
-                                    0.5 * extension - 9.25 +
-                                    sqrt(9.25.pow(2) - (sqrt(3.0) / 2).pow(2) * extension.pow(2))
-                        },
-                        accel = 150.0,
-                        decel = if (s == LOCK) -1000.0 else -400.0, // old: -1400.0
-                        v_max = 100.0
-                )
-                liftTimer = ElapsedTime()
-            }
-            println("${
-                when (s) {
-                    INTAKE, LOCK, PRELOCK, SPIT, ALIGN -> TRUE_LIFT_HEIGHTS[0]
-                    BACKDROP, EXTEND, SCORE, SCORE_L, SCORE_R
-                    -> TRUE_LIFT_HEIGHTS[h] +
-                            0.5 * extension - 9.25 +
-                            sqrt(9.25.pow(2) - (sqrt(3.0) / 2).pow(2) * extension.pow(2))
-                }
-            }")
+            // killer
+            // if (h != height) {
+            liftMP = AsymTrapezoidMP(
+                    start = lift.state.extension,
+                    end = when (s) {
+                        INTAKE, LOCK, PRELOCK, SPIT, ALIGN -> TRUE_LIFT_HEIGHTS[0]
+                        BACKDROP, EXTEND, SCORE, SCORE_L, SCORE_R
+                        -> TRUE_LIFT_HEIGHTS[h] +
+                                0.5 * extension - 9.25 +
+                                sqrt(9.25.pow(2) - (sqrt(3.0) / 2).pow(2) * extension.pow(2))
+                    },
+                    accel = if (Globals.AUTO) 100.0 else 150.0,
+                    decel = if (s == LOCK) -1000.0 else -400.0, // old: -1400.0
+                    v_max = 100.0
+            )
+            liftTimer = ElapsedTime()
+            // }
+            // println("${
+            //     when (s) {
+            //         INTAKE, LOCK, PRELOCK, SPIT, ALIGN -> TRUE_LIFT_HEIGHTS[0]
+            //         BACKDROP, EXTEND, SCORE, SCORE_L, SCORE_R
+            //         -> TRUE_LIFT_HEIGHTS[h] +
+            //                 0.5 * extension - 9.25 +
+            //                 sqrt(9.25.pow(2) - (sqrt(3.0) / 2).pow(2) * extension.pow(2))
+            //     }
+            // }")
             robotState = s
         }
         height = h
@@ -110,7 +113,7 @@ class CycleCommand(val intake: IntakeSubsystem, val lift: LiftSubsystem, val out
             } else {
                 out.update(robotState, armMP.update(armTimer.seconds()).s)
             }
-            lift.update(liftMP.update(liftTimer.seconds()).s, Robot.dt)
+            lift.update(liftMP.update(liftTimer.seconds()).s, Robot.dt, s == LOCK)
         }
         intake.update(s)
     }

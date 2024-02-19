@@ -90,6 +90,7 @@ class SussyTele : LinearOpMode() {
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.A) }, RobotState.INTAKE)
                     .transition({ primary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) }, RobotState.ALIGN)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.BACK) }, RobotState.SPIT)
+                    .transition({ secondary.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) && gamepad2.guide }, RobotState.BACKDROP, { height = 2 })
                     .onExit { lastState = RobotState.LOCK }
                 .state(RobotState.PRELOCK)
                     .transition({ secondary.wasJustPressed(GamepadKeys.Button.B) }, RobotState.LOCK)
@@ -202,10 +203,9 @@ class SussyTele : LinearOpMode() {
                 secondary.wasJustPressed(GamepadKeys.Button.X) -> intake.lower()
                 secondary.wasJustPressed(GamepadKeys.Button.Y) -> intake.raise()
                 // subdivisions?
-                secondary.wasJustPressed(GamepadKeys.Button.BACK) && gamepad2.guide -> output.pivotOffset -= 22.5
-                secondary.wasJustPressed(GamepadKeys.Button.START) && gamepad2.guide -> output.pivotOffset += 22.5
-                secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && gamepad2.guide && drone.position == 0.12 -> drone.update(DroneSubsystem.DroneState.LODED)
-                secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && gamepad2.guide && drone.position == 0.15 -> drone.update(DroneSubsystem.DroneState.DIPER)
+                secondary.wasJustPressed(GamepadKeys.Button.BACK) && gamepad2.guide -> output.pivotOffset -= 11.25
+                secondary.wasJustPressed(GamepadKeys.Button.START) && gamepad2.guide -> output.pivotOffset += 11.25
+                secondary.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) && gamepad2.guide -> drone.update(DroneSubsystem.DroneState.DIPER)
             }
             lastJoystickDown = joystickDown
             lastJoystickUp = joystickUp
