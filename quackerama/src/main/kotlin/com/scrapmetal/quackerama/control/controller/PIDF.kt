@@ -38,11 +38,11 @@ class PDF(
      * Calculate PDF output
      *
      * @param x current state x
-     * @param setpoint setpoint
+     * @param reference setpoint
      * @param dt timestep in milliseconds
      */
-    fun update(x: Double, setpoint: Double, dt: Double): Double {
-        val error = (setpoint - x).let {
+    fun update(x: Double, reference: Double, dt: Double): Double {
+        val error = (reference - x).let {
             // TODO: generalize beyond assuming radians + full circle
             if (continuous && it.absoluteValue > PI) {
                 it + if (it > 0) -2*PI else 2*PI

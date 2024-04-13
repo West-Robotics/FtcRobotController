@@ -4,7 +4,8 @@ import com.scrapmetal.quackerama.control.Pose2d
 import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
 import com.scrapmetal.quackerama.control.path.path
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.Side
+import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
+import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.Alliance
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.Start
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.Lane
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.YellowSide
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.seventh.robot.vision.GetPropPositionPipeli
 import java.lang.Math.toRadians
 
 class AutoPaths(
-        val side: Side,
+        val alliance: Alliance,
         val start: Start,
         val lane: Lane,
         val yellowSide: YellowSide,
@@ -25,75 +26,75 @@ class AutoPaths(
     // === BASE DEFINITIONS ===
     // position is middle of bot
     val botOffset = 9.5
-    val sideMult = if (side == Side.RED) 1 else -1
+    val sideMult = if (alliance == Side.RED) 1 else -1
     val initPose = when {
-        side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(12.0+4.0, -72.0+botOffset), Rotation2d(toRadians(90.0)))// was 3.5 offset
-        side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(12.0+4.0, 72.0-botOffset), Rotation2d(toRadians(-90.0)))
-        side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-36.0-4.0, -72.0+botOffset), Rotation2d(toRadians(90.0)))
-        side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-36.0-4.0, 72.0-botOffset), Rotation2d(toRadians(-90.0)))
+        alliance == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(12.0+4.0, -72.0+botOffset), Rotation2d(toRadians(90.0)))// was 3.5 offset
+        alliance == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(12.0+4.0, 72.0-botOffset), Rotation2d(toRadians(-90.0)))
+        alliance == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-36.0-4.0, -72.0+botOffset), Rotation2d(toRadians(90.0)))
+        alliance == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-36.0-4.0, 72.0-botOffset), Rotation2d(toRadians(-90.0)))
         else -> Pose2d()
     }
     val propPose = when {
-        prop == PropPosition.LEFT && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(9.0, -36.5), Rotation2d(toRadians(0.0)))
-        prop == PropPosition.MIDDLE && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(20.0, -34.0), Rotation2d(toRadians(0.0)))
-        prop == PropPosition.RIGHT && side == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(32.0, -34.0), Rotation2d(toRadians(0.0)))
-        prop == PropPosition.LEFT && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(32.0, 34.0), Rotation2d(toRadians(0.0)))
-        prop == PropPosition.MIDDLE && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(20.0, 32.0), Rotation2d(toRadians(0.0)))
-        prop == PropPosition.RIGHT && side == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(10.0, 36.5), Rotation2d(toRadians(0.0)))
-        prop == PropPosition.LEFT && side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-55.0, -14.0), Rotation2d(toRadians(90.0)))
-        prop == PropPosition.MIDDLE && side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-48.0, -14.0), Rotation2d(toRadians(90.0)))
-        prop == PropPosition.RIGHT && side == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-30.0, -36.0), Rotation2d(toRadians(180.0)))
-        prop == PropPosition.LEFT && side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(30.0, 36.0), Rotation2d(toRadians(180.0)))
-        prop == PropPosition.MIDDLE && side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-48.0, -14.0), Rotation2d(toRadians(-90.0)))
-        prop == PropPosition.RIGHT && side == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-55.0, -14.0), Rotation2d(toRadians(-90.0)))
+        prop == PropPosition.LEFT && alliance == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(9.0, -36.5), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.MIDDLE && alliance == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(20.0, -34.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.RIGHT && alliance == Side.RED && start == Start.CLOSE -> Pose2d(Vector2d(32.0, -34.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.LEFT && alliance == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(32.0, 34.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.MIDDLE && alliance == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(20.0, 32.0), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.RIGHT && alliance == Side.BLUE && start == Start.CLOSE -> Pose2d(Vector2d(10.0, 36.5), Rotation2d(toRadians(0.0)))
+        prop == PropPosition.LEFT && alliance == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-55.0, -14.0), Rotation2d(toRadians(90.0)))
+        prop == PropPosition.MIDDLE && alliance == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-48.0, -14.0), Rotation2d(toRadians(90.0)))
+        prop == PropPosition.RIGHT && alliance == Side.RED && start == Start.FAR -> Pose2d(Vector2d(-30.0, -36.0), Rotation2d(toRadians(180.0)))
+        prop == PropPosition.LEFT && alliance == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(30.0, 36.0), Rotation2d(toRadians(180.0)))
+        prop == PropPosition.MIDDLE && alliance == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-48.0, -14.0), Rotation2d(toRadians(-90.0)))
+        prop == PropPosition.RIGHT && alliance == Side.BLUE && start == Start.FAR -> Pose2d(Vector2d(-55.0, -14.0), Rotation2d(toRadians(-90.0)))
         else -> Pose2d()
     }
     val yellowPose = when {
-        side == Side.RED && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, -30.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, -36.5), Rotation2d(toRadians(0.0)))
-        side == Side.RED && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, -43.25), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, 43.5), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, 37.2), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, 32.5), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, -30.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, -36.5), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, -43.25), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && prop == PropPosition.LEFT -> Pose2d(Vector2d(49.0, 43.5), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(49.0, 37.2), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && prop == PropPosition.RIGHT -> Pose2d(Vector2d(49.0, 32.5), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     } + if (yellowSide == YellowSide.RIGHT) Pose2d(Vector2d(0.0, -3.0), Rotation2d()) else Pose2d()
     val backdropPose = when {
-        side == Side.RED -> Pose2d(Vector2d(49.0,-40.0+0.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE -> Pose2d(Vector2d(49.0,40.0-0.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED -> Pose2d(Vector2d(49.0,-40.0+0.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE -> Pose2d(Vector2d(49.0,40.0-0.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val stackPose = when {
-        side == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+12.0, -36.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+12.0, 36.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && stack == Stack.FAR && prop == PropPosition.LEFT -> Pose2d(Vector2d(-72.0+10.5, -18.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && stack == Stack.FAR && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(-72.0+11.5, -18.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && stack == Stack.FAR && prop == PropPosition.RIGHT -> Pose2d(Vector2d(-72.0+12.0, -15.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.FAR && prop == PropPosition.RIGHT -> Pose2d(Vector2d(-72.0+10.5, 15.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.FAR && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(-72.0+11.5, 15.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && stack == Stack.FAR && prop == PropPosition.LEFT -> Pose2d(Vector2d(-72.0+12.0, 14.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+12.0, -36.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && stack == Stack.CLOSE -> Pose2d(Vector2d(-72.0+12.0, 36.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && stack == Stack.FAR && prop == PropPosition.LEFT -> Pose2d(Vector2d(-72.0+10.5, -18.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && stack == Stack.FAR && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(-72.0+11.5, -18.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && stack == Stack.FAR && prop == PropPosition.RIGHT -> Pose2d(Vector2d(-72.0+12.0, -15.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && stack == Stack.FAR && prop == PropPosition.RIGHT -> Pose2d(Vector2d(-72.0+10.5, 15.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && stack == Stack.FAR && prop == PropPosition.MIDDLE -> Pose2d(Vector2d(-72.0+11.5, 15.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && stack == Stack.FAR && prop == PropPosition.LEFT -> Pose2d(Vector2d(-72.0+12.0, 14.0), Rotation2d(toRadians(0.0)))
         // side == Side.BLUE && stack == Stack.FAR -> Pose2d(Vector2d(-72.0+10.5, 18.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val parkPose = when {
-        side == Side.RED && park == Park.INNER -> Pose2d(Vector2d(45.0, -10.0))
-        side == Side.BLUE && park == Park.INNER -> Pose2d(Vector2d(45.0, 10.0))
+        alliance == Side.RED && park == Park.INNER -> Pose2d(Vector2d(45.0, -10.0))
+        alliance == Side.BLUE && park == Park.INNER -> Pose2d(Vector2d(45.0, 10.0))
         // side == Side.RED && park == Park.OUTER -> Pose2d(Vector2d(45.0, -10.0))
         // side == Side.BLUE && park == Park.OUTER -> Pose2d(Vector2d(45.0, 10.0))
         park == Park.NONE -> backdropPose
         else -> Pose2d()
     }
     val audienceJoin = when {
-        side == Side.RED && lane == Lane.LANE_2 -> Pose2d(Vector2d(-12.0, -38.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && lane == Lane.LANE_2 -> Pose2d(Vector2d(-12.0, 38.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && lane == Lane.LANE_2 -> Pose2d(Vector2d(-12.0, -38.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && lane == Lane.LANE_2 -> Pose2d(Vector2d(-12.0, 38.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
     val backdropJoin = when {
-        side == Side.RED && lane == Lane.LANE_1 -> Pose2d(Vector2d(24.0, -60.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && lane == Lane.LANE_2 -> Pose2d(Vector2d(24.0, -36.0), Rotation2d(toRadians(0.0)))
-        side == Side.RED && lane == Lane.LANE_3 -> Pose2d(Vector2d(24.0, -12.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && lane == Lane.LANE_1 -> Pose2d(Vector2d(24.0, 60.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && lane == Lane.LANE_2 -> Pose2d(Vector2d(24.0, 36.0), Rotation2d(toRadians(0.0)))
-        side == Side.BLUE && lane == Lane.LANE_3 -> Pose2d(Vector2d(24.0, 12.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && lane == Lane.LANE_1 -> Pose2d(Vector2d(24.0, -60.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && lane == Lane.LANE_2 -> Pose2d(Vector2d(24.0, -36.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.RED && lane == Lane.LANE_3 -> Pose2d(Vector2d(24.0, -12.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && lane == Lane.LANE_1 -> Pose2d(Vector2d(24.0, 60.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && lane == Lane.LANE_2 -> Pose2d(Vector2d(24.0, 36.0), Rotation2d(toRadians(0.0)))
+        alliance == Side.BLUE && lane == Lane.LANE_3 -> Pose2d(Vector2d(24.0, 12.0), Rotation2d(toRadians(0.0)))
         else -> Pose2d()
     }
 
@@ -109,7 +110,7 @@ class AutoPaths(
                     heading(propPose.heading.polarAngle)
                 }
             }
-        } else if ((prop == PropPosition.RIGHT && side == Side.RED) || (prop == PropPosition.LEFT && side == Side.BLUE)) {
+        } else if ((prop == PropPosition.RIGHT && alliance == Side.RED) || (prop == PropPosition.LEFT && alliance == Side.BLUE)) {
             hermite {
                 label("close to backdrop prop")
                 start {
@@ -123,11 +124,11 @@ class AutoPaths(
                     heading(propPose.heading.polarAngle)
                 }
             }
-        } else if (side == Side.RED) {
+        } else if (alliance == Side.RED) {
             hermite {
                 label("red to left prop")
                 start {
-                    pos(initPose.position); ang(toRadians(20.0*(if ((side == Side.RED && start == Start.CLOSE) || (side == Side.BLUE && start == Start.FAR))
+                    pos(initPose.position); ang(toRadians(20.0*(if ((alliance == Side.RED && start == Start.CLOSE) || (alliance == Side.BLUE && start == Start.FAR))
                         1.0 else -1.0))); v(25.0)
                 }
                 end {
