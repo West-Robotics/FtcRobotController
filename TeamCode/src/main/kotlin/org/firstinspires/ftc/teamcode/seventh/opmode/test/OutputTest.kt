@@ -2,58 +2,60 @@ package org.firstinspires.ftc.teamcode.seventh.opmode.test
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.arcrobotics.ftclib.gamepad.GamepadEx
+import com.arcrobotics.ftclib.command.CommandScheduler
+import com.arcrobotics.ftclib.command.InstantCommand
+import com.arcrobotics.ftclib.command.PerpetualCommand
 import com.arcrobotics.ftclib.gamepad.GamepadKeys
+import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
+import org.firstinspires.ftc.teamcode.seventh.opmode.teleop.Gigapad
 
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Hardware
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
-import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.RobotState
+import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem.*
 
+@Photon
 @TeleOp(name = "OutputTest")
 class OutputTest : LinearOpMode() {
     @Override
     override fun runOpMode() {
-        Robot.hardwareMap = hardwareMap
-        val output = OutputSubsystem(Robot.hardwareMap)
-        val gamepad = GamepadEx(gamepad1)
-        var state = RobotState.LOCK
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
+        val gamepad = Gigapad(gamepad1)
+        Robot.init(hardwareMap, telemetry, null, null)
+        val output = OutputSubsystem(Robot.getHwMap())
 
+        // gamepad.ne.whenActive(InstantCommand({ output.set(Roll.LM_I) }))
+        gamepad.north.whenActive(InstantCommand({ output.set(Roll.VERT_I) }))
+        gamepad.nw.whenActive(InstantCommand({ output.set(Roll.RM) }))
+        gamepad.west.whenActive(InstantCommand({ output.set(Roll.HORIZ) }))
+        gamepad.sw.whenActive(InstantCommand({ output.set(Roll.LM) }))
+        gamepad.south.whenActive(InstantCommand({ output.set(Roll.VERT) }))
+        // gamepad.se.whenActive(InstantCommand({ output.set(Roll.RM_I) }))
+        gamepad.rTrig.whenActive(InstantCommand({ output.set(Claw.NONE) }))
+        gamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+            .whenActive(InstantCommand({ output.set(Claw.RIGHT) }))
+        gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+            .whenActive(InstantCommand({ output.set(Claw.LEFT) }))
+        gamepad.getGamepadButton(GamepadKeys.Button.B)
+            .whenActive(InstantCommand({ output.set(Claw.BOTH) }))
+        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+            .whenPressed(InstantCommand({ output.set(Arm.BACKDROP) })
+                .andThen(InstantCommand({ output.set(Pitch.OUT) })))
+        gamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+            .whenPressed(InstantCommand({ output.set(Arm.IN) })
+                .andThen(InstantCommand({ output.set(Pitch.IN) })))
+        // PerpetualCommand(InstantCommand({ output.set(70*-gamepad.rightX) })).schedule()
         waitForStart()
 
         while (opModeIsActive() && !isStopRequested) {
             Robot.read(output)
-            gamepad.readButtons()
-            if (gamepad.getButton(GamepadKeys.Button.A)) {
-                state = RobotState.INTAKE
-            } else if (gamepad.getButton(GamepadKeys.Button.B)) {
-                state = RobotState.LOCK
-            } else if (gamepad.getButton(GamepadKeys.Button.X)) {
-                state = RobotState.BACKDROP
-            } else if (gamepad.getButton(GamepadKeys.Button.Y)) {
-                state = RobotState.EXTEND
-            // } else if (gamepad.gamepad.guide, gamepad.gamepad.) {
-                // gamepad.gamepad.ps
-                // gamepad.gamepad.share
-                // gamepad.gamepad.x
-                // gamepad.gamepad.touchpad_finger_1_x
-                // gamepad.gamepad.touchpad_finger_1_y
-                // output.update(RobotState.EXTEND)
-            }
-            output.update(state, -120.0)
+            output.set(45*-gamepad.rightX)
+            // does this add latency?
+            telemetry.addData("hz", 1/Robot.getDt())
+            telemetry.addData("left voltage", output.endLAng)
+            telemetry.addData("right voltage", output.endRAng)
             Robot.write(output)
-            // telemetry.addData("max pos", output.armLeft.getCommandedPosition())
-            telemetry.addData("x", gamepad.gamepad.x)
-            telemetry.addData("y", gamepad.gamepad.y)
-            telemetry.addData("left filled", output.leftFilled)
-            telemetry.addData("right filled", output.rightFilled)
-            // telemetry.addData("profile velo", output.mpState.v)
-            telemetry.update()
         }
     }
 }

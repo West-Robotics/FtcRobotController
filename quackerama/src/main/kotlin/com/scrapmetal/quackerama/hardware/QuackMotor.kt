@@ -20,17 +20,13 @@ class QuackMotor(val hardwareMap: HardwareMap, name: String, private var thresh:
     private val motor = hardwareMap.get(DcMotorEx::class.java, name)
     private var lastPower = 0.0
 
-    init {
-        motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-    }
+    init { motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER }
 
     fun setZeroPowerBehavior(zeroPowerBehavior: ZeroPowerBehavior) {
         motor.zeroPowerBehavior = zeroPowerBehavior
     }
 
-    fun setDirection(direction: Direction) {
-        motor.direction = direction
-    }
+    fun setDirection(direction: Direction) { motor.direction = direction }
 
     fun setPower(power: Double) {
         if (abs(power - lastPower) > thresh) {
@@ -39,15 +35,10 @@ class QuackMotor(val hardwareMap: HardwareMap, name: String, private var thresh:
         }
     }
 
-    fun setThresh(thresh: Double) {
-        this.thresh = thresh
-    }
+    fun setThresh(thresh: Double) { this.thresh = thresh }
 
-    fun setCurrentAlert(current: Double, currentUnit: CurrentUnit) {
-        motor.setCurrentAlert(current, currentUnit)
-    }
-
+    fun setCurrentAlert(current: Double) { motor.setCurrentAlert(current, CurrentUnit.AMPS) }
+    fun getCurrentAlert(current: Double) = motor.getCurrentAlert(CurrentUnit.AMPS)
     fun getCurrent(currentUnit: CurrentUnit) = motor.getCurrent(currentUnit)
-    fun getCurrentAlert(currentUnit: CurrentUnit) = motor.getCurrentAlert(currentUnit)
     fun isOverCurrent() = motor.isOverCurrent
 }

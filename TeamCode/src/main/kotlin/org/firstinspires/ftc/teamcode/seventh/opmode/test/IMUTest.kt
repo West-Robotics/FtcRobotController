@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
-import org.firstinspires.ftc.teamcode.drive.DriveConstants
+// import org.firstinspires.ftc.teamcode.drive.DriveConstants
 
 import java.lang.Math.toDegrees
 
@@ -21,7 +21,7 @@ class IMUTest : LinearOpMode() {
         // val drive = SampleMecanumDrive(hardware, hardwareMap)
         val dashboard = FtcDashboard.getInstance()
         val imu: IMU = hardwareMap.get(IMU::class.java, "imu")
-        imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
+        // imu.initialize(IMU.Parameters(RevHubOrientationOnRobot(DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR)))
         var ang = 0.0
         var angVel = 0.0
 

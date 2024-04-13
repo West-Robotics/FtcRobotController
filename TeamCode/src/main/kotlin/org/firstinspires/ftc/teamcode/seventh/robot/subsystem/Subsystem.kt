@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 
-interface Subsystem {
+import com.arcrobotics.ftclib.command.Subsystem
+
+interface Subsystem : Subsystem {
     // WARNING: ORDER OF CALLING MATTERS
     // As indicated by https://docs.google.com/presentation/d/19RBNY5aCJK8FEnOWX4JIMRd9WVtqkeJ7pX1d8rqK2_U/edit#slide=id.g15295dfebf2_0_33
     // Latency (but not throughput) of commands is affected when dependencies are not called in order

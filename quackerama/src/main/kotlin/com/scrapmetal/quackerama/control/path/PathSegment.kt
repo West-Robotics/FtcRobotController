@@ -12,8 +12,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Rotation
  *
  * @param decelDistance distance before the endpoint to begin decelerating
  * @param heading heading to maintain in radians
+ * @param tangentHeading whether to have the heading be the tangent of the path or not
  */
-data class MovementConstraints(val decelDistance: Double = 0.0, val heading: Double = 0.0)
+data class MovementConstraints(
+    val decelDistance: Double = 0.0,
+    val heading: Double = 0.0,
+    val tangentHeading: Boolean = false
+)
 interface PathSegment {
     val label: String
     val startPose: Pose2d

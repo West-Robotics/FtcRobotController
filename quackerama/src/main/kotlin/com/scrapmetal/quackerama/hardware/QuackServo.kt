@@ -19,7 +19,7 @@ class QuackServo(
     hardwareMap: HardwareMap,
     name: String,
     pwm: ModelPWM,
-    private var thresh: Double = 0.005,
+    private var thresh: Double = 0.002,
     usFrame: Double = 5000.0,
 ) {
     /**
@@ -50,7 +50,7 @@ class QuackServo(
 
     fun setPosition(position: Double) {
         if (abs(position - lastPosition) > thresh) {
-            servo.position = position
+            servo.setPosition(position)
             lastPosition = position
         }
     }
@@ -61,7 +61,7 @@ class QuackServo(
     fun setPosition(position: Double, convertToPosition: (Double) -> Double) {
     	val convertedPosition = convertToPosition(position)
         if (abs(convertedPosition - lastPosition) > thresh) {
-            servo.position = convertedPosition
+            servo.setPosition(convertedPosition)
             lastPosition = convertedPosition
         }
     }

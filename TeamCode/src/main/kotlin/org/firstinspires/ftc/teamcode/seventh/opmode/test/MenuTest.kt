@@ -14,8 +14,8 @@ class MenuTest : LinearOpMode() {
     override fun runOpMode() {
         val selectionMenu = SelectionMenu(telemetry)
         selectionMenu.addSetting(Setting("Color", listOf(
-                Option("<font color=\"#FF0000\">RED</font>", Globals.Side.RED),
-                Option("<font color=\"#0000FF\">BLUE</font>", Globals.Side.RED))))
+                Option("<font color=\"#FF0000\">RED</font>", Globals.Alliance.RED),
+                Option("<font color=\"#0000FF\">BLUE</font>", Globals.Alliance.RED))))
         selectionMenu.addSetting(Setting("Lane", listOf(
                 Option("\n" +
                         "<tt>┏━━━┓\n</tt>" +
@@ -42,8 +42,8 @@ class MenuTest : LinearOpMode() {
                         "<tt>┃·\uD83E\uDD16·┃\n</tt>" +
                         "<tt>┗━━━┛</tt>", 1))))
         selectionMenu.addSetting(Setting("Side", listOf(
-                Option("CLOSE", Globals.Side.RED),
-                Option("FAR", Globals.Side.RED))))
+                Option("CLOSE", Globals.Alliance.RED),
+                Option("FAR", Globals.Alliance.RED))))
         selectionMenu.addSetting(Setting("Delay", listOf(
                 Option("0s", 0),
                 Option("1s", 1),

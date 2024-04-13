@@ -66,7 +66,7 @@ class PathBuilder {
             fun pos(x: Double, y: Double) { startPose = Pose2d(Vector2d(x, y), startPose.heading) }
             fun pos(v: Vector2d) { startPose = Pose2d(v, startPose.heading) }
             fun ang(theta: Double) {
-                startPose = Pose2d(startPose.position, Rotation2d(cos(theta), sin(theta)))
+                startPose = Pose2d(startPose.position, Rotation2d(theta))
             }
             // v is for hermite
             fun v(v: Double) { v0 = v }
@@ -74,12 +74,19 @@ class PathBuilder {
         inner class End {
             fun pos(x: Double, y: Double) { endPose = Pose2d(Vector2d(x, y), endPose.heading) }
             fun pos(v: Vector2d) { endPose = Pose2d(v, endPose.heading) }
-            fun ang(theta: Double) { endPose = Pose2d(endPose.position, Rotation2d(cos(theta), sin(theta))) }
+            fun ang(theta: Double) { endPose = Pose2d(endPose.position, Rotation2d(theta)) }
             fun v(v: Double) { v1 = v }
         }
         inner class Constraints {
             fun decelDist(d: Double) { constraints = MovementConstraints(d, constraints.heading) }
             fun heading(h: Double) { constraints = MovementConstraints(constraints.decelDistance, h) }
+            fun tangentHeading() {
+                constraints = MovementConstraints(
+                    constraints.decelDistance,
+                    constraints.heading,
+                    true,
+                )
+            }
         }
     }
     inner class LineBuilder {

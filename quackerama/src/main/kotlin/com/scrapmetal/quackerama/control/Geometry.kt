@@ -1,23 +1,18 @@
 package com.scrapmetal.quackerama.control
 
+import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
-import kotlin.math.pow
 import kotlin.math.sign
 import kotlin.math.sin
-import kotlin.math.sqrt
 
-/**
- * A vector in both the mathematical and physical interpretation of the word
- */
-data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
-    constructor(magnitude: Double, theta: Rotation2d) : this(magnitude*cos(theta.polarAngle), magnitude*sin(theta.polarAngle))
-    val mag by lazy { hypot(u, v) }
-    val polarAngle by lazy { atan2(v, u) }
-    val unit by lazy { if (mag != 0.0) Vector2d(u/mag, v/mag) else Vector2d(0.0, 0.0) }
-    val normal by lazy { Vector2d(-v, u) }
-    // maybe some of these make lazy and don't calculate until you need it
+data class Vector2d(val x: Double = 0.0, val y: Double = 0.0) {
+    // TODO: add polar coordinates?
+    val mag by lazy { hypot(x, y) }
+    val polarAngle by lazy { atan2(y, x) }
+    val unit by lazy { if (mag != 0.0) Vector2d(x/mag, y/mag) else Vector2d(0.0, 0.0) }
+    val normal by lazy { Vector2d(-y, x) }
     // companion object {
     //     val comparator = Comparator<Vector2d> { a, b ->
     //         when {
@@ -27,40 +22,41 @@ data class Vector2d(val u: Double = 0.0, val v: Double = 0.0) {
     //         }
     //     }
     // }
-    operator fun times(s: Double) = Vector2d(u*s, v*s)
-    operator fun div(s: Double) = Vector2d(u/s, v/s)
-    operator fun plus(w: Vector2d) = Vector2d(u+w.u, v+w.v)
-    operator fun minus(w: Vector2d) = Vector2d(u-w.u, v-w.v)
-    operator fun unaryMinus() = Vector2d(-u, -v)
+    operator fun times(s: Double) = Vector2d(x*s, y*s)
+    operator fun div(s: Double) = Vector2d(x/s, y/s)
+    operator fun plus(v: Vector2d) = Vector2d(x+v.x, y+v.y)
+    operator fun minus(v: Vector2d) = Vector2d(x-v.x, y-v.y)
+    operator fun unaryMinus() = Vector2d(-x, -y)
     operator fun compareTo(w: Vector2d) = sign(mag - w.mag).toInt()
-    fun distanceTo(w: Vector2d) = (w-this).let { hypot(it.u, it.v) }
+    fun distanceTo(w: Vector2d) = (w-this).let { hypot(it.x, it.y) }
 }
 
-// TODO: mega pain
 /**
  * A rotation on a vector, rotation, or a pose
  */
-data class Rotation2d(val u: Double = 1.0, val v: Double = 0.0) {
-    constructor(v: Vector2d) : this(v.unit.u, v.unit.v)
-    constructor(theta: Double) : this(cos(theta), sin(theta))
-    val mag by lazy { hypot(u, v) }
-    val polarAngle by lazy { atan2(v, u) }
-    val normal by lazy { Rotation2d(-v, u) }
-    val vector by lazy { Vector2d(u, v) }
-    operator fun times(s: Double) = Vector2d(u*s, v*s)
-    operator fun div(s: Double) = Vector2d(u/s, v/s)
-    operator fun plus(w: Rotation2d) = Rotation2d(polarAngle + w.polarAngle)
-    operator fun minus(w: Rotation2d) = Rotation2d(polarAngle - w.polarAngle)
-    operator fun unaryMinus() = Vector2d(-u, -v)
-    // what is this lol
-    operator fun compareTo(w: Vector2d) = sign(mag - w.mag).toInt()
+data class Rotation2d(val theta: Double = 0.0) {
+    val normal by lazy { Rotation2d(theta + PI/2) }
+    val vector by lazy { Vector2d(cos(theta), sin(theta)) }
+    val inverse by lazy { Rotation2d(-theta) }
+    operator fun times(s: Double) = Rotation2d(s*theta)
+    operator fun times(v: Vector2d) =
+        Vector2d(
+            v.x*cos(theta) - v.y*sin(theta),
+            v.x*sin(theta) + v.y*cos(theta)
+        )
+    operator fun div(s: Double) = Rotation2d(theta/s)
+    operator fun plus(r: Rotation2d) = Rotation2d(theta + r.theta)
+    operator fun minus(r: Rotation2d) = Rotation2d(theta - r.theta)
+    // NOTE: originally had unary minus, removed due to being confusing between flipping by 180 deg
+    // and the inverse
+    // operator fun compareTo(r: Rotation2d) = sign(mag - w.mag).toInt()
 }
 
-// TODO: mega pain
 /**
  * A combination of position and heading
  */
 data class Pose2d(val position: Vector2d = Vector2d(), val heading: Rotation2d = Rotation2d()) {
+    constructor(x: Double = 0.0, y: Double = 0.0, theta: Double = 0.0) : this(Vector2d(x, y), Rotation2d(theta))
     operator fun plus(p: Pose2d) = Pose2d(position + p.position, heading + p.heading)
     operator fun minus(p: Pose2d) = Pose2d(position - p.position, heading - p.heading)
 }

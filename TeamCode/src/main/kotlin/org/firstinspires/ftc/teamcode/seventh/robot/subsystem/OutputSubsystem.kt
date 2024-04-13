@@ -1,93 +1,144 @@
 package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
 
-import com.qualcomm.robotcore.hardware.ColorRangeSensor
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.util.ElapsedTime
+import com.scrapmetal.quackerama.control.controller.AsymTrapezoidMP
 import com.scrapmetal.quackerama.hardware.QuackAnalog
 import com.scrapmetal.quackerama.hardware.QuackServo
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
-
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.FINGER_CLOSE
-import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals.FINGER_OPEN
-import kotlin.math.ulp
 
 class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
-    data class OutputState(
-        val arm: Double = -120.0,
-        val pitch: Double = -58.0,
-        val left: Double = FINGER_CLOSE,
-        val right: Double = FINGER_CLOSE,
-    ) var outState = OutputState()
-        private set
-    private var robotState = RobotState.LOCK
+    data class State(
+        var arm: Arm = Arm.IN,
+        var yaw: Double = 0.0,
+        var pitch: Pitch = Pitch.IN,
+        var roll: Roll = Roll.HORIZ,
+        var claw: Claw = Claw.BOTH,
+    ) private var state = State()
 
-    var leftFilled = false
-        private set
-    var rightFilled = false
-        private set
-    var curArmAngLeft = 0.0
-        private set
-    var curArmAngRight = 0.0
-        private set
-    var curArmAng = 0.0
-        private set
+    enum class Arm(val angle: Double) {
+        IN(180+50.0),
+        INTAKE(180+45.0),
+        PULLOUT(180+50.0),
+        BACKDROP(5.0),
+        HIGH(45.0),
+        GROUND(-30.0),
+    }
+    enum class Pitch(val angle: Double) {
+        IN(60.0),
+        PULLOUT(65.0),
+        OUT(-5.0),
+    }
+    enum class Roll(val angle: Double) {
+        /**
+         * LR
+         */
+        HORIZ(0.0),
+        /**
+         *    R
+         *
+         * L
+         */
+        // 53
+        LM(53.0),
+        /**
+         * L
+         *
+         *    R
+         */
+        RM(-53.0),
+        /**
+         * R
+         *
+         * L
+         */
+        VERT(90.0),
+        // /**
+        //  * Inversion of HORIZ
+        //  */
+        // HORIZ_I(180.0),
+        /**
+         * Inversion of LM
+         */
+        LM_I(-120.0),
+        /**
+         * Inversion of RM
+         */
+        RM_I(120.0),
+        /**
+         * Inversion of VERT
+         */
+        VERT_I(-90.0),
+    }
+    /**
+     * Describes which sides of the claw holds a pixel
+     */
+    enum class Claw(val left: Double, val right: Double) {
+        BOTH(0.02, 0.02),
+        LEFT(0.02, 0.5),
+        RIGHT(0.5, 0.02),
+        NONE(0.5, 0.5),
+    }
 
-    val tilt = if (Globals.AUTO) 100.0 else 105.0
-
-    private val armLeft = QuackServo(hardwareMap, "armLeft", QuackServo.ModelPWM.AXON_MAX)
-    private val armRight = QuackServo(hardwareMap, "armRight", QuackServo.ModelPWM.AXON_MAX)
-    private val armEncLeft = QuackAnalog(hardwareMap, "armEncLeft")
-    private val armEncRight = QuackAnalog(hardwareMap, "armEncRight")
-    private val pitch = QuackServo(hardwareMap, "pitch", QuackServo.ModelPWM.GENERIC)
-    private val fingerLeft = QuackServo(hardwareMap, "fingerLeft", QuackServo.ModelPWM.AXON_MICRO)
-    private val fingerRight = QuackServo(hardwareMap, "fingerRight", QuackServo.ModelPWM.AXON_MICRO)
-    private val colorLeft = hardwareMap.get(ColorRangeSensor::class.java, "colorLeft")
-    private val colorRight = hardwareMap.get(ColorRangeSensor::class.java, "colorRight")
-    var pivotOffset = 0.0
+    private var armMP = AsymTrapezoidMP(Arm.IN.angle, Arm.IN.angle, 0.0, 0.0, 0.0)
+    private var armTimer = ElapsedTime()
+    private val armL = QuackServo(hardwareMap, "armL", QuackServo.ModelPWM.AXON_MAX)
+    private val armR = QuackServo(hardwareMap, "armR", QuackServo.ModelPWM.AXON_MAX)
+    private val endL = QuackServo(hardwareMap, "endL", QuackServo.ModelPWM.AXON_MICRO)
+    private val endR = QuackServo(hardwareMap, "endR", QuackServo.ModelPWM.AXON_MICRO)
+    private val fingerL = QuackServo(hardwareMap, "fingerL", QuackServo.ModelPWM.AXON_MICRO)
+    private val fingerR = QuackServo(hardwareMap, "fingerR", QuackServo.ModelPWM.AXON_MICRO)
+    private val endLEnc = QuackAnalog(hardwareMap, "endLEnc") { x: Double -> 180 * x }
+    private val endREnc = QuackAnalog(hardwareMap, "endREnc") { x: Double -> 180 * x }
+    // private val endLAngOffset = -180.0
+    // private val endRAngOffset = -135.0
+    private val endLAngOffset = 0.0
+    private val endRAngOffset = 0.0
+    var endLAng = 0.0
+        private set
+    var endRAng = 0.0
+        private set
 
     init {
-        armLeft.setDirection(Servo.Direction.REVERSE)
-        armRight.setDirection(Servo.Direction.FORWARD)
-        pitch.setDirection(Servo.Direction.REVERSE)
-        fingerLeft.setDirection(Servo.Direction.REVERSE)
-        fingerRight.setDirection(Servo.Direction.FORWARD)
-        pitch.setPosition(60.0)
-        fingerLeft.setPosition(FINGER_CLOSE)
-        fingerRight.setPosition(FINGER_CLOSE)
+        armL.setDirection(Servo.Direction.REVERSE)
+        armR.setDirection(Servo.Direction.FORWARD)
+        endL.setDirection(Servo.Direction.FORWARD)
+        endR.setDirection(Servo.Direction.REVERSE)
+        fingerL.setDirection(Servo.Direction.REVERSE)
+        fingerR.setDirection(Servo.Direction.FORWARD)
+        endLEnc.invert()
     }
 
     override fun read() {
-        if (robotState == RobotState.INTAKE && !Globals.AUTO) {
-            leftFilled = colorLeft.getDistance(DistanceUnit.MM) < 16.0
-            rightFilled = colorRight.getDistance(DistanceUnit.MM) < 16.0
-        }
-        curArmAngLeft = armEncLeft.getRawVoltage()
-        curArmAngRight = 3.3 - armEncRight.getRawVoltage()
-        curArmAng = -109.14*(curArmAngLeft + curArmAngRight)/2 + 88.78
+        endLAng = endLEnc.getTransformedValue() + endLAngOffset
+        endRAng = endREnc.getTransformedValue() + endRAngOffset
     }
 
-    fun update(s: RobotState, armAng: Double) {
-        robotState = s
-        outState = when (s) {
-            RobotState.LOCK     -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.PRELOCK  -> OutputState(armAng, 62.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.INTAKE   -> OutputState(armAng, 62.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SPIT     -> OutputState(armAng, 62.0+pivotOffset, FINGER_OPEN, FINGER_OPEN)
-            RobotState.ALIGN    -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.BACKDROP -> OutputState(armAng, 65.0+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.EXTEND   -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_CLOSE, FINGER_CLOSE)
-            RobotState.SCORE    -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_OPEN, FINGER_OPEN)
-            RobotState.SCORE_L  -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_OPEN, FINGER_CLOSE)
-            RobotState.SCORE_R  -> OutputState(armAng, armAng+tilt+pivotOffset, FINGER_CLOSE, FINGER_OPEN)
+    fun set(s: State) {
+        if (s.arm != state.arm) {
+            armMP = AsymTrapezoidMP(state.arm.angle, s.arm.angle, 5000.0, -1000.0, 4000.0)
+            armTimer.reset()
         }
+        state = s
     }
+    fun set(a: Arm) {
+        if (a != state.arm) {
+            armMP = AsymTrapezoidMP(state.arm.angle, a.angle, 5000.0, -1000.0, 4000.0)
+            armTimer.reset()
+        }
+        state.arm = a
+    }
+    fun set(y: Double) { state.yaw = y }
+    fun set(p: Pitch) { state.pitch = p }
+    fun set(r: Roll) { state.roll = r }
+    fun set(c: Claw) { state.claw = c }
 
     override fun write() {
-        armLeft.setPosition(outState.arm)  { theta: Double -> theta/180.0 + 1.0 }
-        armRight.setPosition(outState.arm) { theta: Double -> theta/180.0 + 1.0 }
-        pitch.setPosition(outState.pitch)  { theta: Double -> theta/270.0 }
-        fingerLeft.setPosition(outState.left)
-        fingerRight.setPosition(outState.right)
+        armL.setPosition(armMP.update(armTimer.seconds()).s + state.yaw.coerceIn(-45.0..45.0)) { a: Double -> a*(1/355.0) + 90/355.0 }
+        armR.setPosition(armMP.update(armTimer.seconds()).s - state.yaw.coerceIn(-45.0..45.0)) { a: Double -> a*(1/355.0) + 90/355.0 }
+        endL.setPosition(state.pitch.angle - state.roll.angle) { theta: Double -> theta/200.0 + 120/200.0 }
+        endR.setPosition(state.pitch.angle + state.roll.angle) { theta: Double -> theta/200.0 + 120/200.0 }
+        fingerL.setPosition(state.claw.left)
+        fingerR.setPosition(state.claw.right)
     }
 }

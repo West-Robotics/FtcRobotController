@@ -2,7 +2,6 @@ package com.scrapmetal.quackerama.control.controller
 
 import kotlin.math.PI
 import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 /**
  * A PDF controller with feedforward given as a function
@@ -22,27 +21,33 @@ import kotlin.math.sign
  * @param maxMagnitude maximum output for both + and -
  * @param continuous whether or not the input is wrapped around (e.g. rotational actuators)
  */
-class PDF(
+class PIDF(
     private var p: Double,
+    private var i: Double,
     private var d: Double,
     private var f: (x: Double) -> Double = { _: Double -> 0.0 },
     private var minPowerToMove: Double = 0.0,
     private var deadzone: Double = 0.0,
-    private var maxMagnitude: Double = 1.0,
+    val maxMagnitude: Double = 1.0,
     private val continuous: Boolean = false,
+    private var iZone: Double = 0.0,
+    private var maxIOutput: Double = 0.0,
 ) {
     // L statefulness
-    private var lastX = 0.0
+    private var lastY = 0.0
+    private var eIntegral = 0.0
 
     /**
-     * Calculate PDF output
+     * Calculate PIDF output
      *
-     * @param x current state x
-     * @param reference setpoint
-     * @param dt timestep in milliseconds
+     * @param y state output y
+     * @param reference reference
+     * @param dt timestep in seconds
      */
-    fun update(x: Double, reference: Double, dt: Double): Double {
-        val error = (reference - x).let {
+    // NOTE: i think a lot of people usually use x, not y cause x is the state variable. i think y
+    //   is technically more correct since the plant output is what is fed back into the loop
+    fun update(y: Double, reference: Double, dt: Double): Double {
+        val error = (reference - y).let {
             // TODO: generalize beyond assuming radians + full circle
             if (continuous && it.absoluteValue > PI) {
                 it + if (it > 0) -2*PI else 2*PI
@@ -50,8 +55,14 @@ class PDF(
                 it
             }
         }
-        val dxdt = (x - lastX)/dt
-        lastX = x
-        return Utils.correctWithMinPower(p*error + -d*dxdt + f(x), minPowerToMove, deadzone, maxMagnitude)
+        val dxdt = (y - lastY)/dt
+        lastY = y
+        eIntegral += if (error < iZone) error else 0.0
+        return Utils.correctWithMinPower(
+            p*error + (i*eIntegral).coerceIn(-maxIOutput..maxIOutput) -d*dxdt + f(y),
+            minPowerToMove,
+            deadzone,
+            maxMagnitude
+        )
     }
 }

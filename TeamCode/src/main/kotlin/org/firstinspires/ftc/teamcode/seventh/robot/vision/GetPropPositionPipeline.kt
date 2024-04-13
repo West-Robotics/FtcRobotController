@@ -10,6 +10,20 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 class GetPropPositionPipeline : OpenCvPipeline() {
+    private val LEFT_REGION_X = 20.0
+    private val LEFT_REGION_Y = 400.0
+    private val LEFT_REGION_WIDTH = 200.0
+    private val LEFT_REGION_HEIGHT = 100.0
+
+    private val MIDDLE_REGION_X = 400.0
+    private val MIDDLE_REGION_Y = 400.0
+    private val MIDDLE_REGION_WIDTH = 450.0
+    private val MIDDLE_REGION_HEIGHT = 100.0
+
+    private val RIGHT_REGION_X = 1000.0
+    private val RIGHT_REGION_Y = 400.0
+    private val RIGHT_REGION_WIDTH = 200.0
+    private val RIGHT_REGION_HEIGHT = 100.0
     enum class PropPosition {
         LEFT,
         MIDDLE,
@@ -17,15 +31,15 @@ class GetPropPositionPipeline : OpenCvPipeline() {
     }
     private val GREEN = Scalar(0.0, 255.0, 0.0)
     private val RED = Scalar(255.0, 0.0, 0.0)
-    private val left_pointA = Point(Globals.LEFT_REGION_X, Globals.LEFT_REGION_Y)
-    private val left_pointB = Point(Globals.LEFT_REGION_X + Globals.LEFT_REGION_WIDTH,
-        Globals.LEFT_REGION_Y + Globals.LEFT_REGION_HEIGHT)
-    private val middle_pointA = Point(Globals.MIDDLE_REGION_X, Globals.MIDDLE_REGION_Y)
-    private val middle_pointB = Point(Globals.MIDDLE_REGION_X + Globals.MIDDLE_REGION_WIDTH,
-        Globals.MIDDLE_REGION_Y + Globals.MIDDLE_REGION_HEIGHT)
-    private val right_pointA = Point(Globals.RIGHT_REGION_X, Globals.RIGHT_REGION_Y)
-    private val right_pointB = Point(Globals.RIGHT_REGION_X + Globals.RIGHT_REGION_WIDTH,
-        Globals.RIGHT_REGION_Y + Globals.RIGHT_REGION_HEIGHT)
+    private val left_pointA = Point(LEFT_REGION_X, LEFT_REGION_Y)
+    private val left_pointB = Point(LEFT_REGION_X + LEFT_REGION_WIDTH,
+        LEFT_REGION_Y + LEFT_REGION_HEIGHT)
+    private val middle_pointA = Point(MIDDLE_REGION_X, MIDDLE_REGION_Y)
+    private val middle_pointB = Point(MIDDLE_REGION_X + MIDDLE_REGION_WIDTH,
+        MIDDLE_REGION_Y + MIDDLE_REGION_HEIGHT)
+    private val right_pointA = Point(RIGHT_REGION_X, RIGHT_REGION_Y)
+    private val right_pointB = Point(RIGHT_REGION_X + RIGHT_REGION_WIDTH,
+        RIGHT_REGION_Y + RIGHT_REGION_HEIGHT)
 
     private val left_rect = Rect(left_pointA, left_pointB)
     private val middle_rect = Rect(middle_pointA, middle_pointB)
@@ -49,7 +63,7 @@ class GetPropPositionPipeline : OpenCvPipeline() {
 
         // find which area has the most saturation: should be where big fat cube is
         maxOf(leftSum.`val`[1], middleSum.`val`[1], rightSum.`val`[1]).let {
-            if ((Globals.side == Globals.Side.RED && Globals.start == Globals.Start.CLOSE) || (Globals.side == Globals.Side.BLUE && Globals.start == Globals.Start.FAR)) {
+            if ((Globals.alliance == Globals.Alliance.RED && Globals.start == Globals.Start.BACKDROP) || (Globals.alliance == Globals.Alliance.BLUE && Globals.start == Globals.Start.AUDIENCE)) {
                 when {
                     it == middleSum.`val`[1] && it > 1200000.0 -> {
                         position = PropPosition.MIDDLE
@@ -73,7 +87,7 @@ class GetPropPositionPipeline : OpenCvPipeline() {
                         position = PropPosition.LEFT
                     }
                 }
-            } else if ((Globals.side == Globals.Side.BLUE && Globals.start == Globals.Start.CLOSE) || (Globals.side == Globals.Side.RED && Globals.start == Globals.Start.FAR)) {
+            } else if ((Globals.alliance == Globals.Alliance.BLUE && Globals.start == Globals.Start.BACKDROP) || (Globals.alliance == Globals.Alliance.RED && Globals.start == Globals.Start.AUDIENCE)) {
                 when {
                     it == middleSum.`val`[1] && it > 1200000.0 -> {
                         position = PropPosition.MIDDLE

@@ -12,15 +12,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 class QuackAnalog(hardwareMap: HardwareMap, name: String, val transform: (Double) -> Double = { x: Double -> x }) {
     private val analog = hardwareMap.analogInput.get(name)
     private var offset = 0.0
+    private var inverted = false
 
     /**
      * Get scaled value from 0-1
      */
-    fun getValue() = analog.voltage/3.3
+    fun getValue() = if (!inverted) analog.voltage/3.3 else (3.3-analog.voltage)/3.3
 
     /**
      * Get transformed scaled value
      */
     fun getTransformedValue() = transform(getValue())
     fun getRawVoltage() = analog.voltage
+
+    fun invert() { inverted = true }
+    fun uninvert() { inverted = false }
 }

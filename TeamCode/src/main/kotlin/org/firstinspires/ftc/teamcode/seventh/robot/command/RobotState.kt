@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.seventh.robot.subsystem
+package org.firstinspires.ftc.teamcode.seventh.robot.command
 
 enum class RobotState {
     LOCK,
-    INTAKE,
-    SPIT,
+    TRANSITION,
     BACKDROP,
 }
