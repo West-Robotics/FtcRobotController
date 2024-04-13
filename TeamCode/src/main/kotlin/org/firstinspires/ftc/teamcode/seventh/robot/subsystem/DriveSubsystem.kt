@@ -7,7 +7,6 @@ import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
 import com.scrapmetal.quackerama.control.controller.PIDF
 import com.scrapmetal.quackerama.control.controller.Utils
-import org.firstinspires.ftc.teamcode.MecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import java.lang.Math.toRadians
 import kotlin.math.sin
@@ -40,9 +39,10 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         maxIOutput = 0.2,
     )
     // private val drive = SampleMecanumDrive(hardwareMap)
-    private val drive = MecanumDrive(hardwareMap, com.acmerobotics.roadrunner.Pose2d(0.0, 0.0, 0.0))
+    // private val drive = MecanumDrive(hardwareMap, com.acmerobotics.roadrunner.Pose2d(0.0, 0.0, 0.0))
 
-    override fun read() { drive.updatePoseEstimate() }
+    // override fun read() { drive.updatePoseEstimate() }
+    override fun read() { }
 
     /**
      * Update drivetrain powers open loop, minimum power correction included
@@ -64,7 +64,8 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
             ),
             if (headingPID) {
                 Rotation2d(headingPIDF.update(
-                    drive.pose.heading.toDouble(),
+                    // drive.pose.heading.toDouble(),
+                    0.0,
                     input.heading.theta,
                     Robot.getDt()
                 ))
@@ -84,21 +85,16 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
             // drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
             //         input.position.x, input.position.y,
             //         input.heading.theta))
-        drive.setDrivePowers(com.acmerobotics.roadrunner.PoseVelocity2d(
-                com.acmerobotics.roadrunner.Vector2d(input.position.x, input.position.y),
-                input.heading.theta)
-        )
+        //! drive.setDrivePowers(com.acmerobotics.roadrunner.PoseVelocity2d(
+        //!         com.acmerobotics.roadrunner.Vector2d(input.position.x, input.position.y),
+        //!         input.heading.theta)
+        //! )
         // }
     }
 
     fun startIMUThread(opMode: LinearOpMode) { } // drive.startIMUThread(opMode) }
 
     fun setPoseEstimate(pose: Pose2d) {
-        drive.pose = com.acmerobotics.roadrunner.Pose2d(
-            pose.position.x,
-            pose.position.y,
-            pose.heading.theta,
-        )
         // drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
         //     pose.position.x,
         //     pose.position.y,
@@ -107,13 +103,13 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
 
     fun resetHeading() {
-        with (drive.pose) {
-            drive.pose = com.acmerobotics.roadrunner.Pose2d(
-                position.x,
-                position.y,
-                heading.toDouble(),
-            )
-        }
+        // with (drive.pose) {
+        //     drive.pose = com.acmerobotics.roadrunner.Pose2d(
+        //         position.x,
+        //         position.y,
+        //         heading.toDouble(),
+        //     )
+        // }
         // drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
         //     drive.poseEstimate.x,
         //     drive.poseEstimate.y,
@@ -121,11 +117,11 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         // )
     }
 
-    fun getPoseEstimate(): Pose2d =
-        Pose2d(
-             Vector2d(drive.pose.position.x, drive.pose.position.y),
-             Rotation2d(drive.pose.heading.toDouble())
-        )
+    fun getPoseEstimate(): Pose2d = Pose2d()
+        // Pose2d(
+        //      Vector2d(drive.pose.position.x, drive.pose.position.y),
+        //      Rotation2d(drive.pose.heading.toDouble())
+        // )
 
     // WARNING: this returns no movement if Roadrunner's velocity estimate is null
     fun getVelocity(): Pose2d = Pose2d()

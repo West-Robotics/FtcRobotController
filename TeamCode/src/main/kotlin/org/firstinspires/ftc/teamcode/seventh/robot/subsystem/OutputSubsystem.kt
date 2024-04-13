@@ -74,10 +74,10 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
      * Describes which sides of the claw holds a pixel
      */
     enum class Claw(val left: Double, val right: Double) {
-        BOTH(0.02, 0.02),
-        LEFT(0.02, 0.5),
-        RIGHT(0.5, 0.02),
-        NONE(0.5, 0.5),
+        BOTH(0.01, 0.01),
+        LEFT(0.01, 0.7),
+        RIGHT(0.7, 0.01),
+        NONE(0.7, 0.7),
     }
 
     private var armMP = AsymTrapezoidMP(Arm.IN.angle, Arm.IN.angle, 0.0, 0.0, 0.0)
