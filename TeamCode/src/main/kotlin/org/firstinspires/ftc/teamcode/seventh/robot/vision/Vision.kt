@@ -18,20 +18,21 @@ import java.lang.Math.toRadians
 // TODO: conflicting camera rez and closed devices?
 class Vision(val hardwareMap: HardwareMap) {
     // === constants ===
-    private val atagRobotOffset = Vector2d(0.0, 0.0)
-    private val redBackdropPos = Vector2d(61.25, -35.5)
-    private val blueBackdropPos = Vector2d(61.25, 35.5)
+    // 1.5 + 9.75/2
+    private val atagRobotOffset = Vector2d(-5.5, 0.0)
+    private val redBackdropPos = Vector2d(61.375, -35.375)
+    private val blueBackdropPos = Vector2d(61.375, 35.375)
     // === eocv ===
     private val propCamMonitorViewId: Int = hardwareMap.appContext.resources.getIdentifier(
             "cameraMonitorViewId",
             "id",
             hardwareMap.appContext.packageName
     )
-    lateinit private var propCam: OpenCvWebcam
-    // lateinit private var propCam = OpenCvCameraFactory.getInstance().createWebcam(
-    //         hardwareMap.get(WebcamName::class.java, "propCam"),
-    //         propCamMonitorViewId
-    // )
+    // lateinit private var propCam: OpenCvWebcam
+    private var propCam = OpenCvCameraFactory.getInstance().createWebcam(
+            hardwareMap.get(WebcamName::class.java, "propCam"),
+            propCamMonitorViewId
+    )
     private val propPosition = GetPropPositionPipeline()
 
     // === vision portal ===
@@ -49,8 +50,8 @@ class Vision(val hardwareMap: HardwareMap) {
      */
     fun getPosition(heading: Rotation2d): Vector2d? =
         atagProcessor.detections?.let {
-            // (if (Globals.side == Globals.Side.RED) redBackdropPos else blueBackdropPos) - (it.fold(Vector2d()) { mean, det ->
-            (it.fold(Vector2d()) { mean, det ->
+            (if (Globals.alliance == Globals.Alliance.RED) redBackdropPos else blueBackdropPos) - (it.fold(Vector2d()) { mean, det ->
+            // (it.fold(Vector2d()) { mean, det ->
                 mean +
                 (Rotation2d(-toRadians(det.ftcPose.yaw)) *
                 Vector2d(det.ftcPose.y, -det.ftcPose.x) + // swapped on purpose
@@ -66,7 +67,7 @@ class Vision(val hardwareMap: HardwareMap) {
     fun initProp() {
         propCam.openCameraDeviceAsync( object : OpenCvCamera.AsyncCameraOpenListener {
             override fun onOpened() {
-                propCam.startStreaming(1280, 720, OpenCvCameraRotation.UPSIDE_DOWN);
+                propCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             override fun onError(errorCode: Int) {}

@@ -7,20 +7,22 @@ import com.scrapmetal.quackerama.control.Rotation2d
 import com.scrapmetal.quackerama.control.Vector2d
 import com.scrapmetal.quackerama.control.controller.PIDF
 import com.scrapmetal.quackerama.control.controller.Utils
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import java.lang.Math.toRadians
+import kotlin.math.PI
 import kotlin.math.sin
 
 class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
     private var input = Pose2d()
-    private val movePIDF = PIDF(
-        p = 0.1,
+    val positionPIDF = PIDF(
+        p = 0.07,
         i = 0.0,
-        d = 0.0,
+        d = 0.02,
         f = { _: Double -> 0.0 },
-        minPowerToMove = 0.2,
+        minPowerToMove = 0.0,
         // minPowerToMove = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
-        deadzone = 0.05,
+        deadzone = 0.01,
         maxMagnitude = 1.0,
         continuous = false,
         iZone = 0.05,
@@ -38,11 +40,10 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         iZone = 0.05,
         maxIOutput = 0.2,
     )
-    // private val drive = SampleMecanumDrive(hardwareMap)
+    private val drive = SampleMecanumDrive(hardwareMap)
     // private val drive = MecanumDrive(hardwareMap, com.acmerobotics.roadrunner.Pose2d(0.0, 0.0, 0.0))
 
-    // override fun read() { drive.updatePoseEstimate() }
-    override fun read() { }
+    override fun read() { drive.updatePoseEstimate() }
 
     /**
      * Update drivetrain powers open loop, minimum power correction included
@@ -58,14 +59,17 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
             input.position.unit*Utils.correctWithMinPower(
                 u0 = input.position.mag,
                 // magic regression for measured minimum powers
-                uMin = 0.1*sin(toRadians(2*input.position.polarAngle - 90)) + 0.2,
-                deadzone = 0.01,
+                uMin = if (!fieldOriented) {
+                    0.1*sin(2*input.position.polarAngle - PI/2) + 0.15
+                } else {
+                    0.1*sin(2*(input.position.polarAngle-getPoseEstimate().heading.theta) - PI/2) + 0.15
+               },
+                deadzone = 0.03,
                 max = 1.0
             ),
             if (headingPID) {
                 Rotation2d(headingPIDF.update(
-                    // drive.pose.heading.toDouble(),
-                    0.0,
+                    getPoseEstimate().heading.theta,
                     input.heading.theta,
                     Robot.getDt()
                 ))
@@ -82,9 +86,9 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         //     (lastInput.position.v - input.position.v).absoluteValue > 0.005 ||
         //     (lastInput.heading.polarAngle - input.heading.polarAngle).absoluteValue > 0.005
         // ) {
-            // drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
-            //         input.position.x, input.position.y,
-            //         input.heading.theta))
+        drive.setWeightedDrivePower(com.acmerobotics.roadrunner.geometry.Pose2d(
+                input.position.x, input.position.y,
+                input.heading.theta))
         //! drive.setDrivePowers(com.acmerobotics.roadrunner.PoseVelocity2d(
         //!         com.acmerobotics.roadrunner.Vector2d(input.position.x, input.position.y),
         //!         input.heading.theta)
@@ -92,40 +96,34 @@ class DriveSubsystem(hardwareMap: HardwareMap) : Subsystem {
         // }
     }
 
-    fun startIMUThread(opMode: LinearOpMode) { } // drive.startIMUThread(opMode) }
+    fun startIMUThread(opMode: LinearOpMode) { drive.startIMUThread(opMode) }
 
     fun setPoseEstimate(pose: Pose2d) {
-        // drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
-        //     pose.position.x,
-        //     pose.position.y,
-        //     pose.heading.theta
-        // )
+        drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
+            pose.position.x,
+            pose.position.y,
+            pose.heading.theta
+        )
     }
 
     fun resetHeading() {
-        // with (drive.pose) {
-        //     drive.pose = com.acmerobotics.roadrunner.Pose2d(
-        //         position.x,
-        //         position.y,
-        //         heading.toDouble(),
-        //     )
-        // }
-        // drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
-        //     drive.poseEstimate.x,
-        //     drive.poseEstimate.y,
-        //     0.0
-        // )
+        with (drive.poseEstimate) {
+            drive.poseEstimate = com.acmerobotics.roadrunner.geometry.Pose2d(
+                x,
+                y,
+                0.0,
+            )
+        }
     }
 
-    fun getPoseEstimate(): Pose2d = Pose2d()
-        // Pose2d(
-        //      Vector2d(drive.pose.position.x, drive.pose.position.y),
-        //      Rotation2d(drive.pose.heading.toDouble())
-        // )
+    fun getPoseEstimate(): Pose2d =
+        with (drive.poseEstimate) {
+            Pose2d(x, y, heading)
+        }
 
     // WARNING: this returns no movement if Roadrunner's velocity estimate is null
-    fun getVelocity(): Pose2d = Pose2d()
-        // drive.poseVelocity?.let {
-        //     Pose2d(Vector2d(it.x, it.y) , Rotation2d(it.heading))
-        // } ?: Pose2d(Vector2d(), Rotation2d())
+    fun getVelocity(): Pose2d =
+        drive.poseVelocity?.let {
+            Pose2d(Vector2d(it.x, it.y) , Rotation2d(it.heading))
+        } ?: Pose2d(Vector2d(), Rotation2d())
 }

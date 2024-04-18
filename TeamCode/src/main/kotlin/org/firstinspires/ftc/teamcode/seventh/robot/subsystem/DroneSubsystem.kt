@@ -7,12 +7,11 @@ import com.scrapmetal.quackerama.hardware.QuackServo
 
 class DroneSubsystem(hardwareMap: HardwareMap) : Subsystem {
     enum class State(val position: Double) {
-        LODED(0.15),
-        DIPER(0.0),
-        EQUILI(0.10),
+        LODED(0.82),
+        DIPER(0.64),
     } private var state = State.LODED
 
-    private val drone = QuackServo(hardwareMap, "drone", QuackServo.ModelPWM.GOBILDA_TORQUE)
+    private val drone = QuackServo(hardwareMap, "drone", QuackServo.ModelPWM.GOBILDA_SPEED)
 
     init {
         drone.setDirection(Servo.Direction.FORWARD)

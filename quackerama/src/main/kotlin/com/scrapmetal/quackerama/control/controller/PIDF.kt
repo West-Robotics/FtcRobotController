@@ -36,6 +36,7 @@ class PIDF(
     // L statefulness
     private var lastY = 0.0
     private var eIntegral = 0.0
+    private val dxdtList = ArrayList<Double>()
 
     /**
      * Calculate PIDF output
@@ -56,10 +57,12 @@ class PIDF(
             }
         }
         val dxdt = (y - lastY)/dt
+        dxdtList.add(dxdt)
+        if (dxdtList.size > 2) dxdtList.removeAt(0)
         lastY = y
         eIntegral += if (error < iZone) error else 0.0
         return Utils.correctWithMinPower(
-            p*error + (i*eIntegral).coerceIn(-maxIOutput..maxIOutput) -d*dxdt + f(y),
+            p*error + (i*eIntegral).coerceIn(-maxIOutput..maxIOutput) - d*dxdtList.average() + f(y),
             minPowerToMove,
             deadzone,
             maxMagnitude

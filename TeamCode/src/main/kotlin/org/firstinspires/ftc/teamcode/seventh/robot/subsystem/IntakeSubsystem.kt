@@ -12,6 +12,7 @@ import com.scrapmetal.quackerama.hardware.QuackServo
 class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     enum class State(val power: Double) {
         INTAKE(1.0),
+        STACKTAKE(0.8),
         STOP(0.0),
         SPIT(-0.5),
     }

@@ -13,16 +13,16 @@ import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem
 /**
  * LOCK -> INTAKE
  */
-class IntakeCommand(val intake: IntakeSubsystem, val output: OutputSubsystem, val lift: LiftSubsystem) : SequentialCommandGroup() {
+class IntakeCommand(val intake: IntakeSubsystem, val output: OutputSubsystem, val lift: LiftSubsystem, stackTake: Boolean = false) : SequentialCommandGroup() {
     init {
         addCommands(
             InstantCommand({ output.set(OutputSubsystem.Claw.NONE) }),
             // InstantCommand({ output.set(OutputSubsystem.Arm.INTAKE) }),
-            InstantCommand({ output.set(OutputSubsystem.Pitch.IN) }),
-            InstantCommand({ intake.set(IntakeSubsystem.State.INTAKE) }),
+            InstantCommand({ output.set(OutputSubsystem.Pitch.INTAKE) }),
+            InstantCommand({ intake.set(if (!stackTake) IntakeSubsystem.State.INTAKE else IntakeSubsystem.State.STACKTAKE) }),
             InstantCommand({ lift.set(0.25) }),
             WaitUntilCommand { intake.filledL && intake.filledR },
-            WaitCommand(500),
+            WaitCommand(2500),
         )
         addRequirements(intake, output)
     }
@@ -31,6 +31,7 @@ class IntakeCommand(val intake: IntakeSubsystem, val output: OutputSubsystem, va
         SequentialCommandGroup(
             InstantCommand({ intake.set(IntakeSubsystem.State.STOP) }),
             InstantCommand({ output.set(OutputSubsystem.Arm.IN) }),
+            InstantCommand({ output.set(OutputSubsystem.Pitch.IN) }),
             InstantCommand({ lift.set(0.0) }),
             WaitCommand(500),
             InstantCommand({ output.set(OutputSubsystem.Claw.BOTH) }),

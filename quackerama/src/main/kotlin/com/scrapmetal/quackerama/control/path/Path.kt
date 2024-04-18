@@ -87,6 +87,23 @@ class PathBuilder {
                     true,
                 )
             }
+            fun reverseHeading() {
+                constraints = MovementConstraints(
+                    constraints.decelDistance,
+                    constraints.heading,
+                    constraints.tangentHeading,
+                    true,
+                )
+            }
+            fun maxVel(v: Double) {
+                constraints = MovementConstraints(
+                    constraints.decelDistance,
+                    constraints.heading,
+                    constraints.tangentHeading,
+                    constraints.reverseHeading,
+                    v,
+                )
+            }
         }
     }
     inner class LineBuilder {
@@ -116,6 +133,15 @@ class PathBuilder {
         inner class Constraints {
             fun decelDist(d: Double) { constraints = MovementConstraints(d, constraints.heading) }
             fun heading(h: Double) { constraints = MovementConstraints(constraints.decelDistance, h) }
+            fun maxVel(v: Double) {
+                constraints = MovementConstraints(
+                        constraints.decelDistance,
+                        constraints.heading,
+                        constraints.tangentHeading,
+                        constraints.reverseHeading,
+                        v,
+                )
+            }
         }
     }
 }

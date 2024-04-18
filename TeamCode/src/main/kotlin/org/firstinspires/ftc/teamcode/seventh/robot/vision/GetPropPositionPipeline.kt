@@ -11,17 +11,17 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 class GetPropPositionPipeline : OpenCvPipeline() {
     private val LEFT_REGION_X = 20.0
-    private val LEFT_REGION_Y = 400.0
+    private val LEFT_REGION_Y = 370.0
     private val LEFT_REGION_WIDTH = 200.0
     private val LEFT_REGION_HEIGHT = 100.0
 
     private val MIDDLE_REGION_X = 400.0
-    private val MIDDLE_REGION_Y = 400.0
+    private val MIDDLE_REGION_Y = 370.0
     private val MIDDLE_REGION_WIDTH = 450.0
     private val MIDDLE_REGION_HEIGHT = 100.0
 
     private val RIGHT_REGION_X = 1000.0
-    private val RIGHT_REGION_Y = 400.0
+    private val RIGHT_REGION_Y = 370.0
     private val RIGHT_REGION_WIDTH = 200.0
     private val RIGHT_REGION_HEIGHT = 100.0
     enum class PropPosition {
@@ -89,14 +89,14 @@ class GetPropPositionPipeline : OpenCvPipeline() {
                 }
             } else if ((Globals.alliance == Globals.Alliance.BLUE && Globals.start == Globals.Start.BACKDROP) || (Globals.alliance == Globals.Alliance.RED && Globals.start == Globals.Start.AUDIENCE)) {
                 when {
-                    it == middleSum.`val`[1] && it > 1200000.0 -> {
+                    it == middleSum.`val`[1] && it > 7000000.0 -> {
                         position = PropPosition.MIDDLE
                         Imgproc.rectangle(input, middle_pointA, middle_pointB, GREEN, 8)
                         Imgproc.rectangle(input, left_pointA, left_pointB, RED, 8)
                         Imgproc.rectangle(input, right_pointA, right_pointB, RED, 8)
                         position = PropPosition.MIDDLE
                     }
-                    it == leftSum.`val`[1] && it > 1200000.0 -> {
+                    it == leftSum.`val`[1] && it > 7000000.0 -> {
                         position = PropPosition.LEFT
                         Imgproc.rectangle(input, left_pointA, left_pointB, GREEN, 8)
                         Imgproc.rectangle(input, middle_pointA, middle_pointB, RED, 8)
@@ -112,7 +112,7 @@ class GetPropPositionPipeline : OpenCvPipeline() {
                     }
                 }
             }
-            // println("max sat $it")
+            println("max sat $it")
         }
 
         hsv.release()

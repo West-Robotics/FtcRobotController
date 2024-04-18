@@ -39,22 +39,19 @@ class CubicHermite(
         positions = Array(101) { t: Int -> invoke(t/100.0) }
     }
 
-    override fun invoke(t: Double): Vector2d {
-        return coef[0] + coef[1]*t + coef[2]*t.pow(2) + coef[3]*t.pow(3)
-    }
+    override fun invoke(t: Double) =
+        coef[0] + coef[1]*t + coef[2]*t.pow(2) + coef[3]*t.pow(3)
 
-    override fun dpdt(t: Double): Vector2d {
-        return coef[1] + coef[2]*2.0*t + coef[3]*3.0*t.pow(2)
-    }
+    override fun dpdt(t: Double) =
+        coef[1] + coef[2]*2.0*t + coef[3]*3.0*t.pow(2)
 
-    override fun closestT(p: Vector2d): Double {
-        return positions.indexOf(positions.minBy { q: Vector2d -> q.distanceTo(p) })/100.0
-    }
+    override fun closestT(p: Vector2d) =
+        positions.indexOf(positions.minBy { q: Vector2d -> q.distanceTo(p) })/100.0
 
-    override fun update(p: Vector2d): GVFState {
-        val t = closestT(p)
-        return GVFState(dpdt(t).unit, invoke(t) - p, t)
-    }
+    override fun update(p: Vector2d) =
+        closestT(p).let { t ->
+            GVFState(dpdt(t).unit, invoke(t) - p, t)
+        }
 
     private val dx = 0.01
     private val tolerance = 0.02

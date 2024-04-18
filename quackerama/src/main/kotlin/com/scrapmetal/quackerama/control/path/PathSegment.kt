@@ -17,7 +17,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Rotation
 data class MovementConstraints(
     val decelDistance: Double = 0.0,
     val heading: Double = 0.0,
-    val tangentHeading: Boolean = false
+    val tangentHeading: Boolean = false,
+    val reverseHeading: Boolean = false,
+    val maxVel: Double = 0.7,
 )
 interface PathSegment {
     val label: String

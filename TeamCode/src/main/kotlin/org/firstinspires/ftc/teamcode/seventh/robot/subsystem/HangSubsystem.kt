@@ -16,7 +16,7 @@ class HangSubsystem(hardwareMap: HardwareMap) : Subsystem {
     private val hang = QuackMotor(hardwareMap, "hang")
 
     init {
-        hang.setDirection(DcMotorSimple.Direction.FORWARD)
+        hang.setDirection(DcMotorSimple.Direction.REVERSE)
         // i don't think this saves power
         hang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT)
         set(State.STOP)

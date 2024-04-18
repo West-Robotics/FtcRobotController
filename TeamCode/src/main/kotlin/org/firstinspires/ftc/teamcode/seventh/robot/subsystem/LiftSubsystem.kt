@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.scrapmetal.quackerama.control.controller.PIDF
 import com.scrapmetal.quackerama.hardware.QuackMotor
 import com.scrapmetal.quackerama.hardware.QuackQuadrature
+import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Globals
 import org.firstinspires.ftc.teamcode.seventh.robot.hardware.Robot
 import org.firstinspires.ftc.teamcode.seventh.robot.subsystem.OutputSubsystem.*
 
@@ -20,7 +21,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     var overCurrent: Boolean = false
     var grounded: Boolean = true
     var power: Double = 0.0
-    private val pidf = PIDF(2.1, 0.0, 0.025)
+    private val pidf = PIDF(if (!Globals.AUTO) 1.9 else 1.2, 0.0, if (!Globals.AUTO) 0.025 else 0.0002)
     // 8192 / 4.398 in spool circum
     private val TICKS_PER_DISTANCE = 8192/4.398
     private var voltage = 13.3
@@ -75,7 +76,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     override fun write() {
         power = pidf.update(extension, levelToExtension(boardLevel), Robot.getDt())
         // reground if there's a current spike, we are low, want to be low, and are not reset
-        if (overCurrent && extension < 0.15 && boardLevel == 0.0 && !grounded) {
+        if (overCurrent && extension < 0.05 && boardLevel == 0.0 && !grounded) {
             enc.reset()
             power = 0.0
             grounded = true
@@ -90,7 +91,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
 
     fun onTarget(): Boolean {
-        return (extension-levelToExtension(boardLevel)).absoluteValue < 0.1
+        return (extension-levelToExtension(boardLevel)).absoluteValue < if (!Globals.AUTO) 0.2 else 0.6
     }
 
     private fun levelToExtension(l: Double): Double {

@@ -15,7 +15,7 @@ class FallCommand(lift: LiftSubsystem, output: OutputSubsystem) : SequentialComm
     init {
         addCommands(
             RunCommand({ lift.set(5.0) }).interruptOn { lift.onTarget() },
-            InstantCommand({ output.set(State(Arm.IN, 0.0, Pitch.IN, Roll.HORIZ, Claw.BOTH)) }),
+            InstantCommand({ output.set(State(Arm.IN, 0.0, Pitch.IN, Roll.HORIZ, Claw.NONE)) }),
             WaitCommand(1000),
             InstantCommand({ lift.set(0.0) }),
             InstantCommand({ output.set(0.0) }),

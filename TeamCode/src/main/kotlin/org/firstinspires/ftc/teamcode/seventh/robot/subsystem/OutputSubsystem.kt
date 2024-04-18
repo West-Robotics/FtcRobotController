@@ -26,6 +26,7 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
     enum class Pitch(val angle: Double) {
         IN(60.0),
+        INTAKE(50.0),
         PULLOUT(65.0),
         OUT(-5.0),
     }

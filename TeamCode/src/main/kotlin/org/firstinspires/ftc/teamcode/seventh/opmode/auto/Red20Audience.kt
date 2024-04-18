@@ -30,29 +30,13 @@ import kotlin.time.TimeSource
 @Photon
 @Autonomous(name =
 """
-⬛🟥🟥🟥⬛🟩🟩🟩⬛🟫🟫🟫⬛🟧🟧🟧⬛🟨🟨🟨⬛
-🟥🟥🟦🟦🟩🟩🟦🟦🟫🟫🟦🟦🟧🟧🟦🟦🟨🟨🟦🟦🟦
-🟥🟥🟥🟥🟩🟩🟩🟩🟫🟫🟫🟫🟧🟧🟧🟧🟨🟨🟨🟨🟦
-⬛🟥⬛🟥⬛🟩⬛🟩⬛🟫⬛🟫⬛🟧⬛🟧⬛🟨⬛🟨⬛
-⬛🟨🟨🟨⬛🟥🟥🟥⬛🟩🟩🟩⬛🟫🟫🟫⬛🟧🟧🟧⬛
-🟨🟨🟦🟦🟥🟥🟦🟦🟩🟩🟦🟦🟫🟫🟦🟦🟧🟧🟦🟦🟦
-🟨🟨🟨🟨🟥🟥🟥🟥🟩🟩🟩🟩🟫🟫🟫🟫🟧🟧🟧🟧🟦
-⬛🟨⬛🟨⬛🟥⬛🟥⬛🟩⬛🟩⬛🟫⬛🟫⬛🟧⬛🟧⬛
-⬛🟧🟧🟧⬛🟨🟨🟨⬛🟥🟥🟥⬛🟩🟩🟩⬛🟫🟫🟫⬛
-🟧🟧🟦🟦🟨🟨🟦🟦🟥🟥🟦🟦🟩🟩🟦🟦🟫🟫🟦🟦🟦
-🟧🟧🟧🟧🟨🟨🟨🟨🟥🟥🟥🟥🟩🟩🟩🟩🟫🟫🟫🟫🟦
-⬛🟧⬛🟧⬛🟨⬛🟨⬛🟥⬛🟥⬛🟩⬛🟩⬛🟫⬛🟫⬛
-⬛🟫🟫🟫⬛🟧🟧🟧⬛🟨🟨🟨⬛🟥🟥🟥⬛🟩🟩🟩⬛
-🟫🟫🟦🟦🟧🟧🟦🟦🟨🟨🟦🟦🟥🟥🟦🟦🟩🟩🟦🟦🟦
-🟫🟫🟫🟫🟧🟧🟧🟧🟨🟨🟨🟨🟥🟥🟥🟥🟩🟩🟩🟩🟦
-⬛🟫⬛🟫⬛🟧⬛🟧⬛🟨⬛🟨⬛🟥⬛🟥⬛🟩⬛🟩⬛
-⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛
+Red20Audience
 """
 )
-class SussyAuto : LinearOpMode() {
+class Red20Audience : LinearOpMode() {
     override fun runOpMode() {
         Globals.AUTO = true
-        Globals.alliance = Globals.Alliance.BLUE
+        Globals.alliance = Globals.Alliance.RED
         Globals.lane = Globals.Lane.LANE_3
         Globals.start = Globals.Start.AUDIENCE
         val drive = DriveSubsystem(hardwareMap)
@@ -72,44 +56,41 @@ class SussyAuto : LinearOpMode() {
         vision.initProp()
         vision.enableProp()
         while (opModeInInit()) {
-            // telemetry.addData("prop", vision.getPropPosition())
+            telemetry.addData("prop", vision.getPropPosition())
             telemetry.update()
         }
+        val propPos = vision.getPropPosition()
         vision.closeProp()
         vision.initAtag()
         val paths = AutoPositions(
-                Globals.Alliance.BLUE,
-                Globals.Start.BACKDROP,
+                Globals.Alliance.RED,
+                Globals.Start.AUDIENCE,
                 Globals.Lane.LANE_3,
                 Globals.YellowSide.LEFT,
                 Globals.Stack.FAR,
                 Globals.Park.INNER,
-                GetPropPositionPipeline.PropPosition.MIDDLE,
+                propPos,
         )
         drive.setPoseEstimate(paths.initPose)
         val gg = GG(
                 kN = 0.5,
                 kD = 0.006,
                 maxVel = 0.7,
-                paths.purpleBackdrop,
+                paths.purpleAudience,
                 paths.yellow,
-                paths.intakeStack1,
-                paths.scoreStack1,
-                paths.intakeStack1Again,
-                paths.scoreStack1,
         )
 
         SequentialCommandGroup(
                 // score purple
                 InstantCommand({ gg.currentIndex = 0 }),
                 ParallelCommandGroup(
-                    RiseCommand({ 0 }, { OutputSubsystem.Roll.VERT_I }, lift, output),
-                    SequentialCommandGroup(
-                        WaitCommand(2000),
-                        InstantCommand({ intake.setHeight(5) }),
-                        InstantCommand({ gg.currentIndex++ }),
-                        WaitCommand(2000),
-                    ),
+                        RiseCommand({ 0 }, { OutputSubsystem.Roll.VERT_I }, lift, output),
+                        SequentialCommandGroup(
+                                WaitCommand(2000),
+                                InstantCommand({ intake.setHeight(5) }),
+                                InstantCommand({ gg.currentIndex++ }),
+                                WaitCommand(2000),
+                        ),
                 ),
                 // WaitUntilCommand { gg.onTarget(drive.getPoseEstimate().position) }.withTimeout(2000),
                 // InstantCommand({ vision.getPosition(drive.getPoseEstimate().heading)?.let { drive.setPoseEstimate(Pose2d(it, drive.getPoseEstimate().heading)) } }),
@@ -123,8 +104,8 @@ class SussyAuto : LinearOpMode() {
                 // intake from stacks
                 WaitUntilCommand { drive.getPoseEstimate().position.x < -50.0 }.withTimeout(3000),
                 ScheduleCommand(
-                    IntakeCommand(intake, output, lift, true).withTimeout(6000),
-                    WaitCommand(3000).andThen(InstantCommand({ intake.setHeight(4) }))
+                        IntakeCommand(intake, output, lift, true).withTimeout(6000),
+                        WaitCommand(3000).andThen(InstantCommand({ intake.setHeight(4) }))
                 ),
                 WaitUntilCommand { gg.onTarget(drive.getPoseEstimate().position) }.withTimeout(3000),
                 WaitCommand(2000),
@@ -132,7 +113,7 @@ class SussyAuto : LinearOpMode() {
                 InstantCommand({ gg.currentIndex++ }),
                 WaitUntilCommand { drive.getPoseEstimate().position.x > 5.0 }.withTimeout(3000),
                 RiseCommand({ 1 }, { OutputSubsystem.Roll.VERT_I }, lift, output)
-                    .andThen(InstantCommand({ output.set(-45.0) })),
+                        .andThen(InstantCommand({ output.set(-45.0) })),
                 WaitUntilCommand { gg.onTarget(drive.getPoseEstimate().position) }.withTimeout(2000),
                 InstantCommand({ output.set(OutputSubsystem.Claw.NONE)} ),
                 InstantCommand({ vision.getPosition(drive.getPoseEstimate().heading)?.let { drive.setPoseEstimate(Pose2d(it, drive.getPoseEstimate().heading)) } }),
