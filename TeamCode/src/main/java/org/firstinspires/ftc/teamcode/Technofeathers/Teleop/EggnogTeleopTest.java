@@ -103,6 +103,11 @@ public class EggnogTeleopTest extends OpMode {
         controller2.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
         functions.liftSetPower(controller2.left_stick_y/2);
+        //TODO: problem with lift not going down for automations is because of this:
+        //TODO: if there is no sleep statement, it comes out of the method and sets the power to 0 because of the above statement
+        //TODO: solution #1: set time for lift run down to encoder level, remains risk of overrunning
+        //TODO: solution #2: if statement that cordons off the above if lift is currently running due to automations, touchsensor will still work
+        telemetry.addData("Controller 2 left stick status: ", controller2.left_stick_y);
         telemetry.addData("Lift Current Rotation: ", functions.liftRotation());
         telemetry.addData("DpadRightRunning ", functions.dpadRightRunning);
         /*
@@ -113,7 +118,7 @@ public class EggnogTeleopTest extends OpMode {
 
          */
         //lift
-        if (functions.touchSense1Pressed() && functions.getLiftStatus() == -1) {
+        if (functions.touchSense1Pressed() && functions.getLiftStatus() < 0) {
             functions.liftStop();
         }
         /*
@@ -132,11 +137,11 @@ public class EggnogTeleopTest extends OpMode {
 
 
         telemetry.addData("Lift Status: ", functions.getLiftStatus());
-       // if (distSense1.getDistance(INCH) <= 10 && 0 < controller2.left_stick_y) {
-          //  drive.drive(controller2.left_stick_x/2, controller2.left_stick_y/2, controller2.right_stick_x/2);
+        if (distSense1.getDistance(INCH) <= 10 && 0 < controller2.left_stick_y) {
+            drive.drive(controller2.left_stick_x/2, controller2.left_stick_y/2, controller2.right_stick_x/2);
             //functions.scoringPosition();
             //dylanRan = 1;
-        //}
+        }
         /*
         if (lift1CurrentRotation >=4) {
             liftTooHigh = 1;

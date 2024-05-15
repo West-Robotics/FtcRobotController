@@ -42,6 +42,15 @@ public class Lift {
     public void setPower(double power) {
         lift1.setPower(power);
         lift2.setPower(power);
+        if (power < 0) {
+            liftStatus = -1;
+        }
+        else if (power > 0) {
+            liftStatus = 1;
+        }
+        else {
+            liftStatus = 0;
+        }
     }
     public void goUp() {
         lift1.setPower(1);

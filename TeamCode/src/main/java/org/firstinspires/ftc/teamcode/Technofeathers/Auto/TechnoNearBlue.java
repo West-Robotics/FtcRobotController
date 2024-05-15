@@ -346,5 +346,4 @@ public class TechnoNearBlue extends LinearOpMode{
         frontRight.setPower(strength);
         backRight.setPower(strength);
     }
-
 }

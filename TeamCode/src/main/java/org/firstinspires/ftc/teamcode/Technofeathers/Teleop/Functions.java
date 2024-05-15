@@ -84,22 +84,22 @@ public class Functions {
         if (grabber.grabbedPixels) {
             grabber.move();
         }
+        sleep(500);
         if (pivot1.pivotReadyToDrop) {
             pivot1.move();
         }
         sleep(750);
         lift.goDown();
-        sleep(100);
         dpadRightRunning = false;
         //sleep(500);
-        //TODO: test if this works when distance sensor is pressed
+        //TODO: test if this works when touch sensor is pressed
         //can go down for longer if touch sensor works
         //lift.stop();
     }
 
     public void intakeRun() throws InterruptedException {
         intakeOnRunning = true;
-        /*
+        //TODO: run by encoder for lift
         lift.goUp();
         sleep(500);
         telemetry.addLine("lift Going Up");
@@ -107,14 +107,10 @@ public class Functions {
         if (!stopper.stopperDown) {
             stopper.move();
         }
-        sleep(1000);
-
-         */
         if (!stopper.stopperDown) {
             stopper.move();
         }
         sleep(750);
-        
         intake.rotateForwards();
         telemetry.addLine("Intake Started");
         intakeOnRunning = false;
@@ -128,7 +124,7 @@ public class Functions {
         if (stopper.stopperDown) {
             stopper.move();
         }
-        /*
+
         if (stopper.stopperDown) {
             stopper.move();
         }
@@ -138,10 +134,6 @@ public class Functions {
         sleep(750);
         lift.goDown();
 
-        sleep(500);
-        lift.stop();
-
-         */
         intakeOffRunning = false;
         /*
         if (intakeStopTimer.seconds() >= 5) {
