@@ -133,9 +133,10 @@ class SussyTele : LinearOpMode() {
                 .whenActive(InstantCommand({ output.set(OutputSubsystem.Claw.RIGHT) }))
         backdropping.and(driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER))
                 .whenActive(InstantCommand({ output.set(OutputSubsystem.Claw.LEFT) }))
-        backdropping.whileActiveContinuous(RunCommand({ output.set(-toDegrees(drive.getPoseEstimate().heading.theta).let {
+        backdropping.and(Trigger { output.state.arm == OutputSubsystem.Arm.BACKDROP }
+                .whileActiveContinuous(RunCommand({ output.set(-toDegrees(drive.getPoseEstimate().heading.theta).let {
             if (it <= 180) it else -(360-it)
-        }) }))
+        }) })))
         operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(InstantCommand({ intake.lower() }))
         operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(InstantCommand({ intake.raise() }))
         operator.lTrig.whenActive(InstantCommand({ hang.set(HangSubsystem.State.LOWER) }))
@@ -143,6 +144,8 @@ class SussyTele : LinearOpMode() {
         operator.rTrig.whenActive(InstantCommand({ hang.set(HangSubsystem.State.RAISE) }))
         operator.rTrig.whenInactive(InstantCommand({ hang.set(HangSubsystem.State.STOP) }))
         operator.guide.and(operator.getGamepadButton(GamepadKeys.Button.START)).whenActive(InstantCommand({ drone.set(DroneSubsystem.State.DIPER) }))
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenActive(InstantCommand({ intake.intakePower += 0.05 }))
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenActive(InstantCommand({ intake.intakePower -= 0.05 }))
         waitForStart()
 
         fsm.start()

@@ -15,9 +15,10 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
         STACKTAKE(0.8),
         STOP(0.0),
         SPIT(-0.5),
+        VARIABLE(0.0),
     }
-    private var power = 0.0
-        private set
+    var intakePower = 1.0
+    var power = 0.0
     private val STACK_HEIGHT = doubleArrayOf(0.19, 0.22, 0.25, 0.280, 0.297)
 
     var filledL = false
@@ -53,7 +54,11 @@ class IntakeSubsystem(hardwareMap: HardwareMap) : Subsystem {
     }
 
     fun set(s: State) {
-        power = s.power
+        if (s == State.INTAKE) {
+            power = intakePower
+        } else {
+            power = s.power
+        }
         if (s == State.SPIT) setHeight(5)
     }
     // fun set(p: Double) { power = power }

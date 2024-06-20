@@ -14,7 +14,7 @@ class OutputSubsystem(hardwareMap: HardwareMap) : Subsystem {
         var pitch: Pitch = Pitch.IN,
         var roll: Roll = Roll.HORIZ,
         var claw: Claw = Claw.BOTH,
-    ) private var state = State()
+    ) var state = State()
 
     enum class Arm(val angle: Double) {
         IN(180+50.0),

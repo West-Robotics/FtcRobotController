@@ -22,6 +22,7 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     var grounded: Boolean = true
     var power: Double = 0.0
     private val pidf = PIDF(if (!Globals.AUTO) 1.9 else 1.2, 0.0, if (!Globals.AUTO) 0.025 else 0.0002)
+    private val upPidf = PIDF(if (!Globals.AUTO) 1.9 else 1.2, 0.0, if (!Globals.AUTO) 0.025 else 0.0002, maxMagnitude = 0.6)
     // 8192 / 4.398 in spool circum
     private val TICKS_PER_DISTANCE = 8192/4.398
     private var voltage = 13.3
@@ -74,7 +75,11 @@ class LiftSubsystem(hardwareMap: HardwareMap) : Subsystem {
     fun lower() = set(boardLevel-1)
 
     override fun write() {
-        power = pidf.update(extension, levelToExtension(boardLevel), Robot.getDt())
+        power = if (levelToExtension(boardLevel) > 0.0) {
+            upPidf.update(extension, levelToExtension(boardLevel), Robot.getDt())
+        } else {
+            pidf.update(extension, levelToExtension(boardLevel), Robot.getDt())
+        }
         // reground if there's a current spike, we are low, want to be low, and are not reset
         if (overCurrent && extension < 0.05 && boardLevel == 0.0 && !grounded) {
             enc.reset()

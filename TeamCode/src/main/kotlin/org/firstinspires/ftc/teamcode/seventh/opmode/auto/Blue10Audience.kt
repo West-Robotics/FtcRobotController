@@ -27,15 +27,15 @@ import org.firstinspires.ftc.teamcode.seventh.robot.vision.Vision
 @Photon
 @Autonomous(name =
 """
-Red20Backdrop
+Blue10Audience
 """
 )
-class Red20Backdrop : LinearOpMode() {
+class Blue10Audience : LinearOpMode() {
     override fun runOpMode() {
         Globals.AUTO = true
-        Globals.alliance = Globals.Alliance.RED
+        Globals.alliance = Globals.Alliance.BLUE // THIS IS FINE FOR VISION
         Globals.lane = Globals.Lane.LANE_3
-        Globals.start = Globals.Start.BACKDROP
+        Globals.start = Globals.Start.AUDIENCE
         val drive = DriveSubsystem(hardwareMap)
         val intake = IntakeSubsystem(hardwareMap)
         val lift = LiftSubsystem(hardwareMap)
@@ -44,16 +44,15 @@ class Red20Backdrop : LinearOpMode() {
         val gamepad = Gigapad(gamepad1)
         Robot.init(hardwareMap, telemetry, gamepad, null)
 
-        var stackCount = 5
-
         intake.setHeight(1)
 
+        // vision.enableProp()
         drive.startIMUThread(this)
         vision.initProp()
         vision.enableProp()
         output.set(OutputSubsystem.Claw.BOTH)
         while (opModeInInit()) {
-            telemetry.addData("prop", vision.getPropPosition())
+            // telemetry.addData("prop", vision.getPropPosition())
             telemetry.update()
 
             Robot.write(output)
@@ -62,42 +61,27 @@ class Red20Backdrop : LinearOpMode() {
         vision.closeProp()
         vision.initAtag()
         val paths = AutoPositions(
-                Globals.Alliance.RED,
-                Globals.Start.BACKDROP,
-                Globals.Lane.LANE_3,
-                Globals.YellowSide.LEFT,
-                Globals.Stack.FAR,
-                Globals.Park.OUTER,
-                propPos,
+            Globals.Alliance.RED, // INTENTIONAL FOR PATHING
+            Globals.Start.BACKDROP, // THIS TOO
+            Globals.Lane.LANE_3,
+            Globals.YellowSide.LEFT,
+            Globals.Stack.FAR,
+            Globals.Park.OUTER,
+            propPos,
         )
         drive.setPoseEstimate(paths.initPose)
         val gg = GG(
-                kN = 0.5,
-                kD = 0.006,
-                maxVel = 0.6,
-                paths.purpleBackdrop,
-                paths.yellow,
-                paths.parkPath,
+            kN = 0.5,
+            kD = 0.006,
+            maxVel = 0.6,
+            paths.purpleBackdrop,
         )
 
         SequentialCommandGroup(
                 // score purple
                 InstantCommand({ gg.currentIndex = 0 }),
-                ParallelCommandGroup(
-                    WaitCommand(2000).andThen(RiseCommand({ 0 }, { OutputSubsystem.Roll.HORIZ }, lift, output)),
-                    SequentialCommandGroup(
-                        WaitCommand(2500),
-                        InstantCommand({ intake.setHeight(5) }),
-                        WaitCommand(500),
-                        InstantCommand({ gg.currentIndex++ }),
-                        WaitCommand(2500),
-                    ),
-                ),
-                InstantCommand({ output.set(OutputSubsystem.Claw.NONE) }),
-                // InstantCommand({ vision.getPosition(drive.getPoseEstimate().heading)?.let { drive.setPoseEstimate(Pose2d(it, drive.getPoseEstimate().heading)) } }),
-                WaitCommand(500),
-                InstantCommand({ gg.currentIndex++ }),
-                FallCommand(lift, output),
+                WaitCommand(5000),
+                InstantCommand({ intake.setHeight(5) }),
         ).schedule()
 
         while (opModeIsActive()) {

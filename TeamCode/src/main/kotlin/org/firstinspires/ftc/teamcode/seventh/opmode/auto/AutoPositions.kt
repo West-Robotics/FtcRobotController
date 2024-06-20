@@ -43,8 +43,8 @@ class AutoPositions(
     val propPose = when {
         prop == PropPosition.LEFT && alliance == Alliance.RED && start == Start.BACKDROP -> Pose2d(9.0, -36.5, toRadians(0.0))
         prop == PropPosition.MIDDLE && alliance == Alliance.RED && start == Start.BACKDROP -> Pose2d(24.0, -32.0, toRadians(0.0))
-        prop == PropPosition.RIGHT && alliance == Alliance.RED && start == Start.BACKDROP -> Pose2d(32.0, -30.0, toRadians(0.0))
-        prop == PropPosition.LEFT && alliance == Alliance.BLUE && start == Start.BACKDROP -> Pose2d(31.0, 30.0, toRadians(0.0))
+        prop == PropPosition.RIGHT && alliance == Alliance.RED && start == Start.BACKDROP -> Pose2d(31.0, -30.0, toRadians(0.0))
+        prop == PropPosition.LEFT && alliance == Alliance.BLUE && start == Start.BACKDROP -> Pose2d(31.0, 26.0, toRadians(0.0))
         prop == PropPosition.MIDDLE && alliance == Alliance.BLUE && start == Start.BACKDROP -> Pose2d(24.0, 32.0, toRadians(0.0))
         prop == PropPosition.RIGHT && alliance == Alliance.BLUE && start == Start.BACKDROP -> Pose2d(9.0, 36.5, toRadians(0.0))
         // prop == PropPosition.LEFT && alliance == Alliance.RED && start == Start.AUDIENCE -> Pose2d(-55.0, -14.0, toRadians(90.0))
@@ -57,12 +57,12 @@ class AutoPositions(
     }
     // TODO: NEEDS TUNING
     val yellowPose = when {
-        alliance == Alliance.RED && prop == PropPosition.LEFT -> Pose2d(48.5, -28.0, toRadians(0.0))
-        alliance == Alliance.RED && prop == PropPosition.MIDDLE -> Pose2d(48.5, -34.0, toRadians(0.0))
-        alliance == Alliance.RED && prop == PropPosition.RIGHT -> Pose2d(48.5, -40.0, toRadians(0.0))
+        alliance == Alliance.RED && prop == PropPosition.LEFT -> Pose2d(48.5, -29.0, toRadians(0.0))
+        alliance == Alliance.RED && prop == PropPosition.MIDDLE -> Pose2d(48.5, -35.0, toRadians(0.0))
+        alliance == Alliance.RED && prop == PropPosition.RIGHT -> Pose2d(48.5, -41.0, toRadians(0.0))
         alliance == Alliance.BLUE && prop == PropPosition.LEFT -> Pose2d(48.5, 43.5, toRadians(0.0))
         alliance == Alliance.BLUE && prop == PropPosition.MIDDLE -> Pose2d(48.5, 37.0, toRadians(0.0))
-        alliance == Alliance.BLUE && prop == PropPosition.RIGHT -> Pose2d(48.5, 31.5, toRadians(0.0))
+        alliance == Alliance.BLUE && prop == PropPosition.RIGHT -> Pose2d(48.5, 32.0, toRadians(0.0))
         else -> Pose2d()
     } + if (yellowSide == YellowSide.RIGHT) Pose2d(Vector2d(0.0, -3.0), Rotation2d()) else Pose2d()
     // TODO: set up for mosaics or avoid the yellow, partner pixel detection
