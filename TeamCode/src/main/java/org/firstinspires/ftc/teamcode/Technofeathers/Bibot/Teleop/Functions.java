@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Technofeathers.Bibot.Teleop.Subsystems.Piv
 import org.firstinspires.ftc.teamcode.Technofeathers.Bibot.Teleop.Subsystems.Stopper;
 import org.firstinspires.ftc.teamcode.Technofeathers.Bibot.Teleop.Subsystems.TouchSense1;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
-import org.firstinspires.ftc.teamcode.Technofeathers.Teleop.Subsystems.*;
+import org.firstinspires.ftc.teamcode.Technofeathers.Bibot.Teleop.Subsystems.*;
 
 public class Functions {
     public TechnofeathersDrive drive;
