@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 @TeleOp(name = "AutoTesting")
 public class AutoTesting extends OpMode {
 
-    DcMotor frontRight;
-    DcMotor frontLeft;
-    DcMotor backLeft;
-    DcMotor backRight;
+    //DcMotor frontRight;
+    //DcMotor frontLeft;
+    //DcMotor backLeft;
+    //DcMotor backRight;
     TechnofeathersDrive drive = new TechnofeathersDrive();
 
     public Controller controller1;
@@ -27,7 +27,14 @@ public class AutoTesting extends OpMode {
         frontLeft = hardwareMap.get(DcMotor.class,"backLeft");
         backLeft = hardwareMap.get(DcMotor.class,"frontLeft");
         backRight = hardwareMap.get(DcMotor.class,"frontRight");
-        */
+
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+         */
+
         controller1 = new Controller(gamepad1);
         drive.setupMotors(hardwareMap);
 
@@ -39,8 +46,11 @@ public class AutoTesting extends OpMode {
         controller1.update();
 
         drive.drive(controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
+        telemetry.addData("Side: ", controller1.left_stick_x);
+        telemetry.addData("Forward: ", controller1.left_stick_y);
+        telemetry.addData("Turn: ", controller1.right_stick_x);
 
-
+        /*
         if (controller1.A()){
             backLeft.setPower(1);
         }
@@ -58,5 +68,7 @@ public class AutoTesting extends OpMode {
             frontLeft.setPower(0);
             frontRight.setPower(0);
         }
+
+         */
     }
 }
