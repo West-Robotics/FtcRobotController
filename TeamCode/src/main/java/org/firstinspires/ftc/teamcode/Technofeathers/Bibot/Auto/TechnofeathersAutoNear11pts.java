@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Technofeathers.Auto;
+package org.firstinspires.ftc.teamcode.Technofeathers.Bibot.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersOldDrive;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersPDTest;
 
 import java.util.concurrent.TimeUnit;
@@ -24,7 +24,7 @@ public class TechnofeathersAutoNear11pts extends LinearOpMode {
 
     @Override public void runOpMode() throws InterruptedException {
 
-        TechnofeathersDrive drive = new TechnofeathersDrive(this, hardwareMap);
+        TechnofeathersOldDrive drive = new TechnofeathersOldDrive(this, hardwareMap);
 
 
         waitForStart();
@@ -40,9 +40,6 @@ public class TechnofeathersAutoNear11pts extends LinearOpMode {
         }
 
          */
-        while(e.time(TimeUnit.SECONDS) < 3.6) {
-            drive.drive(0,0,-1);
-        }
 
 
 
