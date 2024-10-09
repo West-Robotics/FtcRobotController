@@ -24,16 +24,39 @@ public class autotester extends LinearOpMode{
         backright = hardwareMap.get(DcMotor.class, "backRight");
 
         frontright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         waitForStart();
+
+
+        frontright.setPower(-0.5);
+        frontleft.setPower(0.5);
+        backleft.setPower(0.5);
+        backright.setPower(-0.5);
+
+        sleep(2000);
+
+        frontright.setPower(0);
+        frontleft.setPower(0);
+        backleft.setPower(0);
+        backright.setPower(0);
+
+        sleep(500);
 
         frontright.setPower(0.5);
         frontleft.setPower(-0.5);
         backleft.setPower(-0.5);
         backright.setPower(0.5);
 
-        sleep(5000);
+        sleep(6000);
 
+        frontright.setPower(0);
+        frontleft.setPower(0);
+        backleft.setPower(0);
+        backright.setPower(0);
 
     }
 

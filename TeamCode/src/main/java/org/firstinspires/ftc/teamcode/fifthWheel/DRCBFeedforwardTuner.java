@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.fifthWheel;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.util.NanoClock;
+//import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,7 +44,7 @@ public class DRCBFeedforwardTuner extends LinearOpMode {
         gripper.close();
         gripper.setLevel(-1);
 
-        NanoClock clock = NanoClock.system();
+        //NanoClock clock = NanoClock.system();
 
         telemetry.addLine("Ready!");
         telemetry.update();
@@ -56,7 +56,7 @@ public class DRCBFeedforwardTuner extends LinearOpMode {
 
         boolean up = true;
         double lastTime = 0.0;
-
+        /*
         while (!isStopRequested()) {
 
             if (clock.seconds() - lastTime > 3) {
@@ -91,6 +91,12 @@ public class DRCBFeedforwardTuner extends LinearOpMode {
             );
 
             telemetry.update();
+
         }
+
+
+         */
     }
+
+
 }

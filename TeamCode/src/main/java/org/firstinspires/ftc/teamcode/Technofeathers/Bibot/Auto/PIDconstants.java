@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Bibot.Auto;
 
-import com.acmerobotics.dashboard.config.Config;
-@Config
+
 public class PIDconstants {
 
     public static double Kp = 2.77;

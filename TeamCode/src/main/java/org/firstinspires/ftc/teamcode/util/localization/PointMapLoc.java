@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils.localization;
+package org.firstinspires.ftc.teamcode.util.localization;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -7,11 +7,11 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.hardware.BaseHardware;
-import org.firstinspires.ftc.teamcode.utils.localization.Point;
+//import org.firstinspires.ftc.teamcode.utils.localization.Point;
 
-import com.acmerobotics.roadrunner.drive.Drive;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+//import com.acmerobotics.roadrunner.drive.Drive;
+//import com.acmerobotics.roadrunner.geometry.Pose2d;
+//import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +21,8 @@ enum State {
     SEARCH, HORIZ, VERT, DONE
 }
 
-public class PointMapLoc extends BaseHardware {
+public class PointMapLoc { //extends BaseHardware {
+    /*
     public Drive drive;
     protected ModernRoboticsI2cRangeSensor f;
     protected ModernRoboticsI2cRangeSensor l;
@@ -240,4 +241,6 @@ public class PointMapLoc extends BaseHardware {
     public ArrayList<Point> getMap() {
         return pointMap;
     }
+
+     */
 }
