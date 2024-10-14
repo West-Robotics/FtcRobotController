@@ -12,12 +12,16 @@ public class DriveTrain {
     private DcMotor leftBack;
     private DcMotor rightFront;
     private DcMotor rightBack;
-
+    private DcMotor armExtender;
+    private DcMotor armRotater;
     public DriveTrain(HardwareMap hardwareMap) {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+
+        armExtender = hardwareMap.get(DcMotor.class, "armExtender");
+        armRotater = hardwareMap.get(DcMotor.class, "armRotater");
 
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -27,10 +31,16 @@ public class DriveTrain {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        armExtender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        armRotater.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armRotater.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void tankDrive(double straightSpeed, double strafeSpeed, double rotationSpeed) {
@@ -42,4 +52,10 @@ public class DriveTrain {
 
     }
 
+    public void manipulateArm(double extendSpeed, double rotateSpeed) {
+
+        armExtender.setPower(extendSpeed);
+        armRotater.setPower(rotateSpeed);
+
+    }
 }

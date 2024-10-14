@@ -17,7 +17,11 @@ public class RobertMkIITeleOp extends OpMode {
 
     @Override
     public void loop() {
-        drivetrain.tankDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        if (gamepad1.left_bumper) {
+            drivetrain.tankDrive(-gamepad1.left_stick_y/2, gamepad1.left_stick_x/2, gamepad1.right_stick_x/2);
+        } else {
+            drivetrain.tankDrive(-gamepad1.left_stick_y/2, gamepad1.left_stick_x/2, gamepad1.right_stick_x/2);
+        }
+        drivetrain.manipulateArm(-gamepad2.left_stick_y, -gamepad2.right_stick_y);
     }
-
 }
