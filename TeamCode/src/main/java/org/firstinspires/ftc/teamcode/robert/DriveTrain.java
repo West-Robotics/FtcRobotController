@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.cooper;
+package org.firstinspires.ftc.teamcode.robert;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -31,12 +31,12 @@ public class DriveTrain {
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void tankDrive(double straightSpeed, double rotationSpeed) {
+    public void tankDrive(double straightSpeed, double strafeSpeed, double rotationSpeed) {
 
-        leftFront.setPower(straightSpeed - rotationSpeed);
-        leftBack.setPower(straightSpeed - rotationSpeed);
-        rightFront.setPower(straightSpeed + rotationSpeed);
-        rightBack.setPower(straightSpeed + rotationSpeed);
+        leftFront.setPower(straightSpeed - rotationSpeed - strafeSpeed);
+        leftBack.setPower(straightSpeed - rotationSpeed + strafeSpeed);
+        rightFront.setPower(straightSpeed + rotationSpeed + strafeSpeed);
+        rightBack.setPower(straightSpeed + rotationSpeed - strafeSpeed);
 
     }
 
