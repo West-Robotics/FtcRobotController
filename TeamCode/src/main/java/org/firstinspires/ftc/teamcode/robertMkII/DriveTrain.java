@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.robert;
+package org.firstinspires.ftc.teamcode.robertMkII;
+
+// for controlling the robot
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
