@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.robertMkII;
 
 // for controlling the robot
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class DriveTrain {
 
@@ -14,8 +16,9 @@ public class DriveTrain {
     private DcMotor rightBack;
     private DcMotor armExtender;
     private DcMotor armRotater;
-    private double armAngle;
-    private double armLength;
+    private CRServo leftHandIntake;
+    private CRServo rightHandIntake;
+    private Servo handRotation;
 
     public DriveTrain(HardwareMap hardwareMap) {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
@@ -26,8 +29,12 @@ public class DriveTrain {
         armExtender = hardwareMap.get(DcMotor.class, "armExtender");
         armRotater = hardwareMap.get(DcMotor.class, "armRotater");
 
+        leftHandIntake = hardwareMap.get(CRServo.class, "leftHandIntake");
+        rightHandIntake = hardwareMap.get(CRServo.class, "rightHandIntake");
+
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightHandIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -73,6 +80,7 @@ public class DriveTrain {
     }
 
     public void moveHand(double handRotateSpeed, double handIntakeSpeed) {
-        
+        leftHandIntake.setPower(handIntakeSpeed);
+        rightHandIntake.setPower(handIntakeSpeed);
     }
 }

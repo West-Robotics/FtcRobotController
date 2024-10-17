@@ -23,5 +23,6 @@ public class RobertMkIITeleOp extends OpMode {
             drivetrain.tankDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         }
         drivetrain.manipulateArm(-gamepad2.left_stick_y, -gamepad2.right_stick_y);
+        drivetrain.moveHand(0,gamepad2.left_trigger-gamepad2.right_trigger);
     }
 }
