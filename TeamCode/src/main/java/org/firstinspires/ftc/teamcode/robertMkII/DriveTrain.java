@@ -14,6 +14,9 @@ public class DriveTrain {
     private DcMotor rightBack;
     private DcMotor armExtender;
     private DcMotor armRotater;
+    private double armAngle;
+    private double armLength;
+
     public DriveTrain(HardwareMap hardwareMap) {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
@@ -39,6 +42,9 @@ public class DriveTrain {
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        armExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armRotater.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armRotater.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -53,9 +59,20 @@ public class DriveTrain {
     }
 
     public void manipulateArm(double extendSpeed, double rotateSpeed) {
+        // motor uses 537.7 ppr
+        // diameter of pulley gear is 120mm
+        // slide extension amount is 107 cm
+        // full rotations until extended is 59
 
-        armExtender.setPower(extendSpeed);
+        double extenderRevCount = armExtender.getCurrentPosition() / 537.7;
+        if ((extenderRevCount < 89 && extendSpeed > 0) || (extenderRevCount > 0 && extendSpeed < 0)) {
+            armExtender.setPower(extendSpeed);
+        }
         armRotater.setPower(rotateSpeed);
 
+    }
+
+    public void moveHand(double handRotateSpeed, double handIntakeSpeed) {
+        
     }
 }
