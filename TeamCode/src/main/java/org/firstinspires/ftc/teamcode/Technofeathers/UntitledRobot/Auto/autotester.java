@@ -17,7 +17,7 @@ public class autotester extends LinearOpMode{
     protected DcMotor backright;
     protected DcMotor backleft;
 
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException{
         frontright = hardwareMap.get(DcMotor.class,"frontRight");
         frontleft = hardwareMap.get(DcMotor.class, "frontLeft");
         backleft = hardwareMap.get(DcMotor.class, "backLeft");

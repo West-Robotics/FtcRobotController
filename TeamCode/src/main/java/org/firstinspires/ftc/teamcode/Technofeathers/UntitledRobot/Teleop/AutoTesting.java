@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
+
+
 @TeleOp(name = "AutoTesting")
 public class AutoTesting extends OpMode {
 
@@ -16,6 +18,7 @@ public class AutoTesting extends OpMode {
     //DcMotor frontLeft;
     //DcMotor backLeft;
     //DcMotor backRight;
+    public DcMotor arm;
     TechnofeathersDrive drive = new TechnofeathersDrive();
 
     public Controller controller1;
@@ -23,17 +26,22 @@ public class AutoTesting extends OpMode {
     public Servo grabber;
     public Servo pivot;
     public Servo newgrabber;
+    public boolean buttonA;
+    public boolean buttonY;
+
 
     @Override
     public void init(){
 
-
+        arm = hardwareMap.get(DcMotor.class,"arm");
         controller1 = new Controller(gamepad1);
         drive.setupMotors(hardwareMap);
         grabber = hardwareMap.get(Servo.class,"grabber");
         pivot = hardwareMap.get(Servo.class,"pivot");
-        newgrabber = hardwareMap.get(Servo.class,"newgrabber");
-
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        buttonA = true;
+        buttonY = true;
     }
 
     @Override
@@ -46,28 +54,37 @@ public class AutoTesting extends OpMode {
         telemetry.addData("Turn: ", controller1.right_stick_x);
         telemetry.addData("pivot", pivot.getPosition());
         telemetry.addData("grabber", grabber.getPosition());
-        telemetry.addData("newgrabber",newgrabber.getPosition());
         telemetry.update();
 
-        if (controller1.AOnce()){
-            grabber.setPosition(0.15);
-        }
-        if (controller1.BOnce()){
-            grabber.setPosition(0.24);
 
+        if (controller1.leftBumper()){
+            if (buttonA) {
+                grabber.setPosition(0.15);
+                buttonA = false;
+            } else{
+                grabber.setPosition(0.24);
+                buttonA = true;
+            }
+        }
+
+        if (controller1.YOnce()){
+            if (buttonY){
+                pivot.setPosition(0.86);
+                buttonY = false;
+            } else{
+                pivot.setPosition(0.55);
+                buttonY = true;
+            }
         }
         if (controller1.XOnce()){
-            pivot.setPosition(0.86);
+
         }
-        if (controller1.YOnce()){
-            pivot.setPosition(0.55);
+        if (controller1.AOnce()){
+            pivot.setPosition(0.38);
+        }
+        if (controller1.BOnce()){
+
         }
 
-        if (controller1.dpadDown()){
-            newgrabber.setPosition(0.35);
-        }
-        if (controller1.dpadUp()){
-            newgrabber.setPosition(0.55);
-        }
     }
 }
