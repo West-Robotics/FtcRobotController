@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robertMkII;
 TODO:
 - make hand pos preset
 - buy bricks
+- remeber to uncomment all of the arm things
 */
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -25,7 +26,9 @@ public class RobertMkIITeleOp extends OpMode {
         } else {
             drivetrain.tankDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         }
+        /*
         drivetrain.manipulateArm(-gamepad2.left_stick_y, -gamepad2.right_stick_y);
         drivetrain.moveHand(gamepad1.y,gamepad2.left_trigger-gamepad2.right_trigger);
+         */
     }
 }

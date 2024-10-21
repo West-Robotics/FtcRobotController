@@ -19,47 +19,47 @@ public class DriveTrain {
     private CRServo leftHandIntake;
     private CRServo rightHandIntake;
     private Servo wrist;
-    private HandPosition handPos;
+/*    private HandPosition handPos;
     private HandPosition lastHandPos;
-
+*/
     public DriveTrain(HardwareMap hardwareMap) /* INIT */ {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-
+/*
         armExtender = hardwareMap.get(DcMotor.class, "armExtender");
         armRotater = hardwareMap.get(DcMotor.class, "armRotater");
 
         leftHandIntake = hardwareMap.get(CRServo.class, "leftHandIntake");
         rightHandIntake = hardwareMap.get(CRServo.class, "rightHandIntake");
-        handRotater = hardwareMap.get(Servo.class, "handRotater");
-
+        wrist = hardwareMap.get(Servo.class, "handRotater");
+*/
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightHandIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+  //      rightHandIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
+/*
         armExtender.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         armRotater.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
+*/
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        armExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+/*        armExtender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armRotater.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armRotater.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         handPos = HandPosition.LEVEL;
-        lastHandPos = HandPosition.LEVEL;
+        lastHandPos = HandPosition.LEVEL; */
     }
 
     public void tankDrive(double straightSpeed, double strafeSpeed, double rotationSpeed) {
@@ -70,7 +70,7 @@ public class DriveTrain {
         rightBack.setPower(straightSpeed + rotationSpeed - strafeSpeed);
 
     }
-
+/*
     public void manipulateArm(double extendSpeed, double rotateSpeed) {
         // motor uses 537.7 ppr
         // diameter of pulley gear is 120mm
@@ -103,5 +103,5 @@ public class DriveTrain {
         } else if (handPos==HandPosition.LEVEL && lastHandPos!=HandPosition.LEVEL) {
             wrist.setPosition(1);
         }
-    }
+    }*/
 }
