@@ -18,9 +18,11 @@ public class DriveTrain {
     private DcMotor armRotater;
     private CRServo leftHandIntake;
     private CRServo rightHandIntake;
-    private CRServo handRotater;
+    private Servo wrist;
+    private HandPosition handPos;
+    private HandPosition lastHandPos;
 
-    public DriveTrain(HardwareMap hardwareMap) {
+    public DriveTrain(HardwareMap hardwareMap) /* INIT */ {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
@@ -31,7 +33,7 @@ public class DriveTrain {
 
         leftHandIntake = hardwareMap.get(CRServo.class, "leftHandIntake");
         rightHandIntake = hardwareMap.get(CRServo.class, "rightHandIntake");
-        handRotater = hardwareMap.get(CRServo.class, "handRotater");
+        handRotater = hardwareMap.get(Servo.class, "handRotater");
 
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -55,6 +57,9 @@ public class DriveTrain {
 
         armExtender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armRotater.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        handPos = HandPosition.LEVEL;
+        lastHandPos = HandPosition.LEVEL;
     }
 
     public void tankDrive(double straightSpeed, double strafeSpeed, double rotationSpeed) {
@@ -83,10 +88,20 @@ public class DriveTrain {
 
     }
 
-    public void moveHand(double handRotateSpeed, double handIntakeSpeed) {
+    enum HandPosition {
+        DUMP,
+        LEVEL
+    }
+    public void moveHand(boolean toggleHandPos, double handIntakeSpeed) {
         leftHandIntake.setPower(handIntakeSpeed);
         rightHandIntake.setPower(handIntakeSpeed);
 
-        handRotater.setPower(handRotateSpeed);
+        lastHandPos = handPos;
+        handPos = (toggleHandPos && handPos==HandPosition.LEVEL) ? HandPosition.DUMP : HandPosition.LEVEL;
+        if (handPos==HandPosition.DUMP && lastHandPos!=HandPosition.DUMP) {
+            wrist.setPosition(0);
+        } else if (handPos==HandPosition.LEVEL && lastHandPos!=HandPosition.LEVEL) {
+            wrist.setPosition(1);
+        }
     }
 }
