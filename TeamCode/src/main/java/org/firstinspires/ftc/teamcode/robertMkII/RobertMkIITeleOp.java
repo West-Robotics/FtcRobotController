@@ -4,6 +4,7 @@ TODO:
 - make hand pos preset
 - buy bricks
 - remeber to uncomment all of the arm things
+- test
 */
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -21,7 +22,7 @@ public class RobertMkIITeleOp extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.left_bumper) {
+        if (!gamepad1.left_bumper) {
             drivetrain.tankDrive(-gamepad1.left_stick_y/2, gamepad1.left_stick_x/2, gamepad1.right_stick_x/2);
         } else {
             drivetrain.tankDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);

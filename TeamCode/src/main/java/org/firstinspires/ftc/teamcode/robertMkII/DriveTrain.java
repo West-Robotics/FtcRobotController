@@ -35,8 +35,8 @@ public class DriveTrain {
         rightHandIntake = hardwareMap.get(CRServo.class, "rightHandIntake");
         wrist = hardwareMap.get(Servo.class, "handRotater");
 */
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
   //      rightHandIntake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
