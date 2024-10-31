@@ -7,7 +7,7 @@ public class pidnow {
 
     public static double Kd = 0.003;
 
-    public static double PForTurns = 2.0;
+    public static double PForTurns = 2.9;
 
     public static double IForTurns = 0.0;
 

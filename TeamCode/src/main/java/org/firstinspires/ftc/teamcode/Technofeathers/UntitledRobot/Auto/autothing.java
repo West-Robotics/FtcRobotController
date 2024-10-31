@@ -90,12 +90,12 @@ public class autothing extends LinearOpMode{
 
         imuParameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                        RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
         );
         imu.initialize(imuParameters);
-        double currentVoltage = 12.8;
+        double currentVoltage = 13.18;
         //setPIDValues((12.5/currentVoltage));
         waitForStart();
 
