@@ -33,8 +33,15 @@ public class AutoTesting extends LinearOpMode {
     public Servo newgrabber;
     public boolean buttonA;
     public boolean buttonY;
-    public double armencoder;
+    public double encodervalue;
 
+    double lastError;
+    double integralSum;
+    double powering;
+
+    public double P;
+    public double I;
+    public double D;
 
     public void runOpMode() throws InterruptedException {
         arm = hardwareMap.get(DcMotor.class, "arm");
@@ -48,99 +55,80 @@ public class AutoTesting extends LinearOpMode {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         buttonA = true;
         buttonY = true;
+
+        P = 0.78;
+        I=0;
+        D=0.3;
+        double voltage = 12.90/13.5;
+        P = P*voltage;
+        I = I*voltage;
+        D = D*voltage;
+
         waitForStart();
         while (opModeIsActive()){
             controller1.update();
 
-            drive.drive(controller1.left_stick_x, -controller1.left_stick_y, controller1.right_stick_x);
-            telemetry.addData("Side: ", controller1.left_stick_x);
-            telemetry.addData("Forward: ", controller1.left_stick_y);
-            telemetry.addData("Turn: ", controller1.right_stick_x);
+            drive.drive(-controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
             telemetry.addData("pivot", pivot.getPosition());
             telemetry.addData("grabber", grabber.getPosition());
-            telemetry.addData("arm",arm.getCurrentPosition());
-            telemetry.update();
 
-
-            if (controller1.leftBumperOnce()) {
-                if (buttonA) {
-                    grabber.setPosition(0.15);
+            if (controller1.leftBumperOnce()){
+                if (buttonA){
+                    grabber.setPosition(0.45);
                     buttonA = false;
-                } else {
-                    grabber.setPosition(0.24);
+                } else{
+                    grabber.setPosition(0.3);
                     buttonA = true;
                 }
             }
 
-            if (controller1.YOnce()) {
-
-                arm.setTargetPosition(550);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armencoder = arm.getCurrentPosition();
-                while(opModeIsActive()&&(armencoder<300)){
-                    armencoder = arm.getCurrentPosition();
-                    arm.setPower(0.2);
-                }
-                pivot.setPosition(0.75) ;
-                arm.setPower(0.1);
-            }
-            if (controller1.XOnce()) {
-
-                arm.setTargetPosition(830);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armencoder = arm.getCurrentPosition();
-                while (opModeIsActive() &&(armencoder<400)){
-                    armencoder = arm.getCurrentPosition();
-                    arm.setPower(0.22);
-                }
-                pivot.setPosition(0.9);
-                arm.setPower(0.1);
-
-            }
-            if (controller1.AOnce()){
-
-
-                arm.setTargetPosition(930);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armencoder = arm.getCurrentPosition();
-                while (opModeIsActive()&&(armencoder<400)){
-                    armencoder = arm.getCurrentPosition();
-                    arm.setPower(0.22);
-                }
-                pivot.setPosition(0.73);
-                arm.setPower(0.1);
-
-            }
-
-            if (controller1.BOnce()) {
-                pivot.setPosition(0.18);
-                arm.setTargetPosition(80);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armencoder = arm.getCurrentPosition();
-                while (opModeIsActive()&&armencoder>750){
-                    armencoder = arm.getCurrentPosition();
-                    arm.setPower(0.2);
-                }
-
-                arm.setPower(0.08);
-                while (opModeIsActive()&&(armencoder>80)){
-                    armencoder = arm.getCurrentPosition();
-                }
-            }
-
-            if (controller1.dpadUpOnce()) {
-                arm.setPower(0);
-                arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            if (controller1.dpadUpOnce()){
+                pivot.setPosition(0.95);
             }
             if (controller1.dpadDownOnce()){
-                pivot.setPosition(0.45);
+                //to start
+                pivot.setPosition(0);
+            }
+            if (controller1.dpadLeftOnce()){
+                pivot.setPosition(0.45);//for specimen drop off
             }
             if(controller1.dpadRightOnce()){
-                pivot.setPosition(0.25);
+                pivot.setPosition(0.71);//to score
             }
+            if(controller1.BOnce()){
+                arm.setPower(0);
+            }
+            encodervalue= arm.getCurrentPosition();
+            telemetry.addData("encoder",encodervalue);
+            if(controller1.A()){
+                powering = PIDForArm(52, encodervalue, P, D, I);
+                arm.setPower(powering);
+            }
+            if(controller1.Y()){
+                powering = PIDForArm(550, encodervalue, P, D, I);
+                arm.setPower(powering);
+            }
+            if(controller1.X()){
+                powering = PIDForArm(740, encodervalue, P, D, I);
+                arm.setPower(powering);
+            }
+
+            telemetry.addData("power",powering);
+
+            telemetry.update();
         }
     }
+    public double PIDForArm(double reference, double state,double p, double d, double i){
+        double error = (reference/500)-(state/500);
+        telemetry.addData("Error in rotations",error);
+        telemetry.addData("error per tick", reference-state);
 
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / (timer.seconds());
+        lastError = error;
+        timer.reset();
+        double returning = (error * p) + (derivative * d) + (integralSum * i);
+        return returning;
+    }
 
 }

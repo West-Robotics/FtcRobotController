@@ -18,33 +18,48 @@ public class testerbot extends LinearOpMode {
     double lastError;
     double integralSum;
     double powering;
-    boolean ying;
+
+    public double P;
+    public double I;
+    public double D;
     public void runOpMode() throws InterruptedException{
         motor = hardwareMap.get(DcMotor.class,"arm");
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         controller1 = new Controller(gamepad1);
         powering=0;
-        ying = false;
+
+        P = 0.78;
+        I=0;
+        D=0.3;
+        double voltage = 13.1/13.5;
+        P = P*voltage;
+        I = I*voltage;
+        D = D*voltage;
         waitForStart();
         while (opModeIsActive()){
             controller1.update();
-            if(controller1.AOnce()){
-                motor.setPower(0.5);
-            }
+
             if(controller1.BOnce()){
                 motor.setPower(0);
             }
             encodervalue= motor.getCurrentPosition();
             telemetry.addData("encoder",encodervalue);
-
-            if(controller1.Y()){
-
-                powering = PIDForArm(550, encodervalue, 0.8, 0.14, 0);
+            if(controller1.A()){
+                powering = PIDForArm(42, encodervalue, P, D, I);
                 motor.setPower(powering);
-
             }
+            if(controller1.Y()){
+                powering = PIDForArm(550, encodervalue, P, D, I);
+                motor.setPower(powering);
+            }
+            if(controller1.X()){
+                powering = PIDForArm(700, encodervalue, P, D, I);
+                motor.setPower(powering);
+            }
+
             telemetry.addData("power",powering);
             telemetry.update();
         }
