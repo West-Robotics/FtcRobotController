@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -32,7 +34,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name="Into-the-Deep, TeleOp")
+@TeleOp(name="Into The Deep TeleOp")
 public class Into_the_deep_TeleOp extends LinearOpMode{
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -40,6 +42,9 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    Servo clawservo;
+    Servo secondaryArm;
+    private DcMotor sliders = null;
 
     @Override
     public void runOpMode() {
@@ -50,7 +55,9 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
+        clawservo = hardwareMap.get(Servo.class, "claw");
+        secondaryArm = hardwareMap.get(Servo.class, "secondaryArm");
+        sliders = hardwareMap.get(DcMotor.class, "primary_arm");
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -63,7 +70,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
@@ -88,6 +95,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
+            double sliderPower = gamepad2.left_stick_y;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -100,6 +108,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
                 rightFrontPower /= max;
                 leftBackPower   /= max;
                 rightBackPower  /= max;
+                sliderPower /= max;
             }
 
             // This is test code:
@@ -120,8 +129,8 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
             */
 
             // Send calculated power to wheels
-            boolean bumper= gamepad1.right_bumper;
-            if (bumper == true){
+            boolean bumper= gamepad1.left_bumper;
+            if (bumper){
                 leftFrontDrive.setPower(leftFrontPower);
                 rightFrontDrive.setPower(rightFrontPower);
                 leftBackDrive.setPower(leftBackPower);
@@ -132,6 +141,24 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
                 leftBackDrive.setPower(leftBackPower/2);
                 rightBackDrive.setPower(rightBackPower/2);
             }
+            if(gamepad2.right_trigger>0.5){
+                clawservo.setPosition(1.0);
+            }
+            if(gamepad2.left_trigger>0.5){
+                clawservo.setPosition(0.65);
+            }
+            if(gamepad2.a){
+                secondaryArm.setPosition(0.55);
+            }
+            if(gamepad2.b){
+                secondaryArm.setPosition(0.2);
+            }
+            if(gamepad2.y){
+                secondaryArm.setPosition(0);
+            }
+            sliders.setPower(sliderPower/2);
+
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
