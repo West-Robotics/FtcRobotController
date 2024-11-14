@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -50,7 +49,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 @TeleOp(name = "servo-test")
 
-public class servo_test extends LinearOpMode {
+public class old_servo extends LinearOpMode {
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
@@ -68,12 +67,13 @@ public class servo_test extends LinearOpMode {
 
         // Connect to servo (Assume Robot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "left_hand");
+        servo = hardwareMap.get(Servo.class, "secondaryArm");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
         waitForStart();
+        servo.setPosition(30);
 
 
         // Scan servo till stop pressed.
