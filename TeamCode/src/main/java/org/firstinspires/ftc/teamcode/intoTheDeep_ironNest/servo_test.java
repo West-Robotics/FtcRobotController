@@ -29,29 +29,30 @@
 
 package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
- * This OpMode scans a single clawservo back and forward until Stop is pressed.
+ * This OpMode scans a single servo back and forward until Stop is pressed.
  * The code is structured as a LinearOpMode
- * INCREMENT sets how much to increase/decrease the clawservo position each cycle
+ * INCREMENT sets how much to increase/decrease the servo position each cycle
  * CYCLE_MS sets the update period.
  *
  * This code assumes a Servo configured with the name "left_hand" as is found on a Robot.
  *
- * NOTE: When any clawservo position is set, ALL attached servos are activated, so ensure that any other
+ * NOTE: When any servo position is set, ALL attached servos are activated, so ensure that any other
  * connected servos are able to move freely before running this test.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "clawservo-test")
+@TeleOp(name = "servo-test")
 
-public class old_servo extends LinearOpMode {
+public class servo_test extends LinearOpMode {
 
-    static final double INCREMENT   = 0.01;     // amount to slew clawservo each CYCLE_MS cycle
+    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
@@ -65,21 +66,20 @@ public class old_servo extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // Connect to clawservo (Assume Robot Left Hand)
-        // Change the text in quotes to match any clawservo name on your robot.
-        servo = hardwareMap.get(Servo.class, "secondaryArm");
+        // Connect to servo (Assume Robot Left Hand)
+        // Change the text in quotes to match any servo name on your robot.
+        servo = hardwareMap.get(Servo.class, "left_hand");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
         waitForStart();
-        servo.setPosition(30);
 
 
-        // Scan clawservo till stop pressed.
+        // Scan servo till stop pressed.
         while(opModeIsActive()){
 
-            // slew the clawservo, according to the rampUp (direction) variable.
+            // slew the servo, according to the rampUp (direction) variable.
             if (rampUp) {
                 // Keep stepping up until we hit the max value.
                 position += INCREMENT ;
@@ -102,7 +102,7 @@ public class old_servo extends LinearOpMode {
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
-            // Set the clawservo to the new position and pause;
+            // Set the servo to the new position and pause;
             servo.setPosition(position);
             sleep(CYCLE_MS);
             idle();
