@@ -27,6 +27,7 @@ public class AutoTesting extends LinearOpMode {
     TechnofeathersDrive drive = new TechnofeathersDrive();
 
     public Controller controller1;
+    public Controller controller2;
 
     public Servo grabber;
     public Servo pivot;
@@ -46,6 +47,7 @@ public class AutoTesting extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         arm = hardwareMap.get(DcMotor.class, "arm");
         controller1 = new Controller(gamepad1);
+        controller2 = new Controller(gamepad2);
         drive.setupMotors(hardwareMap);
         grabber = hardwareMap.get(Servo.class, "grabber");
         pivot = hardwareMap.get(Servo.class, "pivot");
@@ -56,10 +58,10 @@ public class AutoTesting extends LinearOpMode {
         buttonA = true;
         buttonY = true;
 
-        P = 0.78;
+        P = 0.75;
         I=0;
         D=0.3;
-        double voltage = 12.90/13.5;
+        double voltage = 13.5/12.82;
         P = P*voltage;
         I = I*voltage;
         D = D*voltage;
@@ -67,59 +69,71 @@ public class AutoTesting extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             controller1.update();
-
+            controller2.update();
             drive.drive(-controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
+
             telemetry.addData("pivot", pivot.getPosition());
             telemetry.addData("grabber", grabber.getPosition());
 
-            if (controller1.leftBumperOnce()){
+
+            if (controller2.B()){
+                arm.setPower(0.003);
+            } else if (controller2.A()){
+                arm.setPower(-0.003);
+            } else{
+                arm.setPower(controller2.left_stick_y/4);
+            }
+
+            if (controller1.AOnce()){
                 if (buttonA){
-                    grabber.setPosition(0.45);
+                    grabber.setPosition(0.3);
                     buttonA = false;
                 } else{
-                    grabber.setPosition(0.3);
+                    grabber.setPosition(0.45);
                     buttonA = true;
                 }
             }
 
-            if (controller1.dpadUpOnce()){
-                pivot.setPosition(0.95);
+            if (controller1.dpadRightOnce()){
+                pivot.setPosition(1);//to pick up
             }
             if (controller1.dpadDownOnce()){
                 //to start
                 pivot.setPosition(0);
+
             }
-            if (controller1.dpadLeftOnce()){
-                pivot.setPosition(0.45);//for specimen drop off
-            }
-            if(controller1.dpadRightOnce()){
+            if(controller1.dpadUpOnce()){
                 pivot.setPosition(0.71);//to score
             }
+            /*
+            encodervalue= arm.getCurrentPosition();
+            if (controller1.leftBumper()){
+                powering = PIDForArm(40, encodervalue, P, D, I);
+                arm.setPower(powering);
+            }
+
             if(controller1.BOnce()){
                 arm.setPower(0);
             }
-            encodervalue= arm.getCurrentPosition();
             telemetry.addData("encoder",encodervalue);
-            if(controller1.A()){
-                powering = PIDForArm(52, encodervalue, P, D, I);
-                arm.setPower(powering);
-            }
             if(controller1.Y()){
-                powering = PIDForArm(550, encodervalue, P, D, I);
+                powering = PIDForArm(235, encodervalue, P, D, I);
                 arm.setPower(powering);
             }
             if(controller1.X()){
-                powering = PIDForArm(740, encodervalue, P, D, I);
+                powering = PIDForArm(535, encodervalue, P, D, I);
                 arm.setPower(powering);
             }
 
             telemetry.addData("power",powering);
 
+
+             */
             telemetry.update();
         }
     }
     public double PIDForArm(double reference, double state,double p, double d, double i){
-        double error = (reference/500)-(state/500);
+        double error = (reference/290)-(state/290);
         telemetry.addData("Error in rotations",error);
         telemetry.addData("error per tick", reference-state);
 

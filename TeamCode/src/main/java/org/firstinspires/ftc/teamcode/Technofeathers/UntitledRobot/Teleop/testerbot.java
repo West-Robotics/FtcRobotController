@@ -42,6 +42,12 @@ public class testerbot extends LinearOpMode {
         while (opModeIsActive()){
             controller1.update();
 
+
+            motor.setPower(controller1.right_stick_y);
+            encodervalue= motor.getCurrentPosition();
+            telemetry.addData("encoder",encodervalue);
+            telemetry.update();
+            /*
             if(controller1.BOnce()){
                 motor.setPower(0);
             }
@@ -62,6 +68,8 @@ public class testerbot extends LinearOpMode {
 
             telemetry.addData("power",powering);
             telemetry.update();
+
+             */
         }
 
 
