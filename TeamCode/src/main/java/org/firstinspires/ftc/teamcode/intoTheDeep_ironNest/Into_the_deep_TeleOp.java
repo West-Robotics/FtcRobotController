@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -35,24 +37,28 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @TeleOp(name="Into The Deep TeleOp")
-public class Into_the_deep_TeleOp extends LinearOpMode{
+public class Into_the_deep_TeleOp extends LinearOpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    Servo clawservo;
-    Servo secondaryArm;
-    private DcMotor sliders = null;
+    private DcMotor leftFrontDrive;
+    private DcMotor leftBackDrive;
+    private DcMotor rightFrontDrive;
+    private DcMotor rightBackDrive;
+    private Servo clawservo;
+    private Servo secondaryArm;
+    private DcMotor sliders;
+    public int slider_position;
+    int maxPosition = -2900;
+    public double F;
+    public double f = (float) 0.0000005;
 
     @Override
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         clawservo = hardwareMap.get(Servo.class, "claw");
@@ -72,6 +78,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        sliders.setMode(RUN_USING_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -85,16 +92,16 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
+            double leftFrontPower = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
             double sliderPower = gamepad2.left_stick_y;
 
             // Normalize the values so no wheel power exceeds 100%
@@ -104,10 +111,10 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
+                leftFrontPower /= max;
                 rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
                 sliderPower /= max;
             }
 
@@ -129,41 +136,50 @@ public class Into_the_deep_TeleOp extends LinearOpMode{
             */
 
             // Send calculated power to wheels
-            boolean bumper= gamepad1.left_bumper;
-            if (bumper){
+
+            boolean bumper = gamepad1.left_bumper;
+            if (bumper) {
                 leftFrontDrive.setPower(leftFrontPower);
                 rightFrontDrive.setPower(rightFrontPower);
                 leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);}
-            else {
-                leftFrontDrive.setPower(leftFrontPower/2);
-                rightFrontDrive.setPower(rightFrontPower/2);
-                leftBackDrive.setPower(leftBackPower/2);
-                rightBackDrive.setPower(rightBackPower/2);
+                rightBackDrive.setPower(rightBackPower);
+            } else {
+                leftFrontDrive.setPower(leftFrontPower / 2);
+                rightFrontDrive.setPower(rightFrontPower / 2);
+                leftBackDrive.setPower(leftBackPower / 2);
+                rightBackDrive.setPower(rightBackPower / 2);
             }
-            if(gamepad2.right_trigger>0.5){
+            if (gamepad2.right_trigger > 0.5) {
                 clawservo.setPosition(1.0);
             }
-            if(gamepad2.left_trigger>0.5){
+            if (gamepad2.left_trigger > 0.5) {
                 clawservo.setPosition(0.65);
             }
-            if(gamepad2.a){
-                secondaryArm.setPosition(0.55);
+            if (gamepad2.a) {
+                secondaryArm.setPosition(0.6);
             }
-            if(gamepad2.b){
-                secondaryArm.setPosition(0.2);
+            if (gamepad2.b) {
+                secondaryArm.setPosition(0.25);
             }
-            if(gamepad2.y){
+            if (gamepad2.y) {
                 secondaryArm.setPosition(0);
             }
-            sliders.setPower(sliderPower/2);
+            int currentPosition = sliders.getCurrentPosition();
+            F = currentPosition * f;
+                if (currentPosition > maxPosition) {
+                    sliders.setPower(sliderPower+F);
 
+                }
+                else {
+                    sliders.setPower(Math.abs(sliderPower/5));
+                }
 
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.update();
+                // Show the elapsed game time and wheel power.
+                telemetry.addData("sliderPower", sliderPower);
+                telemetry.addData("Status", "Run Time: " + runtime.toString());
+                telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+                telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+                telemetry.update();
+            }
         }
     }
-}
