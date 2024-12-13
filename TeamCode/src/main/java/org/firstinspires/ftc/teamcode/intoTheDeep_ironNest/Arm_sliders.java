@@ -20,6 +20,7 @@ public class Arm_sliders extends LinearOpMode {
     DcMotor wheel2;
     DcMotor wheel4;
     DcMotor wheel3;
+    public double tilesToTicks = 537.7/(120*2*0.254*3.14);
 
 
     @Override
@@ -64,6 +65,18 @@ public class Arm_sliders extends LinearOpMode {
                 telemetry.update();
             }
                 sliders.setPower(F);
+            while (wheel_1.getCurrentPosition()<1.875*tilesToTicks){
+                wheel_1.setPower(0.75);
+                wheel2.setPower(0.75);
+                wheel3.setPower(0.75);
+                wheel4.setPower(0.75);
+            }
+            wheel_1.setPower(0);
+            wheel2.setPower(0);
+            wheel3.setPower(0);
+            wheel4.setPower(0);
+            claw.setPosition(0.65);
+            break;
 
 
         }
