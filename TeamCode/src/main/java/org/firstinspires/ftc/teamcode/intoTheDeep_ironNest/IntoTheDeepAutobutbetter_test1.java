@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous (name = "Into the deep auto- test 1")
@@ -71,16 +72,29 @@ public class IntoTheDeepAutobutbetter_test1 extends LinearOpMode {
                 wheel2.setPower(0.5);
                 wheel3.setPower(-0.5);
                 wheel4.setPower(-0.5);
-                telemetry.addData("wheels",wheel2.getCurrentPosition());
-                telemetry.addData("tiles to ticks",1*tilesToTicks);
-                telemetry.update();
             }
             wheel_1.setPower(0);
             wheel2.setPower(0);
             wheel3.setPower(0);
             wheel4.setPower(0);
-            wait(500);
             claw.setPosition(0.65);
+            while (wheel2.getCurrentPosition()>0){
+                wheel_1.setPower(0.5);
+                wheel2.setPower(-0.5);
+                wheel3.setPower(0.5);
+                wheel4.setPower(0.5);
+            }
+            ElapsedTime timer = new ElapsedTime();
+            if (timer.seconds() < 1) {
+                wheel_1.setPower(0.75);
+                wheel2.setPower(0.75);
+                wheel3.setPower(0.75);
+                wheel4.setPower(0.75);
+            }
+            wheel_1.setPower(-0.75);
+            wheel2.setPower(-0.75);
+            wheel3.setPower(-0.75);
+            wheel4.setPower(-0.75);
             break;
 
 
