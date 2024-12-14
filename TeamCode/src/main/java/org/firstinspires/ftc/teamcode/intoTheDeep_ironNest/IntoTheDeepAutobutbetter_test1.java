@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@Autonomous (name = "Into the deep auto- slider branch")
-public class Arm_sliders extends LinearOpMode {
+@Autonomous (name = "Into the deep auto- test 1")
+public class IntoTheDeepAutobutbetter_test1 extends LinearOpMode {
     DcMotor sliders;
     Servo secondaryArm;
     Servo claw;
-    int maxPosition = -950;
+    int maxPosition = -975;
     public int slider_position;
     public double F;
     public double f = (float) 0.0000005;
@@ -28,7 +28,7 @@ public class Arm_sliders extends LinearOpMode {
         claw = hardwareMap.get(Servo.class, "claw");
         sliders = hardwareMap.get(DcMotor.class, "primary_arm");
         secondaryArm = hardwareMap.get(Servo.class, "secondaryArm");
-        wheel_1 = hardwareMap.get(DcMotorImpl.class, "left_front_drive");
+        wheel_1 = hardwareMap.get(DcMotor.class, "left_front_drive");
         wheel2 = hardwareMap.get(DcMotor.class, "right_back_drive");
         wheel4 = hardwareMap.get(DcMotor.class, "right_front_drive");
         wheel3 = hardwareMap.get(DcMotor.class, "left_back_drive");
@@ -36,13 +36,13 @@ public class Arm_sliders extends LinearOpMode {
         sliders.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         sliders.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheel_1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheel_1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheel_1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheel3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheel3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheel3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wheel4.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheel4.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheel4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
 //        while (opModeIsActive()) {
 //            int currentPosition = sliders.getCurrentPosition();
@@ -58,15 +58,15 @@ public class Arm_sliders extends LinearOpMode {
             slider_position = sliders.getCurrentPosition();
             F = slider_position * f;
             while (slider_position>= maxPosition){
-            slider_position = sliders.getCurrentPosition();
-            F = slider_position * f;
+                slider_position = sliders.getCurrentPosition();
+                F = slider_position * f;
                 sliders.setPower(-0.5 + F);
                 telemetry.addData("F", F);
                 telemetry.addData("wheels",wheel2.getCurrentPosition());
                 telemetry.update();
             }
-                sliders.setPower(F);
-            while (wheel2.getCurrentPosition()<0.008*tilesToTicks){
+            sliders.setPower(F);
+            while (wheel2.getCurrentPosition()<0.0095*tilesToTicks){
                 wheel_1.setPower(-0.5);
                 wheel2.setPower(0.5);
                 wheel3.setPower(-0.5);
