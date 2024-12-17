@@ -47,6 +47,8 @@ public class testerbot extends LinearOpMode {
             encodervalue= motor.getCurrentPosition();
             telemetry.addData("encoder",encodervalue);
             telemetry.update();
+
+
             /*
             if(controller1.BOnce()){
                 motor.setPower(0);

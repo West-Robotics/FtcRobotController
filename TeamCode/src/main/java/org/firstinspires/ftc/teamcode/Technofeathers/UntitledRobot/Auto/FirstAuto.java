@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name = "autoing")
+@Autonomous(name = "autoing")
 public class FirstAuto extends LinearOpMode{
 
     SparkFunOTOS myOtos;
@@ -18,6 +18,7 @@ public class FirstAuto extends LinearOpMode{
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         configureOtos();
 
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -25,14 +26,7 @@ public class FirstAuto extends LinearOpMode{
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 
             // Reset the tracking if the user requests it
-            if (gamepad1.y) {
-                myOtos.resetTracking();
-            }
-
             // Re-calibrate the IMU if the user requests it
-            if (gamepad1.x) {
-                myOtos.calibrateImu();
-            }
 
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);

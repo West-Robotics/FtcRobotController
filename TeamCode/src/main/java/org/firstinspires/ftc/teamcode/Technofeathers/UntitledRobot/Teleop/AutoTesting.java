@@ -51,6 +51,7 @@ public class AutoTesting extends LinearOpMode {
         drive.setupMotors(hardwareMap);
         grabber = hardwareMap.get(Servo.class, "grabber");
         pivot = hardwareMap.get(Servo.class, "pivot");
+
         arm.setDirection(DcMotorSimple.Direction.FORWARD);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -70,10 +71,11 @@ public class AutoTesting extends LinearOpMode {
         while (opModeIsActive()){
             controller1.update();
             controller2.update();
-            drive.drive(-controller1.left_stick_x, controller1.left_stick_y, controller1.right_stick_x);
+            drive.drive(-controller1.left_stick_x/1.2, controller1.left_stick_y/1.2, controller1.right_stick_x/1.2);
 
             telemetry.addData("pivot", pivot.getPosition());
             telemetry.addData("grabber", grabber.getPosition());
+            telemetry.addData("armencoder",arm.getCurrentPosition());
 
 
             if (controller2.B()){
@@ -86,10 +88,10 @@ public class AutoTesting extends LinearOpMode {
 
             if (controller1.AOnce()){
                 if (buttonA){
-                    grabber.setPosition(0.3);
+                    grabber.setPosition(0.17); //closed
                     buttonA = false;
                 } else{
-                    grabber.setPosition(0.45);
+                    grabber.setPosition(0.29); // opened
                     buttonA = true;
                 }
             }
@@ -104,6 +106,9 @@ public class AutoTesting extends LinearOpMode {
             }
             if(controller1.dpadUpOnce()){
                 pivot.setPosition(0.71);//to score
+            }
+            if (controller1.dpadLeftOnce()){
+                pivot.setPosition(0.35);
             }
             /*
             encodervalue= arm.getCurrentPosition();
