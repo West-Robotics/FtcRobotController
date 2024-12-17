@@ -96,7 +96,7 @@ public class AutoTimeBased extends LinearOpMode{
         sleep(2000);
 
         move(-0.2,500);
-pl
+
 
 
     }
