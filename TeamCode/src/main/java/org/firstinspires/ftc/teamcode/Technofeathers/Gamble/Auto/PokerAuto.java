@@ -27,10 +27,8 @@ public class PokerAuto extends LinearOpMode{
     public DcMotor backRight;
     public DcMotor backLeft;
 
-    public Controller controller1;
-    public Controller controller2;
     public TechnofeathersDrive drive;
-    public HorizontalLift horizontalLift;
+    /*public HorizontalLift horizontalLift;
     public VerticalLift verticalLift;
 
     public Servo diffyRotatorLeft;
@@ -45,6 +43,8 @@ public class PokerAuto extends LinearOpMode{
 
     public Servo grabber;
 
+     */
+
     IMU imu;
     IMU.Parameters imuParameters;
     SparkFunOTOS myOtos;
@@ -57,6 +57,7 @@ public class PokerAuto extends LinearOpMode{
     public void runOpMode() throws InterruptedException{
         drive = new TechnofeathersDrive();
         drive.setupMotors(hardwareMap);
+        /*
         horizontalLift.setupMotors(hardwareMap);
         verticalLift.setupMotors(hardwareMap);
         diffyRotatorLeft = hardwareMap.get(Servo.class, "diffyRotatorLeft");
@@ -68,7 +69,8 @@ public class PokerAuto extends LinearOpMode{
         pivotSlide = hardwareMap.get(Servo.class, "diffyRotatorLeft");
         pivotClaw = hardwareMap.get(Servo.class, "diffyRotatorLeft");
         grabber = hardwareMap.get(Servo.class, "diffyRotatorLeft");
-        drive = new TechnofeathersDrive();
+
+         */
         imu = hardwareMap.get(IMU.class, "imu");
         imuParameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
