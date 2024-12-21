@@ -24,8 +24,6 @@ public class Park extends LinearOpMode {
 
         waitForStart();
 
-
-
         frontright.setPower(-0.5);
         frontleft.setPower(0.5);
         backleft.setPower(0.5);
