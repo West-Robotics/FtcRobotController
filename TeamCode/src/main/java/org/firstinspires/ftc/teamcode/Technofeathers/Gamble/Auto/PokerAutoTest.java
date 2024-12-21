@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous (name = "PokerAuto")
-public class PokerAuto extends LinearOpMode{
+@Autonomous (name = "PokerAutoTest")
+public class PokerAutoTest extends LinearOpMode{
     public DcMotor frontRight;
     public DcMotor frontLeft;
     public DcMotor backRight;
@@ -90,8 +90,8 @@ public class PokerAuto extends LinearOpMode{
             Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
             telemetry.addData("Current Angle", Yaw);
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            while (e.time(TimeUnit.SECONDS) < 15) {
-                if (e.time(TimeUnit.SECONDS) < 0.1) {
+            while (pos.y <= 24) {
+                if (pos.y <= 1) {
                     joystickX = 0;
                     joystickY = 0.3;
                     joystickTurn = 0.2;
@@ -106,9 +106,6 @@ public class PokerAuto extends LinearOpMode{
                 }
                 else if (20 < pos.y && pos.y < 24) {
                     joystickY = (24-pos.y)/8;
-                }
-                else {
-                    joystickY = 0;
                 }
                 joystickTurn = (-pos.h)/360;
                 telemetry.update();
