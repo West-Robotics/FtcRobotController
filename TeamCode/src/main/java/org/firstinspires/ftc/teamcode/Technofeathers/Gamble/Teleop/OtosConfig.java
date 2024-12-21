@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Auto;
+package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -8,27 +8,27 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import java.util.concurrent.TimeUnit;
-
-
-@Autonomous(name = "autoing")
-public class FirstAuto extends LinearOpMode{
-
+@TeleOp
+public class OtosConfig extends OpMode {
     public TechnofeathersDrive drive;
-
+    public Controller controller1;
     IMU imu;
     IMU.Parameters imuParameters;
     SparkFunOTOS myOtos;
     YawPitchRollAngles robotOrientation;
     double Yaw = 0;
     @Override
-    public void runOpMode() throws InterruptedException{
+    public void init() {
+        controller1 = new Controller(gamepad1);
         drive = new TechnofeathersDrive();
         drive.setupMotors(hardwareMap);
         imu = hardwareMap.get(IMU.class, "imu");
@@ -43,48 +43,40 @@ public class FirstAuto extends LinearOpMode{
         configureOtos();
         telemetry.addData("Current IMU Angle", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         telemetry.addData("Current Otos Angle", myOtos.getPosition().h);
-        ElapsedTime e = new ElapsedTime();
-        e.reset();
-        e.startTime();
-        waitForStart();
-
-
-        while (opModeIsActive()) {
-
-            robotOrientation = imu.getRobotYawPitchRollAngles();
-            Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
-            telemetry.addData("Current Angle", Yaw);
-            /*while (Yaw < 10) {
-                System.out.println("hdgreg");
-                //drive.drive(0,0,1);
-            }
-             */
-            // Get the latest position
-            while(e.time(TimeUnit.SECONDS) < 3.6) {
-                drive.drive(0,0.3,0);
-
-            }
-            drive.drive(0,0,0.1);
-            /*
-            if (Yaw < 360) {
-                drive.drive(0,0,1);
-            }
-            if (Yaw >= 360) {
-                drive.drive(0,0,0);
-            }
-
-             */
-            SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-
-            // Reset the tracking if the user requests it
-            // Re-calibrate the IMU if the user requests it
-
-            telemetry.addData("X coordinate", pos.x);
-            telemetry.addData("Y coordinate", pos.y);
-            telemetry.addData("Heading angle", pos.h);
-
-            telemetry.update();
+    }
+    @Override
+    public void loop() {
+        controller1.update();
+        robotOrientation = imu.getRobotYawPitchRollAngles();
+        Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        telemetry.addData("Current Angle", Yaw);
+        /*while (Yaw < 10) {
+            System.out.println("hdgreg");
+            //drive.drive(0,0,1);
         }
+         */
+        // Get the latest position
+
+        drive.drive(controller1.left_stick_x/2,controller1.left_stick_y/2,controller1.right_stick_x/2);
+        /*
+        if (Yaw < 360) {
+            drive.drive(0,0,1);
+        }
+        if (Yaw >= 360) {
+            drive.drive(0,0,0);
+        }
+
+         */
+        SparkFunOTOS.Pose2D pos = myOtos.getPosition();
+
+        // Reset the tracking if the user requests it
+        // Re-calibrate the IMU if the user requests it
+
+        telemetry.addData("X coordinate", pos.x);
+        telemetry.addData("Y coordinate", pos.y);
+        telemetry.addData("Heading angle", pos.h);
+
+        telemetry.update();
     }
     private void configureOtos() {
         telemetry.addLine("Configuring OTOS...");
@@ -113,8 +105,8 @@ public class FirstAuto extends LinearOpMode{
         // multiple speeds to get an average, then set the linear scalar to the
         // inverse of the error. For example, if you move the robot 100 inches and
         // the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
-        myOtos.setLinearScalar(1.0);
-        myOtos.setAngularScalar(1.0);
+        myOtos.setLinearScalar(1.1);
+        myOtos.setAngularScalar(0.992);
         //calibrate before starting, takes up 617 milliseconds
         myOtos.calibrateImu();
 
