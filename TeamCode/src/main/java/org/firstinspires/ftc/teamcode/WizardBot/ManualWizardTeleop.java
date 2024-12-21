@@ -78,7 +78,7 @@ public class ManualWizardTeleop extends OpMode {
 
         // Controls
         // Driver 1: Left Trigger hold to intake, release to score, Right Trigger score
-        // Driver 2: Buttons for Lift, Triggers for fine control
+        // Driver 2: Buttons for HorizontalLift, Triggers for fine control
 
         //Drive Controls
         if (controller.leftStickButtonOnce()) {
@@ -96,7 +96,7 @@ public class ManualWizardTeleop extends OpMode {
             drive.drive(-controller.left_stick_x/2, -controller.left_stick_y/2, -controller.right_stick_x /2);
         }
 
-        //Lift Controls
+        //HorizontalLift Controls
         if (controller.left_trigger == 1) {
             lift1.setPower(-.1);
             lift2.setPower(.1);

@@ -103,12 +103,12 @@ public class EggnogTeleopTest extends OpMode {
         //TODO: solution #1: set time for lift run down to encoder level, remains risk of overrunning
         //TODO: solution #2: if statement that cordons off the above if lift is currently running due to automations, touchsensor will still work
         telemetry.addData("Controller 2 left stick status: ", controller2.left_stick_y);
-        telemetry.addData("Lift Current Rotation: ", functions.liftRotation());
+        telemetry.addData("HorizontalLift Current Rotation: ", functions.liftRotation());
         telemetry.addData("DpadRightRunning ", functions.dpadRightRunning);
         /*
         if (functions.liftMinLimitReached()) {
             functions.liftStop();
-            telemetry.addLine("Lift Min Limit Reached");
+            telemetry.addLine("HorizontalLift Min Limit Reached");
         }
 
          */
@@ -119,7 +119,7 @@ public class EggnogTeleopTest extends OpMode {
         /*
         if (controller2.leftBumper()) {
             functions.liftGoUp();
-            telemetry.addLine("Lift go up");
+            telemetry.addLine("HorizontalLift go up");
         }
         else if (controller2.rightBumper() && !functions.touchSense1Pressed()) {
             functions.liftGoDown();
@@ -131,7 +131,7 @@ public class EggnogTeleopTest extends OpMode {
          */
 
 
-        telemetry.addData("Lift Status: ", functions.getLiftStatus());
+        telemetry.addData("HorizontalLift Status: ", functions.getLiftStatus());
         if (distSense1.getDistance(INCH) <= 10 && 0 < controller2.left_stick_y) {
             drive.drive(controller2.left_stick_x/2, controller2.left_stick_y/2, controller2.right_stick_x/2);
             //functions.scoringPosition();

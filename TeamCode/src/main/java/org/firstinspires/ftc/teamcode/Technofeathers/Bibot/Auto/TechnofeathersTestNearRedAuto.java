@@ -63,7 +63,7 @@ public class TechnofeathersTestNearRedAuto extends LinearOpMode {
             if (lift1CurrentRotation > 4) {
                 lift1.setPower(0);
                 lift2.setPower(0);
-                telemetry.addLine("Lift Limit Imposed");
+                telemetry.addLine("HorizontalLift Limit Imposed");
                 liftTooHigh = 1;
             }
             else {

@@ -116,9 +116,9 @@ public class WizardTeleopChildSafe extends OpMode {
 //        telemetry.addData("LiftEncdr", lift1.getCurrentPosition());
 //        telemetry.addData("LiftEncdr2", lift2.getCurrentPosition());
 //        telemetry.addData("SlowMode?", slowMode);
-//        telemetry.addData("Lift P", lift.getP());
-//        telemetry.addData("Lift I", lift.getI());
-//        telemetry.addData("Lift D", lift.getD());
+//        telemetry.addData("HorizontalLift P", lift.getP());
+//        telemetry.addData("HorizontalLift I", lift.getI());
+//        telemetry.addData("HorizontalLift D", lift.getD());
 //        telemetry.addData("FF", lift.getFF());
 //        telemetry.addData("Lift1Power", lift1.getPower());
 //        telemetry.addData("Lift2Power", lift2.getPower());
@@ -131,7 +131,7 @@ public class WizardTeleopChildSafe extends OpMode {
 //        telemetry.addData("Drive P", drive.getDriveP());
 //        telemetry.addData("Drive I", drive.getDriveI());
 //        telemetry.addData("Drive D", drive.getDriveD());
-//        telemetry.addData("Lift Resting", liftZero.getLiftResting());
+//        telemetry.addData("HorizontalLift Resting", liftZero.getLiftResting());
 //        telemetry.addData("Arrived", lift.arrived());
         telemetry.addData("Whos Driving", driveControl);
         telemetry.update();
@@ -201,7 +201,7 @@ public class WizardTeleopChildSafe extends OpMode {
         }
         teleopInit.init();
 
-        //Raising Lift
+        //Raising HorizontalLift
         if (controller.XOnce()) {
             lift.setLiftPos(850);
             liftZero.setLiftResting(0);
@@ -220,7 +220,7 @@ public class WizardTeleopChildSafe extends OpMode {
             pivotServo2.turnToAngle(50);
         }
 
-        //Manual Lift Control
+        //Manual HorizontalLift Control
         if (controller.dpadUpOnce()) {
             lift.setLiftPos(lift.getSetpoint() + 100);
         }
@@ -239,7 +239,7 @@ public class WizardTeleopChildSafe extends OpMode {
             teleopInit.startTeleopInit();
         }
 
-        //Lift PID Toggle and Trigger Toggle
+        //HorizontalLift PID Toggle and Trigger Toggle
         if (controller2.left_trigger < 0.1) {
             leftTrigger = 0;
         }
@@ -256,7 +256,7 @@ public class WizardTeleopChildSafe extends OpMode {
             lift.moveLift();
         }
 
-        //Stack Access Lift Controls
+        //Stack Access HorizontalLift Controls
         if (controller.dpadRightOnce()) {
             stackLevel = stackLevel+1;
             lift.setLiftPos(100 + 100*stackLevel);
@@ -311,7 +311,7 @@ public class WizardTeleopChildSafe extends OpMode {
 //        }
 //
 //
-//        //Manual Lift Control for FF Tuning
+//        //Manual HorizontalLift Control for FF Tuning
 //        if (controller.left_trigger == 1) {
 //            lift1.setPower(-.5);
 //            lift2.setPower(.5);

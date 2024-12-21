@@ -37,13 +37,13 @@ public class LiftTest extends LinearOpMode {
         while(e.time(TimeUnit.SECONDS) <= 1) {
             lift1.setPower(0.25);
             lift2.setPower(0.25);
-            telemetry.addData("Lift Current Rotation: ", -lift1.getCurrentPosition()/537.7);
+            telemetry.addData("HorizontalLift Current Rotation: ", -lift1.getCurrentPosition()/537.7);
             telemetry.update();
         }
         while (e.time(TimeUnit.SECONDS) > 1) {
             lift1.setPower(0);
             lift2.setPower(0);
-            telemetry.addData("Lift Final Rotation", -lift1.getCurrentPosition()/537.7);
+            telemetry.addData("HorizontalLift Final Rotation", -lift1.getCurrentPosition()/537.7);
             telemetry.update();
         }
         /*while(e.time(TimeUnit.SECONDS)<3.6) {

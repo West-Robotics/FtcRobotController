@@ -2,73 +2,59 @@ package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.teamcode.Controller;
-import org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop.Subsystems.Lift;
+import org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop.Subsystems.HorizontalLift;
+import org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop.Subsystems.VerticalLift;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
 @TeleOp
 public class PokerTeleop extends OpMode {
 
     public Controller controller1;
+    public Controller controller2;
     public TechnofeathersDrive drive;
-    public Lift lift;
-    /*
-    public DcMotor verticalLeftLift;
-    public DcMotor verticalRightLift;
-    public DcMotor horizontalLeftLift;
-    public DcMotor horizontalRightLift;
+    public HorizontalLift horizontalLift;
+    public VerticalLift verticalLift;
 
-     */
+    public Servo diffyRotatorLeft;
+    public Servo diffyRotatorRight;
+    public Servo linkageServoLeft;
+    public Servo linkageServoRight;
 
+    public Servo horizontalLiftServoLeft;
+    public Servo horizontalLiftServoRight;
+    public Servo pivotSlide;
+    public Servo pivotClaw;
 
-
+    public Servo grabber;
 
     @Override
     public void init(){
         drive = new TechnofeathersDrive();
         controller1 = new Controller(gamepad1);
+        controller2 = new Controller(gamepad2);
         drive.setupMotors(hardwareMap);
-        lift.setupMotors(hardwareMap);
-        /*
-        verticalLeftLift = hardwareMap.get(DcMotor.class,  "verticalLeftLift");
-        verticalRightLift = hardwareMap.get(DcMotor.class, "verticalRightLift");
-        horizontalLeftLift = hardwareMap.get(DcMotor.class, "horizontalLeftLift");
-        horizontalRightLift = hardwareMap.get(DcMotor.class, "horizontalRightLift");
-
-        verticalLeftLift.setDirection(DcMotorSimple.Direction.FORWARD);
-        verticalRightLift.setDirection(DcMotorSimple.Direction.FORWARD);
-        horizontalLeftLift.setDirection(DcMotorSimple.Direction.FORWARD);
-        horizontalRightLift.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        verticalLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        verticalRightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        horizontalLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        horizontalRightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        verticalLeftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        verticalRightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        horizontalLeftLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        horizontalRightLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-
-        verticalLeftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-        verticalRightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-        horizontalLeftLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-        horizontalRightLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Turn the motor back on when we are done
-
-         */
-
-        //functions.setUp(this.hardwareMap, telemetry);
-        //pivot1.setPosition(1);
-
+        horizontalLift.setupMotors(hardwareMap);
+        verticalLift.setupMotors(hardwareMap);
+        diffyRotatorLeft = hardwareMap.get(Servo.class, "diffyRotatorLeft");
+        diffyRotatorRight = hardwareMap.get(Servo.class, "diffyRotatorRight");
+        linkageServoLeft = hardwareMap.get(Servo.class, "linkageServoLeft");
+        linkageServoRight = hardwareMap.get(Servo.class, "linkageServoRight");
+        horizontalLiftServoLeft = hardwareMap.get(Servo.class, "horizontalLiftServoLeft");
+        horizontalLiftServoRight = hardwareMap.get(Servo.class, "horizontalLiftServoRight");
+        pivotSlide = hardwareMap.get(Servo.class, "diffyRotatorLeft");
+        pivotClaw = hardwareMap.get(Servo.class, "diffyRotatorLeft");
+        grabber = hardwareMap.get(Servo.class, "diffyRotatorLeft");
     }
 
     @Override
     public void loop(){
         controller1.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
+        horizontalLift.setLiftPower(controller2.left_stick_y); //power for horizontal lift, left stick
+        verticalLift.setLiftPower(controller2.right_stick_y); //power for vertical lift, right stick
     }
 }

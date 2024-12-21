@@ -1,18 +1,36 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Auto;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
+import com.qualcomm.robotcore.hardware.IMU;
+
 
 @Autonomous(name = "autoing")
 public class FirstAuto extends LinearOpMode{
 
+    public TechnofeathersDrive drive;
+    IMU imu;
+    IMU.Parameters imuParameters;
     SparkFunOTOS myOtos;
+    YawPitchRollAngles robotOrientation;
+    double Yaw;
     @Override
     public void runOpMode() throws InterruptedException{
+        imu = hardwareMap.get(IMU.class, "imu");
+        imuParameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                )
+        );
+        imu.initialize(imuParameters);
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         configureOtos();
 
@@ -20,6 +38,12 @@ public class FirstAuto extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive()) {
+            robotOrientation = imu.getRobotYawPitchRollAngles();
+            Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+            telemetry.addData("Current Angle", Yaw);
+            while (Yaw < 10) {
+                drive.drive(0,0,1);
+            }
             // Get the latest position
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
 

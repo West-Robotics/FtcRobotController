@@ -76,10 +76,10 @@ public class Functions {
         }
         sleep(750);
         lift.goUp();
-        telemetry.addLine("Lift going up");
+        telemetry.addLine("HorizontalLift going up");
         sleep(500);
         lift.stop();
-        telemetry.addLine("Lift stopped, pivot will move");
+        telemetry.addLine("HorizontalLift stopped, pivot will move");
         if (!pivot1.pivotReadyToDrop) {
             pivot1.move();
         }
