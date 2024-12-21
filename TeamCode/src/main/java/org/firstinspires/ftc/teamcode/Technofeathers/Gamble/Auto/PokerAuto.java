@@ -92,13 +92,18 @@ public class PokerAuto extends LinearOpMode{
             Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
             telemetry.addData("Current Angle", Yaw);
             SparkFunOTOS.Pose2D pos = myOtos.getPosition();
-            while (e.time(TimeUnit.SECONDS) < 15) {
+            while ( (opModeIsActive())&&( e.time(TimeUnit.SECONDS) < 15)) {
                 if (e.time(TimeUnit.SECONDS) < 0.1) {
                     joystickX = 0;
                     joystickY = 0.3;
                     joystickTurn = 0.2;
                 }
+                robotOrientation = imu.getRobotYawPitchRollAngles();
+                Yaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+                telemetry.addData("Current Angle", Yaw);
+                pos = myOtos.getPosition();
                 drive.drive(joystickX,joystickY,joystickTurn);
+
                 telemetry.addData("X coordinate", pos.x);
                 telemetry.addData("Y coordinate", pos.y);
                 telemetry.addData("Heading angle", pos.h);
