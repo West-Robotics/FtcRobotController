@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Technofeathers.UntitledRobot.Teleop;
+package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop;
 
 
 
@@ -60,12 +60,12 @@ public class AutoTesting extends LinearOpMode {
         buttonY = true;
 
         P = 0.75;
-        I=0;
-        D=0.3;
+        I = 0;
+        D = 0.3;
         double voltage = 13.5/12.82;
-        P = P*voltage;
-        I = I*voltage;
-        D = D*voltage;
+        P = P * voltage;
+        I = I * voltage;
+        D = D * voltage;
 
         waitForStart();
         while (opModeIsActive()){
@@ -77,12 +77,11 @@ public class AutoTesting extends LinearOpMode {
             telemetry.addData("grabber", grabber.getPosition());
             telemetry.addData("armencoder",arm.getCurrentPosition());
 
-
-            if (controller2.B()){
+            if (controller2.B()) {
                 arm.setPower(0.003);
-            } else if (controller2.A()){
+            } else if (controller2.A()) {
                 arm.setPower(-0.003);
-            } else{
+            } else {
                 arm.setPower(controller2.left_stick_y/4);
             }
 

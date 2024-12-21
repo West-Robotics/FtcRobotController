@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.Technofeathers.UntitledRobot.Auto;
+package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Auto;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,14 +8,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous()
 public class AutoTimeBased extends LinearOpMode{
-
     protected DcMotor frontRight;
     protected DcMotor frontLeft;
     protected DcMotor backRight;
     protected DcMotor backLeft;
-
     protected DcMotor arm;
-
     protected Servo pivot;
     protected Servo grabber;
 

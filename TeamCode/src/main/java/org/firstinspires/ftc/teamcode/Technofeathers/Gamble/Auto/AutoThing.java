@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.Technofeathers.UntitledRobot.Auto;
+package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Auto;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -11,11 +10,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
-public class autothing extends LinearOpMode{
+public class AutoThing extends LinearOpMode{
 
     DcMotor frontLeft;
     DcMotor frontRight;
@@ -34,15 +32,15 @@ public class autothing extends LinearOpMode{
     double lastError2 = 0;
     private double lastError = 0;
     ElapsedTime timer = new ElapsedTime();
-    double Kp = pidnow.Kp;
-    double Ki = pidnow.Ki;
-    double Kd = pidnow.Kd;
-    double PStraight = pidnow.PForTurns;
-    double IStraight = pidnow.IForTurns;
-    double DStraight = pidnow.DForTurns;
-    double PforMove = pidnow.PforStraigth;
-    double IforMove = pidnow.IforStraight;
-    double DforMove = pidnow.DforStraight;
+    double Kp = PIDNow.Kp;
+    double Ki = PIDNow.Ki;
+    double Kd = PIDNow.Kd;
+    double PStraight = PIDNow.PForTurns;
+    double IStraight = PIDNow.IForTurns;
+    double DStraight = PIDNow.DForTurns;
+    double PforMove = PIDNow.PforStraigth;
+    double IforMove = PIDNow.IforStraight;
+    double DforMove = PIDNow.DforStraight;
     double Yaw;
     IMU imu;
     double currentAngle;

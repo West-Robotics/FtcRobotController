@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.Technofeathers.UntitledRobot.Auto;
+package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Auto;
 
-public class pidnow {
+public class PIDNow {
     public static double Kp = 1.2;
 
     public static double Ki = 0.0;

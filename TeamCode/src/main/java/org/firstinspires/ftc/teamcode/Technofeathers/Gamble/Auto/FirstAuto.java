@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode.Technofeathers.UntitledRobot.Auto;
+package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;

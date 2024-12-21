@@ -131,7 +131,7 @@
 //         //         SampleMecanumDrive.getAccelerationConstraint(38))
 //         //     .build();
 // 
-//         TrajectorySequence park = null;
+//         TrajectorySequence Park = null;
 // 
 //         TrajectorySequence signalOne = drive.trajectorySequenceBuilder(coneStack.end())
 //             .lineToSplineHeading(new Pose2d(-60, -9, Math.toRadians(90)))
@@ -217,13 +217,13 @@
 // 
 //         switch (signal) {
 //             case 1:
-//                 park = signalOne;
+//                 Park = signalOne;
 //                 break;
 //             case 2:
-//                 park = signalTwo;
+//                 Park = signalTwo;
 //                 break;
 //             case 3:
-//                 park = signalThree;
+//                 Park = signalThree;
 //                 break;
 //         }
 // 
@@ -245,13 +245,13 @@
 // //                        state = State.LAST_CONE_STACK;
 // //                        drive.followTrajectorySequenceAsync(lastConeStack);
 //                         state = State.PARKING;
-//                         drive.followTrajectorySequenceAsync(park);
+//                         drive.followTrajectorySequenceAsync(Park);
 //                     }
 //                     break;
 //                 case LAST_CONE_STACK:
 //                     if (!drive.isBusy()) {
 //                         state = State.PARKING;
-//                         drive.followTrajectorySequenceAsync(park);
+//                         drive.followTrajectorySequenceAsync(Park);
 //                     }
 //                     break;
 //                 case PARKING:
