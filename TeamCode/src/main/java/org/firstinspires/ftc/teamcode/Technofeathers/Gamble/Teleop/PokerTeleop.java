@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-
+import org.ejml.equation.IntegerSequence;
 import org.firstinspires.ftc.teamcode.Controller;
 import org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop.Subsystems.HorizontalLift;
 import org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop.Subsystems.VerticalLift;
@@ -34,9 +34,12 @@ public class PokerTeleop extends OpMode {
     public boolean buttonA;
 
     public boolean buttonY;
+    public boolean buttonB;
 
     public boolean buttonBforcontroller1;
 
+    public double rightHorizontalGrabberServoValue;
+    public double leftHorizontalGrabberServoValue;
     @Override
     public void init(){
         drive = new TechnofeathersDrive();
@@ -46,6 +49,8 @@ public class PokerTeleop extends OpMode {
         //horizontalLift.setupMotors(hardwareMap);
         verticalLift.setupMotors(hardwareMap);
         diffyRotatorLeft = hardwareMap.get(Servo.class, "diffyRotatorLeft");
+        diffyRotatorLeft.setDirection(Servo.Direction.REVERSE);
+        diffyRotatorRight.setDirection(Servo.Direction.FORWARD);
         diffyRotatorRight = hardwareMap.get(Servo.class, "diffyRotatorRight");
         linkageServoLeft = hardwareMap.get(Servo.class, "linkageServoLeft");
         linkageServoRight = hardwareMap.get(Servo.class, "linkageServoRight");
@@ -55,7 +60,11 @@ public class PokerTeleop extends OpMode {
         horizontalgrabber = hardwareMap.get(Servo.class,"diffyRotaterLeft");
         buttonA = false;
         buttonY = false;
+        buttonB = false;
         buttonBforcontroller1 = false;
+        rightHorizontalGrabberServoValue = 0.5;
+        leftHorizontalGrabberServoValue = 0.5;
+
 
     }
 
@@ -67,6 +76,7 @@ public class PokerTeleop extends OpMode {
         //horizontalLift.setLiftPower(controller2.left_stick_y); //power for horizontal lift, left stick
         verticalLift.setLiftPower(controller2.left_stick_y/2); //power for vertical lift, right stick
 
+        //horizontal grabber
         if (controller1.BOnce()){
             if (buttonBforcontroller1){
                 horizontalgrabber.setPosition(0.5);
@@ -77,44 +87,71 @@ public class PokerTeleop extends OpMode {
             }
         }
 
+        //the diffy rotator
+        if (controller1.dpadRightOnce()){
+            rightHorizontalGrabberServoValue += 0.05;
+            leftHorizontalGrabberServoValue +=0.05;
+        }
+        if (controller1.dpadLeftOnce()){
+            rightHorizontalGrabberServoValue -=0.05;
+            leftHorizontalGrabberServoValue -=0.05;
+        }
+        if (controller1.dpadUpOnce()){
+            rightHorizontalGrabberServoValue =0.5;
+            leftHorizontalGrabberServoValue =0.5;
+        }
+
+
 
 
 
 
         // controller 2
 
+
+
         //linkage/horizontal slides
-        if(controller2.AOnce()) {
-            if (buttonA) {
-                linkageServoLeft.setPosition(0.5);
-                linkageServoRight.setPosition(0.5);
-                buttonA = false;
-            } else {
-                linkageServoLeft.setPosition(0.75);
-                linkageServoRight.setPosition(0.75);
-                buttonA = true;
-            }
+        if(controller2.dpadUpOnce()) {
+
+
+        }
+
+        if(controller2.dpadLeftOnce()){
+
+        }
+        if (controller2.dpadDownOnce()){
 
         }
 
         //pivot to align specimen
-        if (controller2.BOnce()){
-            pivotSlide.setPosition(0.5);
-            pivotClaw.setPosition(0.5);
+        if (controller2.AOnce()){
+            if (buttonA){
+                pivotSlide.setPosition(0.5);
+                pivotClaw.setPosition(0.5);
+                buttonA = false;
+            } else{
+                pivotSlide.setPosition(0.75);
+                pivotSlide.setPosition(0.75);
+                buttonA = true;
+            }
+
 
         }
 
         //vertical grabber
-        if (controller2.YOnce()){
-            if (buttonY){
+        if (controller2.BOnce()){
+            if (buttonB){
                 grabber.setPosition(0.5);
-                buttonY = false;
+                buttonB = false;
             } else{
                 grabber.setPosition(0.75);
-                buttonY = true;
+                buttonB = true;
             }
         }
 
+
+
+        //configure reset buttons
 
     }
 }
