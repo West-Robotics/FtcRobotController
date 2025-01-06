@@ -36,6 +36,9 @@ public class PokerTeleop extends OpMode {
     public boolean buttonY;
     public boolean buttonB;
 
+    public boolean clawIsOut;
+    public boolean servoChanged;
+    public boolean canRotateClaw;
     public boolean buttonBforcontroller1;
 
     public double rightHorizontalGrabberServoValue;
@@ -64,8 +67,9 @@ public class PokerTeleop extends OpMode {
         buttonBforcontroller1 = false;
         rightHorizontalGrabberServoValue = 0.5;
         leftHorizontalGrabberServoValue = 0.5;
-
-
+        clawIsOut = false;
+        servoChanged = false;
+        canRotateClaw = false;
     }
 
     @Override
@@ -74,8 +78,9 @@ public class PokerTeleop extends OpMode {
         controller2.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
         //horizontalLift.setLiftPower(controller2.left_stick_y); //power for horizontal lift, left stick
-        verticalLift.setLiftPower(controller2.left_stick_y/2); //power for vertical lift, right stick
+        verticalLift.setLiftPower(controller2.left_stick_y/2); //power for vertical lift, left stick controller 2
 
+        servoChanged = false;
         //horizontal grabber
         if (controller1.BOnce()){
             if (buttonBforcontroller1){
@@ -88,42 +93,75 @@ public class PokerTeleop extends OpMode {
         }
 
         //the diffy rotator
-        if (controller1.dpadRightOnce()){
+        if (controller1.dpadRightOnce()&& canRotateClaw){
             rightHorizontalGrabberServoValue += 0.05;
             leftHorizontalGrabberServoValue +=0.05;
+            servoChanged = true;
         }
-        if (controller1.dpadLeftOnce()){
+        if (controller1.dpadLeftOnce()&& canRotateClaw){
             rightHorizontalGrabberServoValue -=0.05;
             leftHorizontalGrabberServoValue -=0.05;
+            servoChanged = true;
         }
         if (controller1.dpadUpOnce()){
             rightHorizontalGrabberServoValue =0.5;
             leftHorizontalGrabberServoValue =0.5;
+            servoChanged = true;
         }
 
+        if ((leftHorizontalGrabberServoValue !=0.5)||(rightHorizontalGrabberServoValue!=0.5)){
+            clawIsOut = true;
+        } else{
+            clawIsOut = false;
+        }
 
-
-
+        if (servoChanged){
+            diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
+            diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
+        }
 
 
         // controller 2
 
-
-
         //linkage/horizontal slides
         if(controller2.dpadUpOnce()) {
-
+            linkageServoLeft.setPosition(1);
+            linkageServoRight.setPosition(1);
 
         }
 
         if(controller2.dpadLeftOnce()){
-
+            linkageServoLeft.setPosition(0.3);
+            linkageServoRight.setPosition(0.3);
         }
         if (controller2.dpadDownOnce()){
-
+           linkageServoRight.setPosition(0);
+           linkageServoLeft.setPosition(0);
         }
 
-        //pivot to align specimen
+        //pivots horizontal claw up and down
+        if (controller2.YOnce() && !clawIsOut ){
+            if (buttonY){
+                diffyRotatorLeft.setPosition(0.75);
+                diffyRotatorRight.setPosition(0.25);
+                canRotateClaw = false;
+                buttonY = false;
+            } else{
+                diffyRotatorRight.setPosition(0.5);
+                diffyRotatorLeft.setPosition(0.5);
+                canRotateClaw = true;
+                buttonY = true;
+            }
+        }
+
+
+        //reset vertical slides to lowest positions
+        if (controller2.XOnce()){
+            //on hold but probably will
+        }
+
+
+        //pivot to align specimen vertical claw
         if (controller2.AOnce()){
             if (buttonA){
                 pivotSlide.setPosition(0.5);
