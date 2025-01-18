@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -31,6 +32,8 @@ public class PokerTeleop extends OpMode {
     public Servo grabber;
     public Servo horizontalgrabber;
 
+    public AnalogInput analogInput;
+
     public boolean buttonA;
 
     public boolean buttonY;
@@ -43,6 +46,9 @@ public class PokerTeleop extends OpMode {
 
     public double rightHorizontalGrabberServoValue;
     public double leftHorizontalGrabberServoValue;
+
+    public double grabberPivotValue;
+    public double slidePivotValue;
     @Override
     public void init(){
         drive = new TechnofeathersDrive();
@@ -52,15 +58,19 @@ public class PokerTeleop extends OpMode {
         //horizontalLift.setupMotors(hardwareMap);
         verticalLift.setupMotors(hardwareMap);
         diffyRotatorLeft = hardwareMap.get(Servo.class, "diffyRotatorLeft");
+        diffyRotatorRight = hardwareMap.get(Servo.class, "diffyRotatorRight");
         diffyRotatorLeft.setDirection(Servo.Direction.REVERSE);
         diffyRotatorRight.setDirection(Servo.Direction.FORWARD);
-        diffyRotatorRight = hardwareMap.get(Servo.class, "diffyRotatorRight");
+
+
         linkageServoLeft = hardwareMap.get(Servo.class, "linkageServoLeft");
         linkageServoRight = hardwareMap.get(Servo.class, "linkageServoRight");
-        pivotSlide = hardwareMap.get(Servo.class, "diffyRotatorLeft");
-        pivotClaw = hardwareMap.get(Servo.class, "diffyRotatorLeft");
-        grabber = hardwareMap.get(Servo.class, "diffyRotatorLeft");
-        horizontalgrabber = hardwareMap.get(Servo.class,"diffyRotaterLeft");
+        pivotSlide = hardwareMap.get(Servo.class, "pivotSlide");
+        pivotClaw = hardwareMap.get(Servo.class, "pivotClaw");
+        grabber = hardwareMap.get(Servo.class, "grabber");
+        horizontalgrabber = hardwareMap.get(Servo.class,"horizontalGrabber");
+
+
         buttonA = false;
         buttonY = false;
         buttonB = false;
@@ -70,6 +80,10 @@ public class PokerTeleop extends OpMode {
         clawIsOut = false;
         servoChanged = false;
         canRotateClaw = false;
+        grabberPivotValue = 0;
+        slidePivotValue = 0;
+        pivotClaw.setPosition(grabberPivotValue);
+        pivotSlide.setPosition(slidePivotValue);
     }
 
     @Override
@@ -78,28 +92,55 @@ public class PokerTeleop extends OpMode {
         controller2.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
         //horizontalLift.setLiftPower(controller2.left_stick_y); //power for horizontal lift, left stick
-        verticalLift.setLiftPower(controller2.left_stick_y/2); //power for vertical lift, left stick controller 2
+        verticalLift.setLiftPower(controller2.left_stick_y/1.5); //power for vertical lift, left stick controller 2
 
-        servoChanged = false;
+
         //horizontal grabber
         if (controller1.BOnce()){
             if (buttonBforcontroller1){
-                horizontalgrabber.setPosition(0.5);
+                horizontalgrabber.setPosition(0.13);
                 buttonBforcontroller1 = false;
             } else{
-                horizontalgrabber.setPosition(0.75);
+                horizontalgrabber.setPosition(0.18);
                 buttonBforcontroller1 = true;
             }
         }
 
+        if (controller2.dpadUpOnce()&& slidePivotValue<1){
+            slidePivotValue +=0.05;
+            servoChanged = true;
+        }
+        if (controller2.dpadDownOnce()&& slidePivotValue>0){
+            slidePivotValue -=0.05;
+            servoChanged = true;
+        }
+
+        if (controller2.YOnce()&& grabberPivotValue<1){
+            grabberPivotValue += 0.05;
+            servoChanged = true;
+        }
+
+        if (controller2.AOnce()&&grabberPivotValue>0){
+            grabberPivotValue -=0.05;
+            servoChanged = true;
+        }
+
+        if (servoChanged){
+            pivotSlide.setPosition(slidePivotValue);
+            pivotClaw.setPosition(grabberPivotValue);
+            servoChanged = false;
+        }
+
+
         //the diffy rotator
+        /*
         if (controller1.dpadRightOnce()&& canRotateClaw){
-            rightHorizontalGrabberServoValue += 0.05;
+            rightHorizontalGrabberServoValue -= 0.05;
             leftHorizontalGrabberServoValue +=0.05;
             servoChanged = true;
         }
         if (controller1.dpadLeftOnce()&& canRotateClaw){
-            rightHorizontalGrabberServoValue -=0.05;
+            rightHorizontalGrabberServoValue +=0.05;
             leftHorizontalGrabberServoValue -=0.05;
             servoChanged = true;
         }
@@ -107,7 +148,10 @@ public class PokerTeleop extends OpMode {
             rightHorizontalGrabberServoValue =0.5;
             leftHorizontalGrabberServoValue =0.5;
             servoChanged = true;
+            canRotateClaw = true;
         }
+
+         */
 
         if ((leftHorizontalGrabberServoValue !=0.5)||(rightHorizontalGrabberServoValue!=0.5)){
             clawIsOut = true;
@@ -115,15 +159,16 @@ public class PokerTeleop extends OpMode {
             clawIsOut = false;
         }
 
-        if (servoChanged){
-            diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
-            diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
-        }
+       // if (servoChanged){
+       //     diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
+      //      diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
+      //  }
 
 
         // controller 2
 
         //linkage/horizontal slides
+        /*
         if(controller2.dpadUpOnce()) {
             linkageServoLeft.setPosition(1);
             linkageServoRight.setPosition(1);
@@ -131,19 +176,22 @@ public class PokerTeleop extends OpMode {
         }
 
         if(controller2.dpadLeftOnce()){
-            linkageServoLeft.setPosition(0.3);
-            linkageServoRight.setPosition(0.3);
+            linkageServoLeft.setPosition(-1);
+            linkageServoRight.setPosition(-1);
         }
         if (controller2.dpadDownOnce()){
            linkageServoRight.setPosition(0);
            linkageServoLeft.setPosition(0);
         }
 
+         */
+
         //pivots horizontal claw up and down
+        /*
         if (controller2.YOnce() && !clawIsOut ){
             if (buttonY){
-                diffyRotatorLeft.setPosition(0.75);
-                diffyRotatorRight.setPosition(0.25);
+                diffyRotatorLeft.setPosition(0.95);
+                diffyRotatorRight.setPosition(0.95);
                 canRotateClaw = false;
                 buttonY = false;
             } else{
@@ -154,6 +202,8 @@ public class PokerTeleop extends OpMode {
             }
         }
 
+         */
+
 
         //reset vertical slides to lowest positions
         if (controller2.XOnce()){
@@ -162,17 +212,24 @@ public class PokerTeleop extends OpMode {
 
 
         //pivot to align specimen vertical claw
+        /*
+
+
         if (controller2.AOnce()){
             if (buttonA){
                 pivotSlide.setPosition(0.5);
                 pivotClaw.setPosition(0.5);
                 buttonA = false;
             } else{
-                pivotSlide.setPosition(0.75);
-                pivotSlide.setPosition(0.75);
+                pivotSlide.setPosition(1.1);
+                pivotClaw.setPosition(0.3);
                 buttonA = true;
             }
+        }
 
+         */
+
+        if (controller2.YOnce()){
 
         }
 
@@ -182,7 +239,10 @@ public class PokerTeleop extends OpMode {
                 grabber.setPosition(0.5);
                 buttonB = false;
             } else{
-                grabber.setPosition(0.75);
+                grabber.setPosition(0.3);
+
+
+
                 buttonB = true;
             }
         }

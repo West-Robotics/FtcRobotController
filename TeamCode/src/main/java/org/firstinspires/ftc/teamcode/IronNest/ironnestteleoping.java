@@ -2,18 +2,15 @@
 package org.firstinspires.ftc.teamcode.IronNest;
 
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import org.firstinspires.ftc.teamcode.Controller;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@TeleOp(name = "Ironnest")
-public class IronnestTeleop extends OpMode {
+@TeleOp(name = "Ironnesttleoping")
+public class ironnestteleoping extends OpMode {
     private Controller controller;
     private Controller controller2;
     private double wristpos;

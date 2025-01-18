@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controller;
 @TeleOp(name="Automeanguy")
-public class testerbot extends LinearOpMode {
+public class  testerbot extends LinearOpMode {
 
     public DcMotor motor;
     public Controller controller1;
@@ -21,32 +22,30 @@ public class testerbot extends LinearOpMode {
     public double P;
     public double I;
     public double D;
-    public void runOpMode() throws InterruptedException{
-        motor = hardwareMap.get(DcMotor.class,"arm");
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        controller1 = new Controller(gamepad1);
-        powering=0;
+    public Servo pivotSlide;
+    public Servo pivotClaw;
 
-        P = 0.78;
-        I=0;
-        D=0.3;
-        double voltage = 13.1/13.5;
-        P = P*voltage;
-        I = I*voltage;
-        D = D*voltage;
+    public Servo grabber;
+    public void runOpMode() throws InterruptedException{
+
+        pivotSlide = hardwareMap.get(Servo.class, "pivotSlide");
+        pivotClaw = hardwareMap.get(Servo.class, "pivotClaw");
+        grabber = hardwareMap.get(Servo.class, "grabber");
+
+        controller1 = new Controller(gamepad1);
+
         waitForStart();
         while (opModeIsActive()){
             controller1.update();
-
-
-            motor.setPower(controller1.right_stick_y);
-            encodervalue= motor.getCurrentPosition();
-            telemetry.addData("encoder",encodervalue);
-            telemetry.update();
-
+            if (controller1.Y()){
+                pivotClaw.setPosition(0.5);
+            }
+            if (controller1.BOnce()){
+                grabber.setPosition(0.5);
+            }
+            if (controller1.XOnce()){
+                pivotSlide.setPosition(0.5);
+            }
 
             /*
             if(controller1.BOnce()){

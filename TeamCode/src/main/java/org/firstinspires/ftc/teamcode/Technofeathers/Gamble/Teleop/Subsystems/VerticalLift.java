@@ -12,7 +12,7 @@ public class VerticalLift {
         verticalRightLift = hardwareMap.get(DcMotor.class, "verticalRightLift");
 
         verticalLeftLift.setDirection(DcMotorSimple.Direction.FORWARD);
-        verticalRightLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        verticalRightLift.setDirection(DcMotorSimple.Direction.REVERSE);
 
         verticalLeftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         verticalRightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -23,8 +23,11 @@ import java.util.concurrent.TimeUnit;
 public class blackjackauto extends LinearOpMode {
 
 
+
     public VerticalLift verticalLift = new VerticalLift();
 
+
+    public ElapsedTime timer = new ElapsedTime();
     public Servo diffyRotatorLeft;
     public Servo diffyRotatorRight;
     public Servo linkageServoLeft;
@@ -43,7 +46,21 @@ public class blackjackauto extends LinearOpMode {
 
 
 
-    double integralSum2;
+    double errorForStraight;
+    double errorForStrafe;
+    double errorForTurns;
+
+
+
+
+    double lasterrorCheck;
+
+    double currentErrorCheck;
+    double lastError3;
+    double integralSum;
+    double lastError;
+    double integralSumForStraight;
+    double integralSumForStrafe;
     double lastError2;
     @Override
     public void runOpMode() throws InterruptedException{
@@ -52,9 +69,11 @@ public class blackjackauto extends LinearOpMode {
         myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
         configureOtos();
         telemetry.addData("Current Otos Angle", myOtos.getPosition().h);
-
-        integralSum2 =0;
+        telemetry.update();
+        lastError = 0;
         lastError2 = 0;
+        lastError3 = 0;
+        currentErrorCheck = 5;
         /*
         verticalLift.setupMotors(hardwareMap);
         diffyRotatorLeft = hardwareMap.get(Servo.class, "diffyRotatorLeft");
@@ -71,37 +90,84 @@ public class blackjackauto extends LinearOpMode {
         grabber.setPosition(0.5);
 */
         waitForStart();
+        pos = myOtos.getPosition();
+        telemetry.addData("X coordinate", pos.x);
+        telemetry.addData("Y coordinate", pos.y);
+        telemetry.addData("Heading angle", pos.h);
 
-
+        telemetry.update();
+        sleep(2000);
+        timer.reset();
         do{
-
             pos = myOtos.getPosition();
+            double targety = 26;
+            double targetx = 0;
+            double heading = 0;
+            double powery = -PIDControlForStraight(targety,pos.y,1.2,0,0.01);
+            double powerx = -PIDControlForStrafe(targetx,pos.x,1.2,0,0.01);
+            double powerheading = -PIDControl(heading,pos.h,1.2,0,0.003);
 
-            drive.drive(1,0,0);
-            // Reset the tracking if the user requests it
-            // Re-calibrate the IMU if the user requests it
+            lasterrorCheck = currentErrorCheck;
+            currentErrorCheck = heading - pos.h;
+
+            telemetry.addData("heading power", powerheading);
+            telemetry.addData("x power", powerx);
+            telemetry.addData("y power", powery);
+
+            drive.drive(powerx, powery, powerheading);
+            timer.reset();
 
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
             telemetry.addData("Heading angle", pos.h);
-
             telemetry.update();
-        } while (opModeIsActive());
 
+        } while (opModeIsActive() && (Math.abs(lasterrorCheck)>0.5 || Math.abs(currentErrorCheck)>0.5));
+        drive.drive(0,0,0);
 
     }
 
 
-    public double PIDControlForStraight(double reference, double state){
-        double error2 = reference - state;
-        integralSum2 += error2 * timer.seconds();
-        double derivative = (error2 - lastError2) / (timer.seconds());
+    public double PIDControlForStraight(double reference, double state,double P, double I, double D){
 
-        lastError2 = error2;
-        timer.reset();
-        telemetry.addData("Error2", error2);
-        double returning2 = (error2 * PforMove) + (derivative * DforMove) + (integralSum2 * IforMove);
-        return  returning2;
+        double error = (reference - state)/12;
+        integralSumForStraight += error * timer.seconds();
+        double derivative = (error - lastError2) / (timer.seconds());
+        lastError2 = error;
+
+        return  (error * P) + (derivative * D) + (integralSumForStraight * I);
+    }
+
+    public double PIDControlForStrafe(double reference, double state,double P, double I, double D){
+
+        double error = (reference - state)/12;
+        integralSumForStrafe += error * timer.seconds();
+        double derivative = (error - lastError3) / (timer.seconds());
+        lastError3 = error;
+
+        return  (error * P) + (derivative * D) + (integralSumForStrafe * I);
+    }
+
+    public double PIDControl(double reference, double state,double p, double i, double d){
+        reference = Math.toRadians(reference);
+        state = Math.toRadians(state);
+
+        double error = angleReset(reference-state);
+        integralSum += error * timer.seconds();
+        double derivative = (error - lastError) / (timer.seconds());
+        lastError = error;
+
+        return (error * p) + (derivative * d) + (integralSum * i);
+    }
+
+    public double angleReset(double radians){
+        while (radians > Math.PI){
+            radians -= 2 * Math.PI;
+        }
+        while (radians < -Math.PI){
+            radians += 2 * Math.PI;
+        }
+        return radians;
     }
 
     private void configureOtos() {
