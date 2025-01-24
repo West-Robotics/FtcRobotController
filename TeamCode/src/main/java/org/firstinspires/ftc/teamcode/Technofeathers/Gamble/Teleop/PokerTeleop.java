@@ -131,7 +131,8 @@ public class PokerTeleop extends OpMode {
             servoChanged = false;
         }
 
-
+        telemetry.addData("servoslide",pivotSlide.getPosition());
+        telemetry.addData("servoclaw",pivotClaw.getPosition());
         //the diffy rotator
         /*
         if (controller1.dpadRightOnce()&& canRotateClaw){
