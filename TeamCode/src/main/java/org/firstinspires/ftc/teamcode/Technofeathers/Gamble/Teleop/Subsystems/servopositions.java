@@ -52,16 +52,6 @@ public class servopositions extends LinearOpMode{
 
 
             if (controller1.AOnce()){
-                frontLeft.setPower(1);
-            }
-            if (controller1.BOnce()){
-                frontLeft.setPower(0);
-            }
-            if (controller1.XOnce()){
-                frontLeft.setPower(0.2);
-            }
-            /*
-            if (controller1.AOnce()){
                 pivotslide.setPosition(0.965);
                 pivotclaw.setPosition(0.5);
             }
@@ -70,8 +60,8 @@ public class servopositions extends LinearOpMode{
                 pivotclaw.setPosition(0.2);
             }
 
-             */
 
+            telemetry.addData("fronleft motor",frontLeft.getCurrentPosition());
             telemetry.addData("right motor", verticalRightLift.getCurrentPosition());
             telemetry.addData("left motor", verticalLeftLift.getCurrentPosition());
             telemetry.update();
