@@ -6,14 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-
-@Autonomous (name = "into the deep possibly goodester auto")
-public class Arm_sliders extends LinearOpMode {
+@Autonomous(name = "Finalist Auto")
+public class IntoTheDeepAutoFinnalist extends  LinearOpMode {
     DcMotor sliders;
     Servo secondaryArm;
     Servo claw;
-    int maxPosition = -975;
+    int maxPosition = -1025;
     public int slider_position;
     public double F;
     public double f = (float) 0.0000005;
@@ -49,7 +47,7 @@ public class Arm_sliders extends LinearOpMode {
 //            int currentPosition = sliders.getCurrentPosition();
 //            if (currentPosition >= maxPosition) {
 //                sliders.setPower(-0.5);
-//            }else {
+//            }else {3
 //                sliders.setPower(0);
 //            }
 //        /}
@@ -84,8 +82,9 @@ public class Arm_sliders extends LinearOpMode {
                 wheel3.setPower(0.5);
                 wheel4.setPower(0.5);
             }
+
             ElapsedTime timer = new ElapsedTime();
-            while (wheel2.getCurrentPosition()<(0.013/1.875)*2*tilesToTicks){
+            while (timer.seconds() < 1.5) {
                 wheel_1.setPower(-0.75);
                 wheel2.setPower(0.75);
                 wheel3.setPower(0.75);
@@ -101,3 +100,4 @@ public class Arm_sliders extends LinearOpMode {
         }
     }
 }
+

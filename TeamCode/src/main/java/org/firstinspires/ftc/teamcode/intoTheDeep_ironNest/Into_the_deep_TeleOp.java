@@ -102,7 +102,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower = axial - lateral + yaw;
             double rightBackPower = axial + lateral - yaw;
-            double sliderPower = gamepad2.left_stick_y;
+            double sliderPower = gamepad2.right_stick_y;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -150,19 +150,19 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
                 rightBackDrive.setPower(rightBackPower / 2);
             }
             if (gamepad2.right_trigger > 0.5) {
-                clawservo.setPosition(1.0);
+                clawservo.setPosition(0.9);
             }
             if (gamepad2.left_trigger > 0.5) {
                 clawservo.setPosition(0.65);
             }
             if (gamepad2.a) {
-                secondaryArm.setPosition(0.6);
+                secondaryArm.setPosition(0.575);
             }
             if (gamepad2.b) {
-                secondaryArm.setPosition(0.25);
+                secondaryArm.setPosition(0.225);
             }
             if (gamepad2.y) {
-                secondaryArm.setPosition(0);
+                secondaryArm.setPosition(0.0);
             }
             int currentPosition = sliders.getCurrentPosition();
             F = currentPosition * f;
