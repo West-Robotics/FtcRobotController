@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
         private static final int MAX_POSITION = -975;
         private static final double F_COEFFICIENT = 0.0000005;
         private static final double TILES_TO_TICKS = 537.7 * (120 * 2 * 0.254 * 3.14);
-        private static final int ROTATION_DISTANCE = 2;
+        private static final int ROTATION_DISTANCE = 1;
         private static final double TURNING_NUMBER = ((double) ROTATION_DISTANCE / 24) * 537.7 * (120 * 2 * 0.254 * 3.14);
 
         private void stopMotors() {
