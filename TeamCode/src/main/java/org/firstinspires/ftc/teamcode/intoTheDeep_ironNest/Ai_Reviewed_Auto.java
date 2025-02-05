@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
         private DcMotor wheel_2;
         private DcMotor wheel_3;
         private DcMotor wheel_4;
-
+        private Servo tertiary_arm;
         private static final int MAX_POSITION = -975;
         private static final double F_COEFFICIENT = 0.0000005;
         private static final double TILES_TO_TICKS = 537.7 * (120 * 2 * 0.254 * 3.14);
@@ -85,6 +85,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
             wheel_2 = hardwareMap.get(DcMotor.class, "right_back_drive");
             wheel_4 = hardwareMap.get(DcMotor.class, "right_front_drive");
             wheel_3 = hardwareMap.get(DcMotor.class, "left_back_drive");
+            tertiary_arm = hardwareMap.get(Servo.class, "tertiary arm");
 
             sliders.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             sliders.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

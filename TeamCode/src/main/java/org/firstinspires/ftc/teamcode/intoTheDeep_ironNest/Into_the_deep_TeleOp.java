@@ -51,6 +51,8 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
     int maxPosition = -2900;
     public double F;
     public double f = (float) 0.0000005;
+    Servo tertiary_arm;
+    Servo secondary_claw;
 
     @Override
     public void runOpMode() {
@@ -64,6 +66,8 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
         clawservo = hardwareMap.get(Servo.class, "claw");
         secondaryArm = hardwareMap.get(Servo.class, "secondaryArm");
         sliders = hardwareMap.get(DcMotor.class, "primary_arm");
+        tertiary_arm = hardwareMap.get(Servo.class, "tertiary_arm");
+        secondary_claw = hardwareMap.get(Servo.class, "secondary_arm");
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -136,7 +140,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-
+// Speed up the motors
             boolean bumper = gamepad1.left_bumper;
             if (bumper) {
                 leftFrontDrive.setPower(leftFrontPower);
@@ -149,12 +153,21 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
                 leftBackDrive.setPower(leftBackPower / 2);
                 rightBackDrive.setPower(rightBackPower / 2);
             }
+            // main claw
             if (gamepad2.right_trigger > 0.5) {
                 clawservo.setPosition(0.9);
             }
             if (gamepad2.left_trigger > 0.5) {
                 clawservo.setPosition(0.65);
             }
+            // secondary claw
+            if (gamepad2.right_bumper){
+                secondary_claw.setPosition(0.0);
+            }
+            if (gamepad2.left_bumper){
+                secondary_claw.setPosition(1.0);
+            }
+            // secondary arm positions
             if (gamepad2.a) {
                 secondaryArm.setPosition(0.575);
             }
@@ -164,6 +177,19 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             if (gamepad2.y) {
                 secondaryArm.setPosition(0.0);
             }
+
+            // tertiary arm
+            if (gamepad2.dpad_down){
+                tertiary_arm.setPosition(1.0);
+            }
+            if (gamepad2.dpad_right){
+                tertiary_arm.setPosition(0.65);
+            }
+            if (gamepad2.dpad_up){
+                tertiary_arm.setPosition(0.37);
+            }
+
+            //Pid
             int currentPosition = sliders.getCurrentPosition();
             F = currentPosition * f;
                 if (currentPosition > maxPosition) {
@@ -174,7 +200,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
                     sliders.setPower(Math.abs(sliderPower/5));
                 }
 
-                // Show the elapsed game time and wheel power.
+                // Show
                 telemetry.addData("sliderPower", sliderPower);
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
                 telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
