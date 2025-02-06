@@ -7,9 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-    @Autonomous(name = " AI auto")
+@Autonomous(name = " AI auto")
     public class Ai_Reviewed_Auto extends LinearOpMode {
         private DcMotor sliders;
         private Servo secondaryArm;
@@ -46,10 +45,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
             wheel_4.setPower(power);
         }
 
-        private void turnRight() {
+        private void turn_right () {
             setTargetPositionForAllWheels((int) TURNING_NUMBER);
             setModeForAllWheels(DcMotor.RunMode.RUN_TO_POSITION);
-            setPowerForAllWheels(0.5);
+            setPowerForAllWheels_to_turn_right(0.5);
             telemetry.addData("Current position", wheel_1.getCurrentPosition());
             telemetry.addData("target position", TURNING_NUMBER);
             telemetry.update();
@@ -69,11 +68,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
             wheel_4.setMode(mode);
         }
 
-        private void setPowerForAllWheels(double power) {
-            wheel_1.setPower(power);
-            wheel_2.setPower(power);
+        private void setPowerForAllWheels_to_turn_right(double power) {
+            wheel_1.setPower(-power);
+            wheel_2.setPower(-power);
             wheel_3.setPower(power);
-            wheel_4.setPower(power);
+            wheel_4.setPower(-power);
         }
 
         @Override
@@ -97,11 +96,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
             waitForStart();
 
             while (opModeIsActive()) {
+                // grab the sample and score it
                 claw.setPosition(1);
                 secondaryArm.setPosition(0.25);
                 int sliderPosition = sliders.getCurrentPosition();
                 double F = sliderPosition * F_COEFFICIENT;
-
+                // sliders go up and stay up
                 while (sliderPosition >= MAX_POSITION && opModeIsActive()) {
                     sliderPosition = sliders.getCurrentPosition();
                     F = sliderPosition * F_COEFFICIENT;
@@ -111,18 +111,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
                     telemetry.update();
                 }
                 sliders.setPower(F);
-
+                // goes forward as long as the target position is met to hang up the specimen
                 while (wheel_2.getCurrentPosition() < 0.013 * TILES_TO_TICKS && opModeIsActive()) {
                     goForward(0.5);
                 }
                 claw.setPosition(0.65);
-
+                // goes back to park position
                 while (wheel_2.getCurrentPosition() > 0 && opModeIsActive()) {
                     goBackwards(0.5);
                 }
                 stopMotors();
-                turnRight();
-                stop();
+                // goes to take the other specimen
+                while (wheel_2.getCurrentPosition() > ((double) 3 / 24) * 537.7 * (120 * 2 * 0.254 * 3.14) && opModeIsActive() ){
+                    setPowerForAllWheels_to_turn_right(0.5);
+                }
+                stopMotors();
                 sleep(6000);
 
 
