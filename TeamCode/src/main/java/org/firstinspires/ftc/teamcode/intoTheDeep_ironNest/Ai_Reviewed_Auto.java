@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.lang.annotation.Target;
-
 @Autonomous(name = " AI auto")
     public class Ai_Reviewed_Auto extends LinearOpMode {
         private DcMotor sliders;
@@ -122,9 +120,11 @@ import java.lang.annotation.Target;
                 stopMotors();
                 // goes to take the other specimen
                 while (wheel_2.getCurrentPosition() > ((double) 3 / 24) * 537.7 * (120 * 2 * 0.254 * 3.14) && opModeIsActive() ){
-
                     setPowerForAllWheels_to_turn_right(0.5);
-                    telemetry.addData("Target posiion" , wheel_2.getTargetPosition());
+                    telemetry.addData("target position", wheel_1.getTargetPosition());
+                    telemetry.addData("Current Position", wheel_2.getCurrentPosition());
+                    telemetry.update();
+                }
                 stopMotors();
                 sleep(6000);
 
