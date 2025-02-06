@@ -88,10 +88,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
             sliders.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             sliders.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            resetAndRunWithoutEncoder(wheel_1);
-            resetAndRunWithoutEncoder(wheel_2);
-            resetAndRunWithoutEncoder(wheel_3);
-            resetAndRunWithoutEncoder(wheel_4);
+            wheel_1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            wheel_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            wheel_3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            wheel_4.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             waitForStart();
 
@@ -111,17 +111,20 @@ import com.qualcomm.robotcore.hardware.Servo;
                 // goes forward as long as the target position is met to hang up the specimen
                 while (wheel_2.getCurrentPosition() < 0.013 * TILES_TO_TICKS && opModeIsActive()) {
                     goForward(0.5);
+                    telemetry.addData("wheels position, we're going forward", wheel_2.getCurrentPosition());
+                    telemetry.update();
                 }
                 claw.setPosition(0.65);
                 // goes back to park position
                 while (wheel_2.getCurrentPosition() > 0 && opModeIsActive()) {
                     goBackwards(0.5);
+                    telemetry.addData("wheel postion, we're parking", wheel_2.getCurrentPosition());
+                    telemetry.update();
                 }
                 stopMotors();
                 // goes to take the other specimen
-                while (wheel_2.getCurrentPosition() > ((double) 3 / 24) * 537.7 * (120 * 2 * 0.254 * 3.14) && opModeIsActive() ){
+                while (wheel_2.getCurrentPosition() < ((double) 3 / 24) * 537.7 * (120 * 2 * 0.254 * 3.14) && opModeIsActive() ){
                     setPowerForAllWheels_to_turn_right(0.5);
-                    telemetry.addData("target position", wheel_1.getTargetPosition());
                     telemetry.addData("Current Position", wheel_2.getCurrentPosition());
                     telemetry.update();
                 }
@@ -132,9 +135,9 @@ import com.qualcomm.robotcore.hardware.Servo;
             }
         }
 
-        private void resetAndRunWithoutEncoder(DcMotor motor) {
+        /*private void resetAndRunWithoutEncoder(DcMotor motor) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
+        }*/
     }
 

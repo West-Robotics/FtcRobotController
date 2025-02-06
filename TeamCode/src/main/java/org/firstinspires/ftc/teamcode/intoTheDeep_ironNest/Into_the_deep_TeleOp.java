@@ -47,6 +47,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
     private Servo clawservo;
     private Servo secondaryArm;
     private DcMotor sliders;
+    private DcMotor sliders2;
     public int slider_position;
     int maxPosition = -2900;
     public double F;
@@ -66,6 +67,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
         clawservo = hardwareMap.get(Servo.class, "claw");
         secondaryArm = hardwareMap.get(Servo.class, "secondaryArm");
         sliders = hardwareMap.get(DcMotor.class, "primary_arm");
+        sliders2 = hardwareMap.get(DcMotor.class, "primary_arm2");
         tertiary_arm = hardwareMap.get(Servo.class, "tertiary_arm");
         secondary_claw = hardwareMap.get(Servo.class, "secondary_arm");
         // ########################################################################################
@@ -82,7 +84,9 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        sliders.setMode(RUN_USING_ENCODER);
+        sliders.setMode(RUN_WITHOUT_ENCODER);
+        sliders2.setMode(RUN_WITHOUT_ENCODER);
+        sliders2.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -194,10 +198,12 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             F = currentPosition * f;
                 if (currentPosition > maxPosition) {
                     sliders.setPower(sliderPower+F);
+                    sliders2.setPower(sliderPower+F);
 
                 }
                 else {
                     sliders.setPower(Math.abs(sliderPower/5));
+                    sliders2.setPower(Math.abs(sliderPower/5));
                 }
 
                 // Show
