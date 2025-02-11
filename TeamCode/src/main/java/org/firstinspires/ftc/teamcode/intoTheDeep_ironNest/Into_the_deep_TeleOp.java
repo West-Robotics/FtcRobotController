@@ -69,7 +69,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
         sliders = hardwareMap.get(DcMotor.class, "primary_arm");
         sliders2 = hardwareMap.get(DcMotor.class, "primary_arm2");
         tertiary_arm = hardwareMap.get(Servo.class, "tertiary_arm");
-        secondary_claw = hardwareMap.get(Servo.class, "secondary_arm");
+        secondary_claw = hardwareMap.get(Servo.class, "secondary_claw");
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
         // ########################################################################################
@@ -165,11 +165,11 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
                 clawservo.setPosition(0.65);
             }
             // secondary claw
-            if (gamepad2.right_bumper){
+            if (gamepad1.right_trigger > 0.5){
                 secondary_claw.setPosition(0.0);
             }
-            if (gamepad2.left_bumper){
-                secondary_claw.setPosition(1.0);
+            if (gamepad1.left_trigger > 0.5){
+                secondary_claw.setPosition(0.3);
             }
             // secondary arm positions
             if (gamepad2.a) {
@@ -183,13 +183,13 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             }
 
             // tertiary arm
-            if (gamepad2.dpad_down){
+            if (gamepad1.dpad_down){
                 tertiary_arm.setPosition(1.0);
             }
-            if (gamepad2.dpad_right){
-                tertiary_arm.setPosition(0.65);
+            if (gamepad1.dpad_right){
+                tertiary_arm.setPosition(0.85);
             }
-            if (gamepad2.dpad_up){
+            if (gamepad1.dpad_up){
                 tertiary_arm.setPosition(0.37);
             }
 
