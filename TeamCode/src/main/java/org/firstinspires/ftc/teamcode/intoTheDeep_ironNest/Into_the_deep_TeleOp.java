@@ -164,6 +164,8 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             if (gamepad2.left_trigger > 0.5) {
                 clawservo.setPosition(0.65);
             }
+
+
             // secondary claw
             if (gamepad1.right_trigger > 0.5){
                 secondary_claw.setPosition(0.0);
@@ -171,23 +173,24 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             if (gamepad1.left_trigger > 0.5){
                 secondary_claw.setPosition(0.3);
             }
+
             // secondary arm positions
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 secondaryArm.setPosition(0.575);
             }
-            if (gamepad1.b) {
+            if (gamepad2.b) {
                 secondaryArm.setPosition(0.225);
             }
-            if (gamepad1.y) {
+            if (gamepad2.y) {
                 secondaryArm.setPosition(0.0);
             }
 
             // tertiary arm
             if (gamepad1.dpad_down){
-                tertiary_arm.setPosition(1.0);
+                tertiary_arm.setPosition(0.9);
             }
             if (gamepad1.dpad_right){
-                tertiary_arm.setPosition(0.85);
+                tertiary_arm.setPosition(0.45);
             }
             if (gamepad1.dpad_up){
                 tertiary_arm.setPosition(0.37);
