@@ -172,13 +172,13 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
                 secondary_claw.setPosition(0.3);
             }
             // secondary arm positions
-            if (gamepad2.a) {
+            if (gamepad1.a) {
                 secondaryArm.setPosition(0.575);
             }
-            if (gamepad2.b) {
+            if (gamepad1.b) {
                 secondaryArm.setPosition(0.225);
             }
-            if (gamepad2.y) {
+            if (gamepad1.y) {
                 secondaryArm.setPosition(0.0);
             }
 
