@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.Servo;
         private Servo tertiary_arm;
         private Servo secondary_claw;
         private static final int MAX_POSITION = -975;
+        private static final int MIN_POSIION = 0;
         private static final double F_COEFFICIENT = 0.0000005;
         private static final double TILES_TO_TICKS = 537.7 * (120 * 2 * 0.254 * 3.14);
         private static final int ROTATION_DISTANCE = 1;
@@ -112,18 +113,24 @@ import com.qualcomm.robotcore.hardware.Servo;
                 }
                 stopMotors();
                 // goes to take the other specimen
-                while (wheel_2.getCurrentPosition() >  -1450 && opModeIsActive() ){
+                while (wheel_2.getCurrentPosition() >  -1550 && opModeIsActive() ){
                     setPowerForAllWheels_to_turn_right(0.5);
                     telemetry.addData("target",-2500);
                     telemetry.addData("Current Position", wheel_2.getCurrentPosition());
                     telemetry.update();
                 }
                 stopMotors();
-                while (wheel_2.getCurrentPosition() < 0.010 && opModeIsActive()){
+                while (wheel_2.getCurrentPosition() < 0.008 && opModeIsActive()){
                     goForward(0.5);
                     telemetry.addData("wheels position, we're going forward", wheel_2.getCurrentPosition());
                     telemetry.update();
                 }
+                while (sliderPosition <= MIN_POSIION && opModeIsActive() && sliderPosition != MAX_POSITION) {
+                    sliderPosition = sliders.getCurrentPosition();
+                    F = sliderPosition * F_COEFFICIENT;
+                    sliders.setPower(-0.5 + F);
+                }
+                sliders.setPower(F);
                 stopMotors();
                 sleep(3000);
                 while(wheel_2.getCurrentPosition() >0 && opModeIsActive()){
@@ -133,12 +140,13 @@ import com.qualcomm.robotcore.hardware.Servo;
                 }
                 stopMotors();
                 resetAndRunWithoutEncoder(wheel_2);
-                while (wheel_2.getCurrentPosition() > -0.007 && opModeIsActive() ){
-                    setPowerForAllWheels_to_turn_right(-0.5);
+                while (wheel_2.getCurrentPosition() > 1550 && opModeIsActive() ){
+                    setPowerForAllWheels_to_turn_right(0.5);
                     telemetry.addData("target",- 0.007) ;
                     telemetry.addData("Current Position", wheel_2.getCurrentPosition());
                     telemetry.update();
                 }
+
                 stopMotors();
                 reset_encoders();
                 telemetry.update();
