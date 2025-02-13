@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.Servo;
         private Servo tertiary_arm;
         private Servo secondary_claw;
         private static final int MAX_POSITION = -975;
-        private static final int MIN_POSIION = 0;
+        private static final int MIN_POSITION = 975;
         private static final double F_COEFFICIENT = 0.0000005;
         private static final double TILES_TO_TICKS = 537.7 * (120 * 2 * 0.254 * 3.14);
         private static final int ROTATION_DISTANCE = 1;
@@ -59,10 +59,14 @@ import com.qualcomm.robotcore.hardware.Servo;
         }
 
         private void setPowerForAllWheels_to_turn_right(double power) {
+            // left
             wheel_1.setPower(-power);
+            // right
             wheel_2.setPower(-power);
+            //left
             wheel_3.setPower(power);
-            wheel_4.setPower(-power);
+            //right
+            wheel_4.setPower(power);
         }
 
         @Override
@@ -96,6 +100,9 @@ import com.qualcomm.robotcore.hardware.Servo;
                     sliderPosition = sliders.getCurrentPosition();
                     F = sliderPosition * F_COEFFICIENT;
                     sliders.setPower(-0.5 + F);
+                    telemetry.addData("Slider position", sliderPosition);
+                    telemetry.addData("Target", MAX_POSITION);
+                    telemetry.update();
                 }
                 sliders.setPower(F);
                 // goes forward as long as the target position is met to hang up the specimen
@@ -113,22 +120,30 @@ import com.qualcomm.robotcore.hardware.Servo;
                 }
                 stopMotors();
                 // goes to take the other specimen
-                while (wheel_2.getCurrentPosition() >  -1550 && opModeIsActive() ){
+                while (wheel_2.getCurrentPosition() <  -1550 && opModeIsActive() ){
                     setPowerForAllWheels_to_turn_right(0.5);
-                    telemetry.addData("target",-2500);
+                    telemetry.addData("target",1500);
                     telemetry.addData("Current Position", wheel_2.getCurrentPosition());
                     telemetry.update();
                 }
                 stopMotors();
-                while (wheel_2.getCurrentPosition() < 0.008 && opModeIsActive()){
+                reset_encoders();
+                while (wheel_2.getCurrentPosition() <=250 && opModeIsActive()){
                     goForward(0.5);
                     telemetry.addData("wheels position, we're going forward", wheel_2.getCurrentPosition());
+                    telemetry.addData("target",1000 );
+                    telemetry.addData("slider position", sliders.getCurrentPosition());
                     telemetry.update();
                 }
-                while (sliderPosition <= MIN_POSIION && opModeIsActive() && sliderPosition != MAX_POSITION) {
+                stopMotors();
+                while (sliders.getCurrentPosition() <= 0 && opModeIsActive()) {
                     sliderPosition = sliders.getCurrentPosition();
                     F = sliderPosition * F_COEFFICIENT;
-                    sliders.setPower(-0.5 + F);
+                    sliders.setPower(0.5 + F);
+                    telemetry.addData("Slider position",sliders.getCurrentPosition());
+                    telemetry.addData("Target", 0);
+                    telemetry.update();
+
                 }
                 sliders.setPower(F);
                 stopMotors();
@@ -141,8 +156,8 @@ import com.qualcomm.robotcore.hardware.Servo;
                 stopMotors();
                 resetAndRunWithoutEncoder(wheel_2);
                 while (wheel_2.getCurrentPosition() > 1550 && opModeIsActive() ){
-                    setPowerForAllWheels_to_turn_right(0.5);
-                    telemetry.addData("target",- 0.007) ;
+                    setPowerForAllWheels_to_turn_right(-0.5);
+                    telemetry.addData("target", -1550) ;
                     telemetry.addData("Current Position", wheel_2.getCurrentPosition());
                     telemetry.update();
                 }
@@ -164,6 +179,5 @@ import com.qualcomm.robotcore.hardware.Servo;
     resetAndRunWithoutEncoder(wheel_2);
     resetAndRunWithoutEncoder(wheel_3);
     resetAndRunWithoutEncoder(wheel_4);
-    resetAndRunWithoutEncoder(sliders);
-}
+    }
 }

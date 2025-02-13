@@ -186,13 +186,13 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             }
 
             // tertiary arm
-            if (gamepad1.dpad_down){
+            if (gamepad1.dpad_up){
                 tertiary_arm.setPosition(0.9);
             }
             if (gamepad1.dpad_right){
                 tertiary_arm.setPosition(0.45);
             }
-            if (gamepad1.dpad_up){
+            if (gamepad1.dpad_down){
                 tertiary_arm.setPosition(0.37);
             }
 
