@@ -145,8 +145,9 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
 
             // Send calculated power to wheels
 // Speed up the motors
-            boolean bumper = gamepad1.left_bumper;
-            if (bumper) {
+            boolean left_bumper = gamepad1.left_bumper;
+            boolean right_bumper = gamepad1.right_bumper;
+            if (left_bumper||right_bumper) {
                 leftFrontDrive.setPower(leftFrontPower);
                 rightFrontDrive.setPower(rightFrontPower);
                 leftBackDrive.setPower(leftBackPower);
