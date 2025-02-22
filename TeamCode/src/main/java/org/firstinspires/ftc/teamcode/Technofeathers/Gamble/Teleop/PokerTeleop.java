@@ -92,7 +92,9 @@ public class PokerTeleop extends OpMode {
         controller2.update();
         drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
         //horizontalLift.setLiftPower(controller2.left_stick_y); //power for horizontal lift, left stick
-        verticalLift.setLiftPower(controller2.left_stick_y/1.5); //power for vertical lift, left stick controller 2
+        //verticalLift.setLiftPower(controller2.left_stick_y/1.5); //power for vertical lift, left stick controller 2
+
+
 
 
         //horizontal grabber
@@ -170,19 +172,19 @@ public class PokerTeleop extends OpMode {
 
         //linkage/horizontal slides
         /*
+
+
         if(controller2.dpadUpOnce()) {
-            linkageServoLeft.setPosition(1);
+            linkageServoLeft.setPosition(0);  //front
             linkageServoRight.setPosition(1);
 
         }
 
-        if(controller2.dpadLeftOnce()){
-            linkageServoLeft.setPosition(-1);
-            linkageServoRight.setPosition(-1);
-        }
+
+
         if (controller2.dpadDownOnce()){
-           linkageServoRight.setPosition(0);
-           linkageServoLeft.setPosition(0);
+           linkageServoLeft.setPosition(0.55); //back
+           linkageServoRight.setPosition(0.45);
         }
 
          */
@@ -213,22 +215,22 @@ public class PokerTeleop extends OpMode {
 
 
         //pivot to align specimen vertical claw
-        /*
+
 
 
         if (controller2.AOnce()){
             if (buttonA){
-                pivotSlide.setPosition(0.5);
+                pivotSlide.setPosition(0.25);
                 pivotClaw.setPosition(0.5);
                 buttonA = false;
             } else{
                 pivotSlide.setPosition(1.1);
-                pivotClaw.setPosition(0.3);
+                pivotClaw.setPosition(0.4);
                 buttonA = true;
             }
         }
 
-         */
+
 
         if (controller2.YOnce()){
 
@@ -241,9 +243,6 @@ public class PokerTeleop extends OpMode {
                 buttonB = false;
             } else{
                 grabber.setPosition(0.3);
-
-
-
                 buttonB = true;
             }
         }

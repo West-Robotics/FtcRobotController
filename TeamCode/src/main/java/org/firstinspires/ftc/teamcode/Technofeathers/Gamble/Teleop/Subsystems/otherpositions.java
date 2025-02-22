@@ -1,19 +1,17 @@
 package org.firstinspires.ftc.teamcode.Technofeathers.Gamble.Teleop.Subsystems;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Controller;
-import org.firstinspires.ftc.teamcode.Technofeathers.Bibot.Auto.TechnoNearBlue;
 import org.firstinspires.ftc.teamcode.Technofeathers.TechnofeathersDrive;
 
-@TeleOp(name = "AutomationForServo")
-public class servopositions extends LinearOpMode{
+@TeleOp(name = "AutomationForServoing")
+public class otherpositions extends LinearOpMode{
     public DcMotor frontLeft;
 
     public DcMotor verticalLeftLift;
@@ -54,11 +52,10 @@ public class servopositions extends LinearOpMode{
     public double linkagerightval;
     public double linkageleftval;
 
-    public ElapsedTime timer = new ElapsedTime();
-
 
     public void runOpMode(){
-
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = dashboard.getTelemetry();
         controller1 = new Controller(gamepad1);
         controller2 = new Controller(gamepad2);
 
@@ -99,7 +96,7 @@ public class servopositions extends LinearOpMode{
 
         drive.setupMotors(hardwareMap);
 
-        buttonA = true;
+        buttonA = false;
         buttonX = false;
         buttonY = false;
         buttonBforcontroller1 = false;
@@ -116,7 +113,8 @@ public class servopositions extends LinearOpMode{
         rightValue = 1;
         leftValue = 0;
         waitForStart();
-
+        diffyRotatorLeft.setPosition(0.05);
+        diffyRotatorRight.setPosition(0.05);
 
 
         while (opModeIsActive()){
@@ -137,36 +135,40 @@ public class servopositions extends LinearOpMode{
                 verticalRightLift.setPower(0);
             }
 
-            //specimen drop off
-            if (controller2.dpadRightOnce()){
-                pivotSlide.setPosition(0.87);
+            //scoring and intake pivot positions
+            /*
+            if (controller2.XOnce()){
+                if (buttonX){
+                    pivotSlide.setPosition(0.25);
+                    pivotClaw.setPosition(0.5);
+                    buttonX = false;
+                } else{
+                    pivotSlide.setPosition(1);
+                    pivotClaw.setPosition(0.4);
+                    buttonX = true;
+                }
+            }
+
+             */
+            if (controller2.XOnce()){
+                pivotSlide.setPosition(0.25);
                 pivotClaw.setPosition(0.5);
             }
-            //specimen pickup
-            if (controller2.dpadLeftOnce()){
-                pivotSlide.setPosition(0.35);
+            if (controller2.BOnce()){
+                pivotSlide.setPosition(1);
                 pivotClaw.setPosition(0.4);
             }
-
-            //transfer
             if (controller2.YOnce()){
-                pivotSlide.setPosition(0);
+                pivotSlide.setPosition(0.65);
                 pivotClaw.setPosition(0.15);
-                leftHorizontalGrabberServoValue = 0.05;
-                rightHorizontalGrabberServoValue =0.05;
-                diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
-                diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
-
-                verticalRightLift.setTargetPosition(-260);
-                verticalLeftLift.setTargetPosition(-260);
+                verticalRightLift.setTargetPosition(-100);
+                verticalLeftLift.setTargetPosition(-100);
                 verticalLeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 verticalRightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                verticalLeftLift.setPower(0.8);
-                verticalRightLift.setPower(0.8);
+                verticalLeftLift.setPower(0.4);
+                verticalRightLift.setPower(0.4);
                 while(opModeIsActive() && verticalRightLift.isBusy() || verticalLeftLift.isBusy()){
-                    controller1.update();
-                    controller2.update();
-                    drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
+                    idle();
                 }
                 verticalLeftLift.setPower(0);
                 verticalRightLift.setPower(0);
@@ -174,52 +176,14 @@ public class servopositions extends LinearOpMode{
                 verticalRightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 verticalLeftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 grabber.setPosition(0.5);
-                linkagerightval = 0.87;
-                linkageleftval = 0.13;
+                sleep(500);
+                linkagerightval = 0.9;
+                linkageleftval = 0.1;
                 linkageServoRight.setPosition(linkagerightval);
                 linkageServoLeft.setPosition(linkageleftval);
-                timer.reset();
-                timer.startTime();
-                while (opModeIsActive() && timer.seconds()<0.5){
-                    controller1.update();
-                    controller2.update();
-                    drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-                }
 
-
-                grabber.setPosition(0.3);
-                sleep(190);
-                horizontalgrabber.setPosition(0.23);
-                buttonA = true;
-                sleep(190);
-                verticalRightLift.setTargetPosition(-780);
-                verticalLeftLift.setTargetPosition(-780);
-                verticalLeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                verticalRightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                verticalLeftLift.setPower(0.8);
-                verticalRightLift.setPower(0.8);
-                while(opModeIsActive() && verticalRightLift.isBusy() || verticalLeftLift.isBusy()){
-                    controller1.update();
-                    controller2.update();
-                    drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-                }
-                verticalLeftLift.setPower(0);
-                verticalRightLift.setPower(0);
-
-                verticalRightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                verticalLeftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                pivotSlide.setPosition(0.6);
-                pivotClaw.setPosition(0.4);
 
             }
-
-            //sample scoring positions
-            if (controller2.XOnce()){
-                pivotSlide.setPosition(0.2);
-                pivotClaw.setPosition(0);
-            }
-
 
             //vertical grabber
             if(controller2.AOnce()){
@@ -228,34 +192,14 @@ public class servopositions extends LinearOpMode{
                     buttonA = false;
                 } else{
                     grabber.setPosition(0.3);
-                    sleep(400);
-                    int rightValSlide = verticalRightLift.getCurrentPosition();
-                    int leftValSlide = verticalLeftLift.getCurrentPosition();
-                    leftValSlide -= 300;
-                    rightValSlide -= 300;
-                    verticalRightLift.setTargetPosition(rightValSlide);
-                    verticalLeftLift.setTargetPosition(leftValSlide);
-                    verticalLeftLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    verticalRightLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    verticalLeftLift.setPower(0.7);
-                    verticalRightLift.setPower(0.7);
-                    while(opModeIsActive() && verticalRightLift.isBusy() || verticalLeftLift.isBusy()){
-                        controller1.update();
-                        controller2.update();
-                        drive.drive(controller1.left_stick_x, -controller1.left_stick_y/1.25, controller1.right_stick_x/1.25);
-
-                    }
-                    verticalLeftLift.setPower(0);
-                    verticalRightLift.setPower(0);
-                    verticalRightLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    verticalLeftLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    pivotSlide.setPosition(0.87);
-                    pivotClaw.setPosition(0.5);
                     buttonA = true;
                 }
             }
 
-
+            if (controller2.dpadUpOnce()){
+                pivotSlide.setPosition(0);
+                pivotClaw.setPosition(0.4);
+            }
 
             //horizontal pivot for grabber
             if (controller1.dpadRightOnce()&& canRotateClawHorizontally){
@@ -271,67 +215,45 @@ public class servopositions extends LinearOpMode{
                 servoChanged = true;
             }
 
-            if (controller1.right_trigger>0.1){
+            if (controller1.dpadUpOnce()){
+                rightHorizontalGrabberServoValue =0.5;
+                leftHorizontalGrabberServoValue =0.5;
+                servoChanged = true;
+            }
+
+
+            if (controller1.dpadDownOnce()){
+                leftHorizontalGrabberServoValue = 0.05;
+                rightHorizontalGrabberServoValue =0.05;
+                servoChanged = true;
+            }
+
+
+
+            //linkage
+            if (controller1.XOnce() ){
+                leftHorizontalGrabberServoValue = 0.05;
+                rightHorizontalGrabberServoValue =0.05;
+                diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
+                diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
+                canRotateClawHorizontally = false;
+                sleep(750);
+                linkageServoLeft.setPosition(0.55); //back
+                linkageServoRight.setPosition(0.45);
+                linkagerightval = 0.45;
+                linkageleftval = 0.55;
+            }
+            if (controller1.YOnce() ){
+                linkageServoLeft.setPosition(0);  //front
+                linkageServoRight.setPosition(1);
+                linkagerightval = 1;
+                linkageleftval = 0;
+                sleep(750);
                 leftHorizontalGrabberServoValue = 0.5;
                 rightHorizontalGrabberServoValue =0.5;
                 diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
                 diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
                 canRotateClawHorizontally = true;
-                sleep(250);
-                horizontalgrabber.setPosition(0.33);
-                buttonBforcontroller1 = true;
-
-            }
-
-
-            if (controller1.left_trigger>0.1){
-                horizontalgrabber.setPosition(0.13);
-                buttonBforcontroller1 = false;
-                sleep(180);
-                leftHorizontalGrabberServoValue = 0.05;
-                rightHorizontalGrabberServoValue =0.05;
-                servoChanged = true;
-                canRotateClawHorizontally = false;
-            }
-
-            if(controller2.BOnce()){
-                pivotSlide.setPosition(0.6);
-                pivotClaw.setPosition(0.4);
-            }
-
-            //linkage
-            if (controller2.leftBumperOnce() ){
-                horizontalgrabber.setPosition(0.13);
-                buttonBforcontroller1 = false;
-                sleep(100);
-                leftHorizontalGrabberServoValue = 0.05;
-                rightHorizontalGrabberServoValue =0.05;
-                diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
-                diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
-                canRotateClawHorizontally = false;
-                sleep(400);
-                linkageServoLeft.setPosition(0.65); //back
-                linkageServoRight.setPosition(0.35);
-                linkagerightval = 0.45;
-                linkageleftval = 0.55;
-            }
-            if (controller2.rightBumperOnce() ){
-
-                horizontalgrabber.setPosition(0.13);
-                buttonBforcontroller1 = false;
-                sleep(100);
-                leftHorizontalGrabberServoValue = 0.05;
-                rightHorizontalGrabberServoValue =0.05;
-                canRotateClawHorizontally = false;
-                diffyRotatorLeft.setPosition(leftHorizontalGrabberServoValue);
-                diffyRotatorRight.setPosition(rightHorizontalGrabberServoValue);
-                sleep(300);
-                linkageServoLeft.setPosition(0);  //front
-                linkageServoRight.setPosition(1);
-                linkagerightval = 1;
-                linkageleftval = 0;
-
-
 
             }
             if (controller1.BOnce()) {
@@ -339,7 +261,7 @@ public class servopositions extends LinearOpMode{
                     horizontalgrabber.setPosition(0.13);
                     buttonBforcontroller1 = false;
                 } else {
-                    horizontalgrabber.setPosition(0.40);
+                    horizontalgrabber.setPosition(0.23);
                     buttonBforcontroller1 = true;
                 }
             }

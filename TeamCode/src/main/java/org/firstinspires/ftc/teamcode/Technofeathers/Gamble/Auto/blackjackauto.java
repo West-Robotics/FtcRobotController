@@ -66,7 +66,8 @@ public class blackjackauto extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         drive = new TechnofeathersDrive();
         drive.setupMotors(hardwareMap);
-        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        myOtos = hardwareMap.get(SparkFunOTOS.class, "sensorOtos");
+        grabber = hardwareMap.get(Servo.class,"grabber");
         configureOtos();
         telemetry.addData("Current Otos Angle", myOtos.getPosition().h);
         telemetry.update();
@@ -89,6 +90,9 @@ public class blackjackauto extends LinearOpMode {
 
         grabber.setPosition(0.5);
 */
+        grabber.setPosition(0.3);
+
+
         waitForStart();
         pos = myOtos.getPosition();
         telemetry.addData("X coordinate", pos.x);
@@ -98,14 +102,15 @@ public class blackjackauto extends LinearOpMode {
         telemetry.update();
         sleep(2000);
         timer.reset();
+        /*
         do{
             pos = myOtos.getPosition();
-            double targety = 26;
+            double targety = 5;
             double targetx = 0;
             double heading = 0;
-            double powery = -PIDControlForStraight(targety,pos.y,1.2,0,0.01);
-            double powerx = -PIDControlForStrafe(targetx,pos.x,1.2,0,0.01);
-            double powerheading = -PIDControl(heading,pos.h,1.2,0,0.003);
+            double powery = PIDControlForStraight(targety,pos.y,0.5,0,0.0);
+            double powerx = -PIDControlForStrafe(targetx,pos.x,0.5,0,0.0);
+            double powerheading = -PIDControl(heading,pos.h,1.2,0,0.02);
 
             lasterrorCheck = currentErrorCheck;
             currentErrorCheck = heading - pos.h;
@@ -122,9 +127,11 @@ public class blackjackauto extends LinearOpMode {
             telemetry.addData("Heading angle", pos.h);
             telemetry.update();
 
-        } while (opModeIsActive() && (Math.abs(lasterrorCheck)>0.5 || Math.abs(currentErrorCheck)>0.5));
+        } while (opModeIsActive() ) ;// && (Math.abs(lasterrorCheck)>0.5 || Math.abs(currentErrorCheck)>0.5));
         drive.drive(0,0,0);
 
+
+         */
     }
 
 
