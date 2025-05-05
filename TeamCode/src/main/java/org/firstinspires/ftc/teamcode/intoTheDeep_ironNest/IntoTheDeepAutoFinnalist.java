@@ -11,7 +11,7 @@ public class IntoTheDeepAutoFinnalist extends  LinearOpMode {
     DcMotor sliders;
     Servo secondaryArm;
     Servo claw;
-    int maxPosition = -1025;
+    int maxPosition = -1125;
     public int slider_position;
     public double F;
     public double f = (float) 0.0000005;
@@ -53,7 +53,7 @@ public class IntoTheDeepAutoFinnalist extends  LinearOpMode {
 //        /}
         while (opModeIsActive()) {
             claw.setPosition(1);
-            secondaryArm.setPosition(0.25);
+            secondaryArm.setPosition(0.225);
             slider_position = sliders.getCurrentPosition();
             F = slider_position * f;
             while (slider_position>= maxPosition){
