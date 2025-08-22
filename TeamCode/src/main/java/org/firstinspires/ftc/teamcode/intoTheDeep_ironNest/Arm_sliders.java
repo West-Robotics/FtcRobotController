@@ -66,12 +66,21 @@ public class Arm_sliders extends LinearOpMode {
                 telemetry.addData("wheels",wheel2.getCurrentPosition());
                 telemetry.update();
             }
+<<<<<<< Updated upstream
             sliders.setPower(F);
             while (wheel2.getCurrentPosition()<0.013*tilesToTicks){
                 wheel_1.setPower(-0.5);
                 wheel2.setPower(0.5);
                 wheel3.setPower(-0.5);
                 wheel4.setPower(-0.5);
+=======
+                sliders.setPower(F);
+            while (wheel3.getCurrentPosition()<1.875*tilesToTicks){
+                wheel_1.setPower(-0.75);
+                wheel2.setPower(0.75);
+                wheel3.setPower(-0.75);
+                wheel4.setPower(-0.75);
+>>>>>>> Stashed changes
             }
             wheel_1.setPower(0);
             wheel2.setPower(0);
