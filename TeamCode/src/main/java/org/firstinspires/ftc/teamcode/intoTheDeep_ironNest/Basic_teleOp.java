@@ -34,7 +34,12 @@ public class Basic_teleOp extends LinearOpMode{
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            
+            if(gamepad1.dpad_up){
+                goforward();
+            }else if(gamepad1.dpad_down){
+                gobackward();
+            }
+
         }
 
 
@@ -44,5 +49,11 @@ public class Basic_teleOp extends LinearOpMode{
         rightFrontDrive.setPower(-1);
         leftBackDrive.setPower(1);
         rightBackDrive.setPower(-1);
+    }
+    public void gobackward(){
+        leftFrontDrive.setPower(-1);
+        rightFrontDrive.setPower(1);
+        leftBackDrive.setPower(-1);
+        rightBackDrive.setPower(1);
     }
 }
