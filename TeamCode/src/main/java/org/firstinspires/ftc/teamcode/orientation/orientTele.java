@@ -52,10 +52,28 @@ public class orientTele extends LinearOpMode {
 
         while (opModeIsActive()) {
             controller1.update();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             frontLeft.setPower(-controller1.left_stick_y);
-            frontRight.setPower(controller1.left_stick_y);
+            frontRight.setPower(-controller1.left_stick_y);
             backLeft.setPower(-controller1.left_stick_y);
-            backRight.setPower(controller1.left_stick_y);
+            backRight.setPower(-controller1.left_stick_y);
             telemetry.addData("left joy stick y", controller1.left_stick_y);
             telemetry.addData("left joy stick x", controller1.left_stick_x);
             telemetry.addData("right joy stick y", controller1.right_stick_y);
