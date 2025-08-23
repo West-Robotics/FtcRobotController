@@ -85,10 +85,10 @@ public class orient extends LinearOpMode {
 
     }
     public void goForward(){
-        frontLeft.setTargetPosition(2240);
-        frontRight.setTargetPosition(2240);
-        backLeft.setTargetPosition(2240);
-        backRight.setTargetPosition(2240);
+        frontLeft.setTargetPosition(2250);
+        frontRight.setTargetPosition(2250);
+        backLeft.setTargetPosition(2250);
+        backRight.setTargetPosition(2250);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -114,10 +114,10 @@ public class orient extends LinearOpMode {
 
     }
     public void goBackward(){
-        frontLeft.setTargetPosition(-2240);
-        frontRight.setTargetPosition(-2240);
-        backLeft.setTargetPosition(-2240);
-        backRight.setTargetPosition(-2240);
+        frontLeft.setTargetPosition(-2250);
+        frontRight.setTargetPosition(-2250);
+        backLeft.setTargetPosition(-2250);
+        backRight.setTargetPosition(-2250);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -141,10 +141,10 @@ public class orient extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void moveRight(){
-        frontLeft.setTargetPosition(2240);
-        frontRight.setTargetPosition(-2240);
-        backLeft.setTargetPosition(-2240);
-        backRight.setTargetPosition(2240);
+        frontLeft.setTargetPosition(2250);
+        frontRight.setTargetPosition(-2250);
+        backLeft.setTargetPosition(-2250);
+        backRight.setTargetPosition(2250);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -168,10 +168,10 @@ public class orient extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void moveLeft(){
-        frontLeft.setTargetPosition(-2240);
-        frontRight.setTargetPosition(2240);
-        backLeft.setTargetPosition(2240);
-        backRight.setTargetPosition(-2240);
+        frontLeft.setTargetPosition(-2250);
+        frontRight.setTargetPosition(2250);
+        backLeft.setTargetPosition(2250);
+        backRight.setTargetPosition(-2250);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
