@@ -45,21 +45,50 @@ public class orient extends LinearOpMode {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         int currentpos = 0;
         waitForStart();
-        while (opModeIsActive()){
-            goForward();
-            telemetry.addData("frontLeft",frontLeft.getCurrentPosition());
-            telemetry.addData("frontRight",frontRight.getCurrentPosition());
-            telemetry.addData("backLeft",backLeft.getCurrentPosition());
-            telemetry.addData("backRight",backRight.getCurrentPosition());
-            telemetry.update();
-        }
+
+        goForward();
+        sleep(500);
+        moveRight();
+        sleep(500);
+        moveRight();
+        sleep(500);
+        goForward();
+        sleep(500);
+        moveLeft();
+        sleep(500);
+        moveLeft();
+        sleep(500);
+        goForward();
+        sleep(500);
+        goForward();
+        sleep(500);
+        moveRight();
+        sleep(500);
+        goBackward();
+        sleep(500);
+        moveRight();
+        sleep(500);
+        goForward();
+        sleep(500);
+        goForward();
+        sleep(500);
+        moveLeft();
+        sleep(500);
+        moveLeft();
+        sleep(500);
+        telemetry.addData("frontLeft",frontLeft.getCurrentPosition());
+        telemetry.addData("frontRight",frontRight.getCurrentPosition());
+        telemetry.addData("backLeft",backLeft.getCurrentPosition());
+        telemetry.addData("backRight",backRight.getCurrentPosition());
+        telemetry.update();
+
 
     }
     public void goForward(){
-        frontLeft.setTargetPosition(3360);
-        frontRight.setTargetPosition(3360);
-        backLeft.setTargetPosition(3360);
-        backRight.setTargetPosition(3360);
+        frontLeft.setTargetPosition(2240);
+        frontRight.setTargetPosition(2240);
+        backLeft.setTargetPosition(2240);
+        backRight.setTargetPosition(2240);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -85,10 +114,10 @@ public class orient extends LinearOpMode {
 
     }
     public void goBackward(){
-        frontLeft.setTargetPosition(-3360);
-        frontRight.setTargetPosition(-3360);
-        backLeft.setTargetPosition(-3360);
-        backRight.setTargetPosition(-3360);
+        frontLeft.setTargetPosition(-2240);
+        frontRight.setTargetPosition(-2240);
+        backLeft.setTargetPosition(-2240);
+        backRight.setTargetPosition(-2240);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -112,10 +141,10 @@ public class orient extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void moveRight(){
-        frontLeft.setTargetPosition(-3360);
-        frontRight.setTargetPosition(3360);
-        backLeft.setTargetPosition(3360);
-        backRight.setTargetPosition(-3360);
+        frontLeft.setTargetPosition(2240);
+        frontRight.setTargetPosition(-2240);
+        backLeft.setTargetPosition(-2240);
+        backRight.setTargetPosition(2240);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -139,10 +168,10 @@ public class orient extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void moveLeft(){
-        frontLeft.setTargetPosition(-3360);
-        frontRight.setTargetPosition(3360);
-        backLeft.setTargetPosition(3360);
-        backRight.setTargetPosition(-3360);
+        frontLeft.setTargetPosition(-2240);
+        frontRight.setTargetPosition(2240);
+        backLeft.setTargetPosition(2240);
+        backRight.setTargetPosition(-2240);
 
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
