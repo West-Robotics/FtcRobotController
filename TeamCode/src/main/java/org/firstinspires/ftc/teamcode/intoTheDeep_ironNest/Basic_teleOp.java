@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+@TeleOp(name="shdfijoagrskhoegsij[o")
 public class Basic_teleOp extends LinearOpMode{
 
     private DcMotor leftFrontDrive;
@@ -17,7 +18,8 @@ public class Basic_teleOp extends LinearOpMode{
 
 
 
-    @Override
+
+
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
@@ -26,10 +28,6 @@ public class Basic_teleOp extends LinearOpMode{
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
