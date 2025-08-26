@@ -43,16 +43,41 @@ public class orientationTeleOp extends LinearOpMode {
         while(opModeIsActive()){
             controller1.update();
 
-            
+            /*
+            if (controller1.Y()){
+                power(1);
+            } else if (controller1.A()) {
+                power(-1);
+            } else {
+                power(0);
+            }
+
+             */
+
+
+            if (controller1.dpadUp()){
+                power(1);
+            } else if (controller1.dpadDown()) {
+                power(-1);
+            } else{
+                power(0);
+            }
+
+
+
+
+
 
 
 
 
         }
+    }
 
-
-
-
-
+    public void power(double x){
+        leftFront.setPower(x);
+        leftBack.setPower(x);
+        rightFront.setPower(x);
+        rightBack.setPower(x);
     }
 }
