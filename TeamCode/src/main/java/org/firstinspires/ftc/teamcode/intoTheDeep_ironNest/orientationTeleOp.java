@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Controller;
 
-
+@TeleOp
 public class orientationTeleOp extends LinearOpMode {
     public DcMotor leftFront;
     public DcMotor leftBack;
@@ -43,30 +44,34 @@ public class orientationTeleOp extends LinearOpMode {
         while(opModeIsActive()){
             controller1.update();
 
-            /*
-            if (controller1.Y()){
-                power(1);
-            } else if (controller1.A()) {
-                power(-1);
-            } else {
-                power(0);
-            }
 
-             */
-
+            // UP DOWN RIGHT LEFT movement
 
             if (controller1.dpadUp()){
                 power(1);
             } else if (controller1.dpadDown()) {
                 power(-1);
-            } else{
+            } else if (controller1.dpadRight()) {
+
+            } else if (controller1.dpadLeft()){
+
+            } else {
                 power(0);
             }
 
 
 
+            //TANK DRIVE
+            /*
+            rightBack.setPower(controller1.right_trigger);
+            rightFront.setPower(controller1.right_trigger);
+            leftBack.setPower(controller1.left_trigger);
+            leftFront.setPower(controller1.left_trigger);
+
+             */
 
 
+            
 
 
 
