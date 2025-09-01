@@ -2,13 +2,42 @@ package org.firstinspires.ftc.teamcode.intoTheDeep_ironNest;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+/*
+ * This file contains an example of a Linear "OpMode".
+ * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
+ * The names of OpModes appear on the menu of the FTC Driver Station.
+ * When a selection is made from the menu, the corresponding OpMode is executed.
+ *
+ * This particular OpMode illustrates driving a 4-motor Omni-Directional (or Holonomic) robot.
+ * This code will work with either a Mecanum-Drive or an X-Drive train.
+ * Both of these drives are illustrated at https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
+ * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
+ *
+ * Also note that it is critical to set the correct rotation direction for each motor.  See details below.
+ *
+ * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
+ * Each motion axis is controlled by one Joystick axis.
+ *
+ * 1) Axial:    Driving forward and backward               Left-joystick Forward/Backward
+ * 2) Lateral:  Strafing right and left                     Left-joystick Right and Left
+ * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
+ *
+ * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
+ * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
+ * the direction of all 4 motors (see code below).
+ *
+ * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
+ */
 @TeleOp(name="Into The Deep TeleOp")
 public class Into_the_deep_TeleOp extends LinearOpMode {
     // Declare OpMode members for each of the 4 motors.
@@ -22,16 +51,15 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
     private DcMotor sliders;
     private DcMotor sliders2;
     public int slider_position;
-    int maxPosition = -2900;
+    int maxPosition = 2900;
     public double F;
     public double f = (float) 0.0000005;
     Servo tertiary_arm;
     Servo secondary_claw;
-    int ideal_position= -1025;
-
-    @Override
+    int ideal_position=  1025;
+ @Override
     public void runOpMode() {
-
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
@@ -59,7 +87,6 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         sliders.setMode(RUN_WITHOUT_ENCODER);
-        sliders.setMode(STOP_AND_RESET_ENCODER);
         sliders2.setMode(RUN_WITHOUT_ENCODER);
         sliders2.setDirection(DcMotor.Direction.REVERSE);
 
@@ -86,7 +113,6 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             double leftBackPower = axial - lateral + yaw;
             double rightBackPower = axial + lateral - yaw;
             double sliderPower = gamepad2.right_stick_y;
-
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -161,6 +187,7 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
             if (gamepad2.y) {
                 secondaryArm.setPosition(0.0);
             }
+
             // tertiary arm
             if (gamepad1.dpad_up){
                 tertiary_arm.setPosition(0.9);
@@ -169,7 +196,15 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
                 tertiary_arm.setPosition(0.45);
             }
             if (gamepad1.dpad_down){
-                tertiary_arm.setPosition(0.37);
+                if ( tertiary_arm.getPosition() >= 0.9 ){
+                    tertiary_arm.setPosition(0.9);
+
+                }else{
+                    tertiary_arm.setPosition(0.37);
+                    telemetry.addData("tertiary arm position:", tertiary_arm.getPosition());
+                    telemetry.update();
+                }
+
             }
 
             //Pid
@@ -184,21 +219,25 @@ public class Into_the_deep_TeleOp extends LinearOpMode {
                     sliders.setPower(Math.abs(sliderPower/5));
                     sliders2.setPower(Math.abs(sliderPower/5));
                 }
-                if (gamepad2.x) {
-                    if (sliders.getCurrentPosition() > ideal_position && opModeIsActive() ) {
+                if (gamepad2.x){
+                    while (sliders.getCurrentPosition() > ideal_position && sliders.getCurrentPosition() != ideal_position){
                         sliders.setPower(0.5);
+                        telemetry.addData("sliders position", sliders.getCurrentPosition());
+                        telemetry.addData("target position", ideal_position);
+                        telemetry.update();
                     }
-                    sliders.setPower(0);
+                sliders.setPower(F);
                 }
 
-
                 // Show
+            telemetry.addData("tertiary arm position:", tertiary_arm.getPosition());
+            telemetry.update();
                 telemetry.addData("sliderPower", sliderPower);
-                telemetry.addData("slider position", sliders.getCurrentPosition());
+                telemetry.addData("sliders position", sliders.getCurrentPosition());
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
                 telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
                 telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
                 telemetry.update();
-
+            }
         }
-    }}
+    }
