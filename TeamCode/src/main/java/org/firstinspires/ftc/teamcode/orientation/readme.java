@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.orientation;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-
-
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 /*
 
 for both files you just need basic "frontLeft", "frontRight", "backLeft", and "backRight" spelled exactly how they are inside the quotes,

@@ -8,7 +8,6 @@ public class TechnofeathersDrive {
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
-
     public void setupMotors(HardwareMap hardwareMap) {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);

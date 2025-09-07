@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
+
 public class orient extends LinearOpMode {
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
+
     public void runOpMode() throws InterruptedException{
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -46,36 +48,11 @@ public class orient extends LinearOpMode {
         int currentpos = 0;
         waitForStart();
 
+
+
         goForward();
-        sleep(500);
-        moveRight();
-        sleep(500);
-        moveRight();
-        sleep(500);
-        goForward();
-        sleep(500);
-        moveLeft();
-        sleep(500);
-        moveLeft();
-        sleep(500);
-        goForward();
-        sleep(500);
-        goForward();
-        sleep(500);
-        moveRight();
-        sleep(500);
-        goBackward();
-        sleep(500);
-        moveRight();
-        sleep(500);
-        goForward();
-        sleep(500);
-        goForward();
-        sleep(500);
-        moveLeft();
-        sleep(500);
-        moveLeft();
-        sleep(500);
+    
+
         telemetry.addData("frontLeft",frontLeft.getCurrentPosition());
         telemetry.addData("frontRight",frontRight.getCurrentPosition());
         telemetry.addData("backLeft",backLeft.getCurrentPosition());
